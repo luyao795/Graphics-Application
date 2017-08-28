@@ -54,8 +54,10 @@ void main(
 		// This example shader sets the "out" position directly from the "in" position:
 		o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
 		// Both of the following lines are exactly equivalent to the one above
-		o_position = float4( i_position.xy, 0.0, 1.0 );
-		o_position = float4( i_position, 0.0, 1.0 );
+		//o_position = float4( i_position.xy, 0.0, 1.0 );
+		//o_position = float4( i_position, 0.0, 1.0 );
+		o_position.x = i_position.x * sin( g_elapsedSecondCount_simulationTime );
+		o_position.y = i_position.y * cos( g_elapsedSecondCount_simulationTime );
 	}
 
 	// EAE6320_TODO: Change the position based on time!

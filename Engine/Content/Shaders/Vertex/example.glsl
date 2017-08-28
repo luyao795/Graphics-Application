@@ -52,8 +52,10 @@ void main()
 		// This example shader sets the "out" position directly from the "in" position:
 		gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
 		// Both of the following lines are exactly equivalent to the one above
-		gl_Position = vec4( i_position.xy, 0.0, 1.0 );
-		gl_Position = vec4( i_position, 0.0, 1.0 );
+		//gl_Position = vec4( i_position.xy, 0.0, 1.0 );
+		//gl_Position = vec4( i_position, 0.0, 1.0 );
+		gl_Position.x = i_position.x * sin( g_elapsedSecondCount_simulationTime );
+		gl_Position.y = i_position.y * cos( g_elapsedSecondCount_simulationTime );
 	}
 
 	// EAE6320_TODO: Change the position based on time!
