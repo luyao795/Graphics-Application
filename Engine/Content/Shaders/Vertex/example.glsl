@@ -60,11 +60,11 @@ void main()
 
 	// EAE6320_TODO: Change the position based on time!
 	// The value g_elapsedSecondCount_simulationTime constantly changes as the simulation progresses, and so by doing something like:
-	//	sin( g_elapsedSecondCount_simulationTime ) or cos( g_elapsedSecondCount_simulationTime )
+	//		sin( g_elapsedSecondCount_simulationTime ) or cos( g_elapsedSecondCount_simulationTime )
 	// you can get a value that will oscillate between [-1,1].
 	// You should change at least one position element so that the triangle animates.
 	// For example, to change X you would do something kind of like:
-	//		gl_Position.x = ? sin( g_elapsedSecondCount_simulationTime ) ?
+	//		gl_Position.x = sin( g_elapsedSecondCount_simulationTime )
 	// You can change .x and .y (but leave .z as 0.0 and .w as 1.0).
 	// The screen dimensions are already [1,1], so you may want to do some math
 	// on the result of the sinusoid function to keep the triangle mostly on screen.
