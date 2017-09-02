@@ -41,13 +41,18 @@ void main(
 		// Alpha
 		1.0 );
 
+	// Make sure the range of those values is [0, 1]
+	o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	o_color.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	o_color.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+
 	// EAE6320_TODO: Change the color based on time!
 	// The value g_elapsedSecondCount_simulationTime constantly changes as the simulation progresses, and so by doing something like:
-	//	sin( g_elapsedSecondCount_simulationTime ) or cos( g_elapsedSecondCount_simulationTime )
+	//		sin( g_elapsedSecondCount_simulationTime ) or cos( g_elapsedSecondCount_simulationTime )
 	// you can get a value that will oscillate between [-1,1].
 	// You should change at least one "channel" so that the color animates.
 	// For example, to change red ("r") you would do something kind of like:
-	//		o_color.r = ? sin( g_elapsedSecondCount_simulationTime ) ?
+	//		o_color.r = sin( g_elapsedSecondCount_simulationTime )
 	// You can change .r, .g, and .b (but leave .a as 1.0).
 	// Remember that your final values should be [0,1], so you will have to do some math.
 }
