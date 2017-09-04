@@ -66,7 +66,7 @@ namespace
 	// Shading Data
 	//-------------
 
-	eae6320::Graphics::Effect s_effect;
+	eae6320::Effect s_effect;
 	//eae6320::Graphics::cShader::Handle s_vertexShader;
 	//eae6320::Graphics::cShader::Handle s_fragmentShader;
 
@@ -88,7 +88,7 @@ namespace
 namespace
 {
 	eae6320::cResult InitializeGeometry();
-	eae6320::cResult InitializeShadingData();
+	//eae6320::cResult InitializeShadingData();
 	eae6320::cResult InitializeViews( const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight );
 }
 
@@ -326,7 +326,7 @@ eae6320::cResult eae6320::Graphics::Initialize( const sInitializationParameters&
 	}
 	// Initialize the shading data
 	{
-		if ( !( result = InitializeShadingData() ) )
+		if ( !( result = s_effect.InitializeShadingData() ) )
 		{
 			EAE6320_ASSERT( false );
 			goto OnExit;
@@ -570,7 +570,7 @@ namespace
 		return result;
 	}
 
-	eae6320::cResult InitializeShadingData()
+	/*eae6320::cResult InitializeShadingData()
 	{
 		auto result = eae6320::Results::Success;
 
@@ -598,7 +598,7 @@ namespace
 	OnExit:
 
 		return result;
-	}
+	}*/
 
 	eae6320::cResult InitializeViews( const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight )
 	{

@@ -12,32 +12,32 @@
 #include "cShader.h"
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
-	#include <Engine/Windows/Includes.h>
+#include <Engine/Windows/Includes.h>
 #endif
 
 namespace eae6320
 {
-	namespace Graphics
+	class Effect
 	{
-		class Effect
-		{
-		public:
-			// Shading Data
-			//-------------
+	public:
 
-			cShader::Handle s_vertexShader;
-			cShader::Handle s_fragmentShader;
+		Effect();
+		~Effect();
 
-			cRenderState s_renderState;
+		// Shading Data
+		//-------------
+
+		Graphics::cShader::Handle s_vertexShader;
+		Graphics::cShader::Handle s_fragmentShader;
+
+		Graphics::cRenderState s_renderState;
 
 #if defined ( EAE6320_PLATFORM_GL )
-			GLuint s_programId = 0;
+		GLuint s_programId = 0;
 #endif
 
-			Effect();
-			~Effect();
-		};
-	}
+		cResult InitializeShadingData();
+	};
 }
 
 #endif // !EAE6320_EFFECT_H

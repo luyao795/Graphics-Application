@@ -5,17 +5,14 @@
 
 namespace eae6320
 {
-	namespace Graphics
+	Effect::Effect()
 	{
-		Effect::Effect()
-		{
 
-		}
+	}
 
-		Effect::~Effect()
-		{
+	Effect::~Effect()
+	{
 
-		}
 	}
 }
 
