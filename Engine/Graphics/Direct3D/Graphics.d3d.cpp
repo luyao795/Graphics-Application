@@ -151,6 +151,7 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
+	s_effect.direct3dImmediateContext = direct3dImmediateContext;
 	EAE6320_ASSERT( direct3dImmediateContext );
 
 	// Every frame an entirely new image will be created.
@@ -173,28 +174,31 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update( &constantData_perFrame );
 	}
 
-	// Bind the shading data
-	{
-		{
-			ID3D11ClassInstance* const* noInterfaces = nullptr;
-			constexpr unsigned int interfaceCount = 0;
-			// Vertex shader
-			{
-				EAE6320_ASSERT( s_effect.s_vertexShader );
-				auto* const shader = cShader::s_manager.Get( s_effect.s_vertexShader );
-				EAE6320_ASSERT( shader && shader->m_shaderObject.vertex );
-				direct3dImmediateContext->VSSetShader( shader->m_shaderObject.vertex, noInterfaces, interfaceCount );
-			}
-			// Fragment shader
-			{
-				EAE6320_ASSERT( s_effect.s_fragmentShader );
-				auto* const shader = cShader::s_manager.Get( s_effect.s_fragmentShader );
-				EAE6320_ASSERT( shader && shader->m_shaderObject.fragment );
-				direct3dImmediateContext->PSSetShader( shader->m_shaderObject.fragment, noInterfaces, interfaceCount );
-			}
-		}
-		s_effect.s_renderState.Bind();
-	}
+	s_effect.BindShadingData();
+
+	//// Bind the shading data
+	//{
+	//	{
+	//		ID3D11ClassInstance* const* noInterfaces = nullptr;
+	//		constexpr unsigned int interfaceCount = 0;
+	//		// Vertex shader
+	//		{
+	//			EAE6320_ASSERT( s_effect.s_vertexShader );
+	//			auto* const shader = cShader::s_manager.Get( s_effect.s_vertexShader );
+	//			EAE6320_ASSERT( shader && shader->m_shaderObject.vertex );
+	//			direct3dImmediateContext->VSSetShader( shader->m_shaderObject.vertex, noInterfaces, interfaceCount );
+	//		}
+	//		// Fragment shader
+	//		{
+	//			EAE6320_ASSERT( s_effect.s_fragmentShader );
+	//			auto* const shader = cShader::s_manager.Get( s_effect.s_fragmentShader );
+	//			EAE6320_ASSERT( shader && shader->m_shaderObject.fragment );
+	//			direct3dImmediateContext->PSSetShader( shader->m_shaderObject.fragment, noInterfaces, interfaceCount );
+	//		}
+	//	}
+	//	s_effect.s_renderState.Bind();
+	//}
+
 	// Draw the geometry
 	{
 		// Bind a specific vertex buffer to the device as a data source
@@ -370,7 +374,10 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		s_vertexInputLayout->Release();
 		s_vertexInputLayout = nullptr;
 	}
-	if ( s_effect.s_vertexShader )
+
+	s_effect.CleanUpShadingData(result);
+
+	/*if ( s_effect.s_vertexShader )
 	{
 		const auto localResult = cShader::s_manager.Release( s_effect.s_vertexShader );
 		if ( !localResult )
@@ -404,7 +411,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 				result = localResult;
 			}
 		}
-	}
+	}*/
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();

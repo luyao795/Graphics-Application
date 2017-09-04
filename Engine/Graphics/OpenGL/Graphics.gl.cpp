@@ -168,15 +168,18 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update( &constantData_perFrame );
 	}
 
-	// Bind the shading data
-	{
-		{
-			EAE6320_ASSERT( s_effect.s_programId != 0 );
-			glUseProgram( s_effect.s_programId );
-			EAE6320_ASSERT( glGetError() == GL_NO_ERROR );
-		}
-		s_effect.s_renderState.Bind();
-	}
+	s_effect.BindShadingData();
+
+	//// Bind the shading data
+	//{
+	//	{
+	//		EAE6320_ASSERT( s_effect.s_programId != 0 );
+	//		glUseProgram( s_effect.s_programId );
+	//		EAE6320_ASSERT( glGetError() == GL_NO_ERROR );
+	//	}
+	//	s_effect.s_renderState.Bind();
+	//}
+
 	// Draw the geometry
 	{
 		// Bind a specific vertex buffer to the device as a data source
@@ -362,7 +365,10 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			s_vertexBufferId = 0;
 		}
 	}
-	if ( s_effect.s_programId != 0 )
+
+	s_effect.CleanUpShadingData(result);
+
+	/*if ( s_effect.s_programId != 0 )
 	{
 		glDeleteProgram( s_effect.s_programId );
 		const auto errorCode = glGetError();
@@ -412,7 +418,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 				result = localResult;
 			}
 		}
-	}
+	}*/
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();

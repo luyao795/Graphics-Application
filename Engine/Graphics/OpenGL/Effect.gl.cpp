@@ -6,6 +6,7 @@
 //==============
 
 #include "../Effect.h"
+#include "../cShader.h"
 
 eae6320::cResult eae6320::Effect::InitializeShadingData()
 {
@@ -183,4 +184,72 @@ OnExit:
 		}
 	}
 	return result;
+}
+
+void eae6320::Effect::CleanUpShadingData(bool result)
+{
+	if (s_programId != 0)
+	{
+		glDeleteProgram(s_programId);
+		const auto errorCode = glGetError();
+		if (errorCode != GL_NO_ERROR)
+		{
+			if (result)
+			{
+				result = eae6320::Results::Failure;
+			}
+			EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+			eae6320::Logging::OutputError("OpenGL failed to delete the program: %s",
+				reinterpret_cast<const char*>(gluErrorString(errorCode)));
+		}
+		s_programId = 0;
+	}
+	if (s_vertexShader)
+	{
+		const auto localResult = eae6320::Graphics::cShader::s_manager.Release(s_vertexShader);
+		if (!localResult)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = localResult;
+			}
+		}
+	}
+	if (s_fragmentShader)
+	{
+		const auto localResult = eae6320::Graphics::cShader::s_manager.Release(s_fragmentShader);
+		if (!localResult)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = localResult;
+			}
+		}
+	}
+	{
+		const auto localResult = s_renderState.CleanUp();
+		if (!localResult)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = localResult;
+			}
+		}
+	}
+}
+
+void eae6320::Effect::BindShadingData()
+{
+	// Bind the shading data
+	{
+		{
+			EAE6320_ASSERT(s_programId != 0);
+			glUseProgram(s_programId);
+			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
+		}
+		s_renderState.Bind();
+	}
 }
