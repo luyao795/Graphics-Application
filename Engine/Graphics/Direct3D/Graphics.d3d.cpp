@@ -1,6 +1,7 @@
 // Include Files
 //==============
 
+#include "../Effect.h"
 #include "../Graphics.h"
 
 #include "Includes.h"
@@ -65,10 +66,11 @@ namespace
 	// Shading Data
 	//-------------
 
-	eae6320::Graphics::cShader::Handle s_vertexShader;
-	eae6320::Graphics::cShader::Handle s_fragmentShader;
+	eae6320::Graphics::Effect s_effect;
+	//eae6320::Graphics::cShader::Handle s_vertexShader;
+	//eae6320::Graphics::cShader::Handle s_fragmentShader;
 
-	eae6320::Graphics::cRenderState s_renderState;
+	//eae6320::Graphics::cRenderState s_renderState;
 
 	// Geometry Data
 	//--------------
@@ -178,20 +180,20 @@ void eae6320::Graphics::RenderFrame()
 			constexpr unsigned int interfaceCount = 0;
 			// Vertex shader
 			{
-				EAE6320_ASSERT( s_vertexShader );
-				auto* const shader = cShader::s_manager.Get( s_vertexShader );
+				EAE6320_ASSERT( s_effect.GetVertexShader() );
+				auto* const shader = cShader::s_manager.Get( s_effect.GetVertexShader() );
 				EAE6320_ASSERT( shader && shader->m_shaderObject.vertex );
 				direct3dImmediateContext->VSSetShader( shader->m_shaderObject.vertex, noInterfaces, interfaceCount );
 			}
 			// Fragment shader
 			{
-				EAE6320_ASSERT( s_fragmentShader );
-				auto* const shader = cShader::s_manager.Get( s_fragmentShader );
+				EAE6320_ASSERT( s_effect.GetFragmentShader() );
+				auto* const shader = cShader::s_manager.Get( s_effect.GetFragmentShader() );
 				EAE6320_ASSERT( shader && shader->m_shaderObject.fragment );
 				direct3dImmediateContext->PSSetShader( shader->m_shaderObject.fragment, noInterfaces, interfaceCount );
 			}
 		}
-		s_renderState.Bind();
+		s_effect.GetRenderState().Bind();
 	}
 	// Draw the geometry
 	{
@@ -368,9 +370,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		s_vertexInputLayout->Release();
 		s_vertexInputLayout = nullptr;
 	}
-	if ( s_vertexShader )
+	if ( s_effect.GetVertexShader() )
 	{
-		const auto localResult = cShader::s_manager.Release( s_vertexShader );
+		const auto localResult = cShader::s_manager.Release( s_effect.GetVertexShader() );
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -380,9 +382,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			}
 		}
 	}
-	if ( s_fragmentShader )
+	if ( s_effect.GetFragmentShader() )
 	{
-		const auto localResult = cShader::s_manager.Release( s_fragmentShader );
+		const auto localResult = cShader::s_manager.Release( s_effect.GetFragmentShader() );
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -393,7 +395,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		}
 	}
 	{
-		const auto localResult = s_renderState.CleanUp();
+		const auto localResult = s_effect.GetRenderState().CleanUp();
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -573,20 +575,20 @@ namespace
 		auto result = eae6320::Results::Success;
 
 		if ( !( result = eae6320::Graphics::cShader::s_manager.Load( "data/Shaders/Vertex/example.shd",
-			s_vertexShader, eae6320::Graphics::ShaderTypes::Vertex ) ) )
+			s_effect.GetVertexShader(), eae6320::Graphics::ShaderTypes::Vertex ) ) )
 		{
 			EAE6320_ASSERT( false );
 			goto OnExit;
 		}
 		if ( !( result = eae6320::Graphics::cShader::s_manager.Load( "data/Shaders/Fragment/example.shd",
-			s_fragmentShader, eae6320::Graphics::ShaderTypes::Fragment ) ) )
+			s_effect.GetFragmentShader(), eae6320::Graphics::ShaderTypes::Fragment ) ) )
 		{
 			EAE6320_ASSERT( false );
 			goto OnExit;
 		}
 		{
 			constexpr uint8_t defaultRenderState = 0;
-			if ( !( result = s_renderState.Initialize( defaultRenderState ) ) )
+			if ( !( result = s_effect.GetRenderState().Initialize( defaultRenderState ) ) )
 			{
 				EAE6320_ASSERT( false );
 				goto OnExit;

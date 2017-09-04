@@ -1,0 +1,3 @@
+/*
+OpenGL specific code for Effect
+*/
