@@ -70,11 +70,12 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 	}
 	// Assign the data to the buffer
 	{
-		constexpr unsigned int triangleCount = 1;
+		constexpr unsigned int triangleCount = 2;
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
 		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
+			// OpenGL rendering order: counterclockwise
 			vertexData[0].x = 0.0f;
 			vertexData[0].y = 0.0f;
 
@@ -83,6 +84,15 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 
 			vertexData[2].x = 1.0f;
 			vertexData[2].y = 1.0f;
+
+			vertexData[3].x = 0.0f;
+			vertexData[3].y = 0.0f;
+
+			vertexData[4].x = 1.0f;
+			vertexData[4].y = 1.0f;
+
+			vertexData[5].x = 0.0f;
+			vertexData[5].y = 1.0f;
 		}
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
@@ -219,7 +229,7 @@ void eae6320::Sprite::DrawGeometry()
 			constexpr GLint indexOfFirstVertexToRender = 0;
 			// As of this comment we are only drawing a single triangle
 			// (you will have to update this code in future assignments!)
-			constexpr unsigned int triangleCount = 1;
+			constexpr unsigned int triangleCount = 2;
 			constexpr unsigned int vertexCountPerTriangle = 3;
 			constexpr auto vertexCountToRender = triangleCount * vertexCountPerTriangle;
 			glDrawArrays(mode, indexOfFirstVertexToRender, vertexCountToRender);
