@@ -73,7 +73,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 		constexpr unsigned int triangleCount = 1;
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		eae6320::Graphics::VertexFormats::sGeometry vertexData[vertexCount];
+		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
 			vertexData[0].x = 0.0f;
 			vertexData[0].y = 0.0f;
@@ -84,7 +84,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 			vertexData[2].x = 1.0f;
 			vertexData[2].y = 1.0f;
 		}
-		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sGeometry);
+		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
 		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(vertexData),
 			// In our class we won't ever read from the buffer
@@ -103,7 +103,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 	{
 		// The "stride" defines how large a single vertex is in the stream of data
 		// (or, said another way, how far apart each position element is)
-		const auto stride = static_cast<GLsizei>(sizeof(eae6320::Graphics::VertexFormats::sGeometry));
+		const auto stride = static_cast<GLsizei>(sizeof(eae6320::Graphics::VertexFormats::sSprite));
 
 		// Position (0)
 		// 2 floats == 8 bytes
@@ -113,7 +113,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 			constexpr GLint elementCount = 2;
 			constexpr GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
 			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride,
-				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sGeometry, x)));
+				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sSprite, x)));
 			const auto errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)
 			{

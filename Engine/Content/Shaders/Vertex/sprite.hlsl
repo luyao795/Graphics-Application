@@ -1,5 +1,5 @@
 /*
-	This is an example vertex shader used to render geometry
+	This is an vertex shader used to render sprite
 */
 
 #include <Shaders/shaders.inc>
@@ -56,8 +56,8 @@ void main(
 		// Both of the following lines are exactly equivalent to the one above
 		//o_position = float4( i_position.xy, 0.0, 1.0 );
 		//o_position = float4( i_position, 0.0, 1.0 );
-		o_position.x = i_position.x * abs( sin( g_elapsedSecondCount_simulationTime ) );
-		o_position.y = i_position.y * abs( cos( g_elapsedSecondCount_simulationTime ) );
+		//o_position.x = i_position.x * abs( sin( g_elapsedSecondCount_simulationTime ) );
+		//o_position.y = i_position.y * abs( cos( g_elapsedSecondCount_simulationTime ) );
 	}
 
 	// EAE6320_TODO: Change the position based on time!

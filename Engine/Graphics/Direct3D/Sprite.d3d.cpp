@@ -48,7 +48,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 					positionElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
 					positionElement.Format = DXGI_FORMAT_R32G32_FLOAT;
 					positionElement.InputSlot = 0;
-					positionElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sGeometry, x);
+					positionElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, x);
 					positionElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					positionElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}
@@ -77,7 +77,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 		constexpr unsigned int triangleCount = 1;
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		eae6320::Graphics::VertexFormats::sGeometry vertexData[vertexCount];
+		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
 			vertexData[0].x = 0.0f;
 			vertexData[0].y = 0.0f;
@@ -90,7 +90,7 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 		}
 		D3D11_BUFFER_DESC bufferDescription{};
 		{
-			const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sGeometry);
+			const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 			EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(bufferDescription.ByteWidth) * 8)));
 			bufferDescription.ByteWidth = static_cast<unsigned int>(bufferSize);
 			bufferDescription.Usage = D3D11_USAGE_IMMUTABLE;	// In our class the buffer will never change after it's been created
@@ -144,7 +144,7 @@ void eae6320::Sprite::DrawGeometry()
 			constexpr unsigned int startingSlot = 0;
 			constexpr unsigned int vertexBufferCount = 1;
 			// The "stride" defines how large a single vertex is in the stream of data
-			constexpr unsigned int bufferStride = sizeof(Graphics::VertexFormats::sGeometry);
+			constexpr unsigned int bufferStride = sizeof(Graphics::VertexFormats::sSprite);
 			// It's possible to start streaming data in the middle of a vertex buffer
 			constexpr unsigned int bufferOffset = 0;
 			direct3dImmediateContext->IASetVertexBuffers(startingSlot, vertexBufferCount, &s_vertexBuffer, &bufferStride, &bufferOffset);
