@@ -22,26 +22,6 @@ namespace eae6320
 		class Effect
 		{
 		public:
-			Effect();
-			~Effect();
-
-			cShader::Handle GetVertexShader();
-			cShader::Handle GetFragmentShader();
-
-			cRenderState GetRenderState();
-
-			void SetVertexShader(cShader::Handle i_vertexShader);
-			void SetFragmentShader(cShader::Handle i_fragmentShader);
-
-			void SetRenderState(cRenderState i_renderState);
-
-#if defined ( EAE6320_PLATFORM_GL )
-			GLuint GetProgramID();
-			void SetProgramID(GLuint i_programId);
-#endif
-
-
-		private:
 			// Shading Data
 			//-------------
 
@@ -53,6 +33,9 @@ namespace eae6320
 #if defined ( EAE6320_PLATFORM_GL )
 			GLuint s_programId = 0;
 #endif
+
+			Effect();
+			~Effect();
 		};
 	}
 }

@@ -171,8 +171,8 @@ void eae6320::Graphics::RenderFrame()
 	// Bind the shading data
 	{
 		{
-			EAE6320_ASSERT( s_effect.GetProgramID() != 0 );
-			glUseProgram( s_effect.GetProgramID() );
+			EAE6320_ASSERT( s_effect.s_programId != 0 );
+			glUseProgram( s_effect.s_programId );
 			EAE6320_ASSERT( glGetError() == GL_NO_ERROR );
 		}
 		s_effect.GetRenderState().Bind();
@@ -362,9 +362,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			s_vertexBufferId = 0;
 		}
 	}
-	if ( s_effect.GetProgramID() != 0 )
+	if ( s_effect.s_programId != 0 )
 	{
-		glDeleteProgram( s_effect.GetProgramID() );
+		glDeleteProgram( s_effect.s_programId );
 		const auto errorCode = glGetError();
 		if ( errorCode != GL_NO_ERROR )
 		{
@@ -376,11 +376,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			eae6320::Logging::OutputError( "OpenGL failed to delete the program: %s",
 				reinterpret_cast<const char*>( gluErrorString( errorCode ) ) );
 		}
-		s_effect.SetProgramID(0);
+		s_effect.s_programId = 0;
 	}
-	if ( s_effect.GetVertexShader() )
+	if ( s_effect.s_vertexShader )
 	{
-		const auto localResult = cShader::s_manager.Release( s_effect.GetVertexShader() );
+		const auto localResult = cShader::s_manager.Release( s_effect.s_vertexShader );
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -390,9 +390,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			}
 		}
 	}
-	if ( s_effect.GetFragmentShader() )
+	if ( s_effect.s_fragmentShader )
 	{
-		const auto localResult = cShader::s_manager.Release( s_effect.GetFragmentShader() );
+		const auto localResult = cShader::s_manager.Release( s_effect.s_fragmentShader );
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -403,7 +403,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		}
 	}
 	{
-		const auto localResult = s_effect.GetRenderState().CleanUp();
+		const auto localResult = s_effect.s_renderState.CleanUp();
 		if ( !localResult )
 		{
 			EAE6320_ASSERT( false );
@@ -608,20 +608,20 @@ namespace
 		auto result = eae6320::Results::Success;
 
 		if ( !( result = eae6320::Graphics::cShader::s_manager.Load( "data/Shaders/Vertex/example.shd",
-			s_effect.GetVertexShader(), eae6320::Graphics::ShaderTypes::Vertex ) ) )
+			s_effect.s_vertexShader, eae6320::Graphics::ShaderTypes::Vertex ) ) )
 		{
 			EAE6320_ASSERT( false );
 			goto OnExit;
 		}
 		if ( !( result = eae6320::Graphics::cShader::s_manager.Load( "data/Shaders/Fragment/example.shd",
-			s_effect.GetFragmentShader(), eae6320::Graphics::ShaderTypes::Fragment ) ) )
+			s_effect.s_fragmentShader, eae6320::Graphics::ShaderTypes::Fragment ) ) )
 		{
 			EAE6320_ASSERT( false );
 			goto OnExit;
 		}
 		{
 			constexpr uint8_t defaultRenderState = 0;
-			if ( !( result = s_effect.GetRenderState().Initialize( defaultRenderState ) ) )
+			if ( !( result = s_effect.s_renderState.Initialize( defaultRenderState ) ) )
 			{
 				EAE6320_ASSERT( false );
 				goto OnExit;
@@ -630,7 +630,7 @@ namespace
 
 		// Create a program
 		{
-			s_effect.SetProgramID(glCreateProgram());
+			s_effect.s_programId = glCreateProgram();
 			const auto errorCode = glGetError();
 			if ( errorCode != GL_NO_ERROR )
 			{
@@ -640,7 +640,7 @@ namespace
 					reinterpret_cast<const char*>( gluErrorString( errorCode ) ) );
 				goto OnExit;
 			}
-			else if ( s_effect.GetProgramID() == 0 )
+			else if ( s_effect.s_programId == 0 )
 			{
 				result = eae6320::Results::Failure;
 				EAE6320_ASSERT( false );
@@ -652,7 +652,7 @@ namespace
 		{
 			// Vertex
 			{
-				glAttachShader( s_effect.GetProgramID(), eae6320::Graphics::cShader::s_manager.Get( s_effect.GetVertexShader() )->m_shaderId );
+				glAttachShader( s_effect.s_programId, eae6320::Graphics::cShader::s_manager.Get( s_effect.s_vertexShader )->m_shaderId );
 				const auto errorCode = glGetError();
 				if ( errorCode != GL_NO_ERROR )
 				{
@@ -665,7 +665,7 @@ namespace
 			}
 			// Fragment
 			{
-				glAttachShader( s_effect.GetProgramID(), eae6320::Graphics::cShader::s_manager.Get( s_effect.GetFragmentShader() )->m_shaderId );
+				glAttachShader( s_effect.s_programId, eae6320::Graphics::cShader::s_manager.Get( s_effect.s_fragmentShader )->m_shaderId );
 				const auto errorCode = glGetError();
 				if ( errorCode != GL_NO_ERROR )
 				{
@@ -679,7 +679,7 @@ namespace
 		}
 		// Link the program
 		{
-			glLinkProgram( s_effect.GetProgramID() );
+			glLinkProgram( s_effect.s_programId );
 			const auto errorCode = glGetError();
 			if ( errorCode == GL_NO_ERROR )
 			{
@@ -689,7 +689,7 @@ namespace
 				std::string linkInfo;
 				{
 					GLint infoSize;
-					glGetProgramiv( s_effect.GetProgramID(), GL_INFO_LOG_LENGTH, &infoSize );
+					glGetProgramiv( s_effect.s_programId, GL_INFO_LOG_LENGTH, &infoSize );
 					const auto errorCode = glGetError();
 					if ( errorCode == GL_NO_ERROR )
 					{
@@ -700,7 +700,7 @@ namespace
 							~sLogInfo() { if ( memory ) free( memory ); }
 						} info( static_cast<size_t>( infoSize ) );
 						GLsizei* const dontReturnLength = nullptr;
-						glGetProgramInfoLog( s_effect.GetProgramID(), static_cast<GLsizei>( infoSize ), dontReturnLength, info.memory );
+						glGetProgramInfoLog( s_effect.s_programId, static_cast<GLsizei>( infoSize ), dontReturnLength, info.memory );
 						const auto errorCode = glGetError();
 						if ( errorCode == GL_NO_ERROR )
 						{
@@ -727,7 +727,7 @@ namespace
 				// Check to see if there were link errors
 				GLint didLinkingSucceed;
 				{
-					glGetProgramiv( s_effect.GetProgramID(), GL_LINK_STATUS, &didLinkingSucceed );
+					glGetProgramiv( s_effect.s_programId, GL_LINK_STATUS, &didLinkingSucceed );
 					const auto errorCode = glGetError();
 					if ( errorCode == GL_NO_ERROR )
 					{
@@ -764,9 +764,9 @@ namespace
 
 		if ( !result )
 		{
-			if ( s_effect.GetProgramID() != 0 )
+			if ( s_effect.s_programId != 0 )
 			{
-				glDeleteProgram( s_effect.GetProgramID() );
+				glDeleteProgram( s_effect.s_programId );
 				const auto errorCode = glGetError();
 				if ( errorCode != GL_NO_ERROR )
 				{
@@ -775,7 +775,7 @@ namespace
 					eae6320::Logging::OutputError( "OpenGL failed to delete the program: %s",
 						reinterpret_cast<const char*>( gluErrorString( errorCode ) ) );
 				}
-				s_effect.SetProgramID(0);
+				s_effect.s_programId = 0;
 			}
 		}
 		return result;
