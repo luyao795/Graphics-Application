@@ -6,7 +6,6 @@
 //==============
 
 #include "../Effect.h"
-#include "../cShader.h"
 #include "Includes.h"
 
 eae6320::cResult eae6320::Effect::InitializeShadingData()
@@ -39,7 +38,7 @@ OnExit:
 	return result;
 }
 
-void eae6320::Effect::CleanUpShadingData(bool result)
+void eae6320::Effect::CleanUpShadingData(eae6320::cResult result)
 {
 	if (s_vertexShader)
 	{

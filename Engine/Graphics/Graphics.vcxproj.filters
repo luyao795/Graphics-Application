@@ -31,6 +31,7 @@
     <ClInclude Include="sContext.h" />
     <ClInclude Include="VertexFormats.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D\cConstantBuffer.d3d.cpp">
@@ -82,6 +83,13 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Direct3D\Sprite.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\Sprite.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />

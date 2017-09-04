@@ -40,7 +40,7 @@ namespace eae6320
 #endif
 
 		cResult InitializeShadingData();
-		void CleanUpShadingData(bool result);
+		void CleanUpShadingData(eae6320::cResult result);
 		void BindShadingData();
 	};
 }

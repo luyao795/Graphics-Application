@@ -36,6 +36,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="sContext.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="VertexFormats.h" />
     <ClInclude Include="Windows\ExternalLibraries.win.h" />
   </ItemGroup>
@@ -72,6 +73,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Direct3D\Sprite.d3d.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="OpenGL\cConstantBuffer.gl.cpp">
@@ -102,7 +107,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="OpenGL\Sprite.gl.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="sContext.cpp" />
+    <ClCompile Include="Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />
