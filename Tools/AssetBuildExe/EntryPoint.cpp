@@ -63,7 +63,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;*/
 
-			// Effect vertex shader
+			// Sprite vertex shader
 			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
@@ -98,7 +98,7 @@ int main( int i_argumentCount, char** i_arguments )
 				goto OnExit;
 			}*/
 
-			// Completion for Effect vertex shader
+			// Completion for Sprite vertex shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
@@ -132,7 +132,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;*/
 
-			// Effect fragment shader
+			// Sprite fragment shader
 			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
@@ -167,7 +167,7 @@ int main( int i_argumentCount, char** i_arguments )
 				goto OnExit;
 			}*/
 
-			// Completion for Effect fragment shader
+			// Completion for Sprite fragment shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
