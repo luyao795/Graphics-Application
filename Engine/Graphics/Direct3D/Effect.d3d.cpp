@@ -12,13 +12,13 @@ eae6320::cResult eae6320::Effect::InitializeShadingData()
 {
 	auto result = eae6320::Results::Success;
 
-	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Vertex/Effect.shd",
+	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Vertex/Sprite.shd",
 		s_vertexShader, eae6320::Graphics::ShaderTypes::Vertex)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
-	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Fragment/Effect.shd",
+	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Fragment/Sprite.shd",
 		s_fragmentShader, eae6320::Graphics::ShaderTypes::Fragment)))
 	{
 		EAE6320_ASSERT(false);

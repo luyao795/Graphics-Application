@@ -64,7 +64,7 @@ int main( int i_argumentCount, char** i_arguments )
 				;*/
 
 			// Effect vertex shader
-			const auto shader_effect = engineSourceContentDir + "Shaders/Vertex/Effect."
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
 #elif defined( EAE6320_PLATFORM_GL )
@@ -72,7 +72,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;
 			//const auto shader_built = gameInstallDir + "data/Shaders/Vertex/example.shd";
-			const auto shader_effect_built = gameInstallDir + "data/Shaders/Vertex/Effect.shd";
+			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/Sprite.shd";
 
 			// Completion for example vertex shader
 			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage) )
@@ -99,10 +99,10 @@ int main( int i_argumentCount, char** i_arguments )
 			}*/
 
 			// Completion for Effect vertex shader
-			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_effect_built, &errorMessage))
+			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
-					+ "\" \"" + shader_effect + "\" \"" + shader_effect_built + "\" vertex").c_str(),
+					+ "\" \"" + shader_sprite + "\" \"" + shader_sprite_built + "\" vertex").c_str(),
 					&exitCode, &errorMessage))
 				{
 					if (exitCode != EXIT_SUCCESS)
@@ -133,7 +133,7 @@ int main( int i_argumentCount, char** i_arguments )
 				;*/
 
 			// Effect fragment shader
-			const auto shader_effect = engineSourceContentDir + "Shaders/Fragment/Effect."
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
 #elif defined( EAE6320_PLATFORM_GL )
@@ -141,7 +141,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;
 			//const auto shader_built = gameInstallDir + "data/Shaders/Fragment/example.shd";
-			const auto shader_effect_built = gameInstallDir + "data/Shaders/Fragment/Effect.shd";
+			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Fragment/Sprite.shd";
 
 			// Completion for example fragment shader
 			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage ) )
@@ -168,10 +168,10 @@ int main( int i_argumentCount, char** i_arguments )
 			}*/
 
 			// Completion for Effect fragment shader
-			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_effect_built, &errorMessage))
+			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
-					+ "\" \"" + shader_effect + "\" \"" + shader_effect_built + "\" fragment").c_str(),
+					+ "\" \"" + shader_sprite + "\" \"" + shader_sprite_built + "\" fragment").c_str(),
 					&exitCode, &errorMessage))
 				{
 					if (exitCode != EXIT_SUCCESS)
