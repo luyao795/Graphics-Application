@@ -64,7 +64,7 @@ int main( int i_argumentCount, char** i_arguments )
 				;*/
 
 			// Sprite vertex shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/sprite."
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
 #elif defined( EAE6320_PLATFORM_GL )
@@ -72,7 +72,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;
 			//const auto shader_built = gameInstallDir + "data/Shaders/Vertex/example.shd";
-			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/example.shd";
+			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/Sprite.shd";
 
 			// Completion for example vertex shader
 			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage) )
@@ -98,7 +98,7 @@ int main( int i_argumentCount, char** i_arguments )
 				goto OnExit;
 			}*/
 
-			// Completion for sprite vertex shader
+			// Completion for Sprite vertex shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
@@ -133,7 +133,7 @@ int main( int i_argumentCount, char** i_arguments )
 				;*/
 
 			// Sprite fragment shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/sprite."
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite."
 #if defined( EAE6320_PLATFORM_D3D )
 				"hlsl"
 #elif defined( EAE6320_PLATFORM_GL )
@@ -141,7 +141,7 @@ int main( int i_argumentCount, char** i_arguments )
 #endif
 				;
 			//const auto shader_built = gameInstallDir + "data/Shaders/Fragment/example.shd";
-			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Fragment/example.shd";
+			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Fragment/Sprite.shd";
 
 			// Completion for example fragment shader
 			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage ) )
@@ -167,7 +167,7 @@ int main( int i_argumentCount, char** i_arguments )
 				goto OnExit;
 			}*/
 
-			// Completion for sprite fragment shader
+			// Completion for Sprite fragment shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
@@ -199,7 +199,7 @@ int main( int i_argumentCount, char** i_arguments )
 
 			// Sprite vertex shaders
 			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.hlsl";
-			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_geometry.shd";
+			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_sprite.shd";
 
 			// Completion of example vertex shaders
 			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage ) )
@@ -225,7 +225,7 @@ int main( int i_argumentCount, char** i_arguments )
 				goto OnExit;
 			}*/
 
-			// Completion of sprite vertex shaders
+			// Completion of Sprite vertex shaders
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
