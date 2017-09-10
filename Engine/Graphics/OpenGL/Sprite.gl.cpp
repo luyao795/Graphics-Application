@@ -10,7 +10,7 @@ OpenGL specific code for Sprite
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Sprite::InitializeGeometry()
+eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideLength)
 {
 	auto result = eae6320::Results::Success;
 

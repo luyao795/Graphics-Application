@@ -150,7 +150,7 @@ OnExit:
 	return result;
 }
 
-void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite)
+void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearColor)
 {
 #if defined (EAE6320_PLATFORM_D3D)
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
@@ -165,7 +165,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite)
 		EAE6320_ASSERT(s_renderTargetView);
 
 		// Black is usually used
-		constexpr float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		const float clearColor[4] = { i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A() };
 		direct3dImmediateContext->ClearRenderTargetView(s_renderTargetView, clearColor);
 	}
 #elif defined (EAE6320_PLATFORM_GL)
@@ -175,7 +175,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite)
 	{
 		// Black is usually used
 		{
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A());
 			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
 		}
 		{

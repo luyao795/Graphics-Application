@@ -117,8 +117,8 @@ void eae6320::Graphics::RenderFrame()
 			return;
 		}
 	}
-
-	ClearView(s_effect, s_sprite);
+	Color color = Color();
+	ClearView(s_effect, s_sprite, color.Cyan());
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
 
@@ -219,7 +219,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the geometry
 	{
-		if (!(result = s_sprite.InitializeGeometry()))
+		if (!(result = s_sprite.InitializeGeometry(1.0f, 1.0f, 1.0f)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;

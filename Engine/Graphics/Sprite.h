@@ -26,7 +26,7 @@ namespace eae6320
 		Sprite();
 		~Sprite();
 
-		cResult InitializeGeometry();
+		cResult InitializeGeometry(float tr_X, float tr_Y, float sideLength);
 		void CleanUpGeometry(eae6320::cResult result);
 		void DrawGeometry();
 
