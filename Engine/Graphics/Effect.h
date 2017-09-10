@@ -23,7 +23,19 @@ namespace eae6320
 	public:
 
 		Effect();
-		~Effect();
+		~Effect();		
+
+		cResult InitializeShadingData();
+		void CleanUpShadingData(eae6320::cResult result);
+		void BindShadingData();
+
+#if defined ( EAE6320_PLATFORM_GL )
+		GLuint s_programId = 0;
+#elif defined ( EAE6320_PLATFORM_D3D )
+		ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
+#endif
+
+	private:
 
 		// Shading Data
 		//-------------
@@ -32,16 +44,6 @@ namespace eae6320
 		Graphics::cShader::Handle s_fragmentShader;
 
 		Graphics::cRenderState s_renderState;
-
-#if defined ( EAE6320_PLATFORM_GL )
-		GLuint s_programId = 0;
-#elif defined ( EAE6320_PLATFORM_D3D )
-		ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
-#endif
-
-		cResult InitializeShadingData();
-		void CleanUpShadingData(eae6320::cResult result);
-		void BindShadingData();
 	};
 }
 
