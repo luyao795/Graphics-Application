@@ -26,6 +26,7 @@ namespace eae6320
 		Sprite();
 		~Sprite();
 
+		// (tr_X, tr_Y) is the coordinate of top right point, sideLength is the length of each side of the rectangle(square)
 		cResult InitializeGeometry(float tr_X, float tr_Y, float sideLength);
 		void CleanUpGeometry(eae6320::cResult result);
 		void DrawGeometry();
@@ -33,7 +34,6 @@ namespace eae6320
 #if defined (EAE6320_PLATFORM_D3D)
 		ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
 #endif
-
 	private:
 
 #if defined ( EAE6320_PLATFORM_D3D )

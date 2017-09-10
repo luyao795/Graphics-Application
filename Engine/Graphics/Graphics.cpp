@@ -219,7 +219,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the geometry
 	{
-		if (!(result = s_sprite.InitializeGeometry(1.0f, 1.0f, 1.0f)))
+		if (!(result = s_sprite.InitializeGeometry(0.5f, 0.5f, 1.0f)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;

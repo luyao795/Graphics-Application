@@ -75,24 +75,24 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, flo
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
 		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
-			// OpenGL rendering order: counterclockwise
-			vertexData[0].x = 0.0f;
-			vertexData[0].y = 0.0f;
+			// OpenGL Rendering Order: Counterclockwise (CCW)
+			vertexData[0].x = tr_X - sideLength;
+			vertexData[0].y = tr_Y - sideLength;
 
-			vertexData[1].x = 1.0f;
-			vertexData[1].y = 0.0f;
+			vertexData[1].x = tr_X;
+			vertexData[1].y = tr_Y - sideLength;;
 
-			vertexData[2].x = 1.0f;
-			vertexData[2].y = 1.0f;
+			vertexData[2].x = tr_X;
+			vertexData[2].y = tr_Y;
 
-			vertexData[3].x = 0.0f;
-			vertexData[3].y = 0.0f;
+			vertexData[3].x = tr_X - sideLength;
+			vertexData[3].y = tr_Y - sideLength;
 
-			vertexData[4].x = 1.0f;
-			vertexData[4].y = 1.0f;
+			vertexData[4].x = tr_X;
+			vertexData[4].y = tr_Y;
 
-			vertexData[5].x = 0.0f;
-			vertexData[5].y = 1.0f;
+			vertexData[5].x = tr_X - sideLength;
+			vertexData[5].y = tr_Y;
 		}
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
