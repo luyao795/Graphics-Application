@@ -10,7 +10,7 @@ OpenGL specific code for Sprite
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideLength)
+eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV)
 {
 	auto result = eae6320::Results::Success;
 
@@ -76,22 +76,22 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, flo
 		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
 			// OpenGL Rendering Order: Counterclockwise (CCW)
-			vertexData[0].x = tr_X - sideLength;
-			vertexData[0].y = tr_Y - sideLength;
+			vertexData[0].x = tr_X - sideH;
+			vertexData[0].y = tr_Y - sideV;
 
 			vertexData[1].x = tr_X;
-			vertexData[1].y = tr_Y - sideLength;;
+			vertexData[1].y = tr_Y - sideV;;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y;
 
-			vertexData[3].x = tr_X - sideLength;
-			vertexData[3].y = tr_Y - sideLength;
+			vertexData[3].x = tr_X - sideH;
+			vertexData[3].y = tr_Y - sideV;
 
 			vertexData[4].x = tr_X;
 			vertexData[4].y = tr_Y;
 
-			vertexData[5].x = tr_X - sideLength;
+			vertexData[5].x = tr_X - sideH;
 			vertexData[5].y = tr_Y;
 		}
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);

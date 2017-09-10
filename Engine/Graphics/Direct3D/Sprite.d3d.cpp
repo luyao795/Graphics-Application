@@ -11,7 +11,7 @@ Direct3D specific code for Sprite
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideLength)
+eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV)
 {
 	auto result = eae6320::Results::Success;
 
@@ -80,19 +80,19 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, flo
 		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
-			vertexData[0].x = tr_X - sideLength;
-			vertexData[0].y = tr_Y - sideLength;
+			vertexData[0].x = tr_X - sideH;
+			vertexData[0].y = tr_Y - sideV;
 
 			vertexData[1].x = tr_X;
 			vertexData[1].y = tr_Y;
 
 			vertexData[2].x = tr_X;
-			vertexData[2].y = tr_Y - sideLength;
+			vertexData[2].y = tr_Y - sideV;
 
-			vertexData[3].x = tr_X - sideLength;
-			vertexData[3].y = tr_Y - sideLength;
+			vertexData[3].x = tr_X - sideH;
+			vertexData[3].y = tr_Y - sideV;
 
-			vertexData[4].x = tr_X - sideLength;
+			vertexData[4].x = tr_X - sideH;
 			vertexData[4].y = tr_Y;
 
 			vertexData[5].x = tr_X;
