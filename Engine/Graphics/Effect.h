@@ -39,7 +39,7 @@ namespace eae6320
 		ID3D11DeviceContext* direct3dImmediateContext; // = Graphics::sContext::g_context.direct3dImmediateContext;
 #endif
 
-		cResult InitializeShadingData();
+		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[]);
 		void CleanUpShadingData(eae6320::cResult result);
 		void BindShadingData();
 	};

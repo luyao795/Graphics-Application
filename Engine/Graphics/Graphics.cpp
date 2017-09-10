@@ -61,11 +61,13 @@ namespace
 	// Shading Data
 	//-------------
 
+	// This effect contains color changing property.
 	eae6320::Effect s_effect;
 
 	// Geometry Data
 	//--------------
 
+	// These two sprites form the color changing plus sign.
 	eae6320::Sprite s_sprite;
 	eae6320::Sprite s_sprite2;
 }
@@ -215,7 +217,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the shading data
 	{
-		if (!(result = s_effect.InitializeShadingData()))
+		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd")))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
