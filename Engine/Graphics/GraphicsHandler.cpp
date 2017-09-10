@@ -150,12 +150,12 @@ OnExit:
 	return result;
 }
 
-void eae6320::Graphics::ClearView(Effect effect, Sprite sprite)
+void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite)
 {
 #if defined (EAE6320_PLATFORM_D3D)
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
-	effect.direct3dImmediateContext = direct3dImmediateContext;
-	sprite.direct3dImmediateContext = direct3dImmediateContext;
+	effect.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
+	sprite.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 	EAE6320_ASSERT(direct3dImmediateContext);
 
 	// Every frame an entirely new image will be created.

@@ -28,7 +28,7 @@ namespace eae6320
 		eae6320::cResult InitializeViews(const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight);
 
 		// Platform specific code in RenderFrame function for clearing view
-		void ClearView(Effect effect, Sprite sprite);
+		void ClearView(Effect &effect, Sprite &sprite);
 
 		// Platform specific code in RenderFrame function for swapping render buffer
 		void SwapRender();
