@@ -67,6 +67,7 @@ namespace
 	//--------------
 
 	eae6320::Sprite s_sprite;
+	eae6320::Sprite s_sprite2;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -119,6 +120,7 @@ void eae6320::Graphics::RenderFrame()
 	}
 	Color color = Color();
 	ClearView(s_effect, s_sprite, color.Cyan());
+	ClearView(s_effect, s_sprite2, color.Cyan());
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
 
@@ -132,6 +134,8 @@ void eae6320::Graphics::RenderFrame()
 	s_effect.BindShadingData();
 
 	s_sprite.DrawGeometry();
+
+	s_sprite2.DrawGeometry();
 
 	SwapRender();
 
@@ -224,6 +228,12 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
+
+		if (!(result = s_sprite2.InitializeGeometry(1.0f, 1.0f, 0.5f)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 	}
 
 OnExit:
@@ -238,6 +248,8 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	CleanUpGraphics();
 
 	s_sprite.CleanUpGeometry(result);
+
+	s_sprite2.CleanUpGeometry(result);
 
 	s_effect.CleanUpShadingData(result);
 
