@@ -70,10 +70,6 @@ namespace eae6320
 		cResult Initialize( const sInitializationParameters& i_initializationParameters );
 		cResult CleanUp();
 
-#if defined (EAE6320_PLATFORM_D3D)
-		eae6320::cResult InitializeViews(const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight);
-#endif
-
 		void SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime);
 
 		cResult WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds);

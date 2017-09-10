@@ -31,6 +31,7 @@
     </ClInclude>
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="GraphicsHandler.h" />
     <ClInclude Include="OpenGL\Includes.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -75,6 +76,7 @@
     </ClCompile>
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="GraphicsHandler.cpp" />
     <ClCompile Include="OpenGL\cConstantBuffer.gl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
