@@ -110,6 +110,34 @@ int main( int i_argumentCount, char** i_arguments )
 				eae6320::Assets::OutputErrorMessageWithFileInfo(__FILE__, __LINE__, errorMessage.c_str());
 				goto OnExit;
 			}
+
+			// Static fragment shader
+			const auto shader_sprite_static = engineSourceContentDir + "Shaders/Fragment/Static.eae6320";
+			const auto shader_sprite_static_built = gameInstallDir + "data/Shaders/Fragment/Static.shd";
+
+			// Completion for Sprite fragment shader
+			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
+			{
+				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
+					+ "\" \"" + shader_sprite_static + "\" \"" + shader_sprite_static_built + "\" fragment").c_str(),
+					&exitCode, &errorMessage))
+				{
+					if (exitCode != EXIT_SUCCESS)
+					{
+						return exitCode;
+					}
+				}
+				else
+				{
+					eae6320::Assets::OutputErrorMessageWithFileInfo(__FILE__, __LINE__, errorMessage.c_str());
+					goto OnExit;
+				}
+			}
+			else
+			{
+				eae6320::Assets::OutputErrorMessageWithFileInfo(__FILE__, __LINE__, errorMessage.c_str());
+				goto OnExit;
+			}
 		}
 #if defined( EAE6320_PLATFORM_D3D )
 		{

@@ -64,7 +64,7 @@ namespace
 	// This effect contains color changing property.
 	eae6320::Effect s_effect;
 	// This effect contains white static property.
-	//eae6320::Effect s_effect_static;
+	eae6320::Effect s_effect_static;
 
 	// Geometry Data
 	//--------------
@@ -72,6 +72,11 @@ namespace
 	// These two sprites form the color changing plus sign.
 	eae6320::Sprite s_sprite;
 	eae6320::Sprite s_sprite2;
+	// These four sprites form the static white rectangles.
+	eae6320::Sprite s_sprite_static;
+	eae6320::Sprite s_sprite_static2;
+	eae6320::Sprite s_sprite_static3;
+	eae6320::Sprite s_sprite_static4;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -122,9 +127,17 @@ void eae6320::Graphics::RenderFrame()
 			return;
 		}
 	}
-	Color color = Color();
-	ClearView(s_effect, s_sprite, color.Cyan());
-	ClearView(s_effect, s_sprite2, color.Cyan());
+
+	{
+		Color color = Color();
+		ClearView(s_effect, s_sprite, color.Cyan());
+		ClearView(s_effect, s_sprite2, color.Cyan());
+
+		ClearView(s_effect_static, s_sprite_static, color.Cyan());
+		ClearView(s_effect_static, s_sprite_static2, color.Cyan());
+		ClearView(s_effect_static, s_sprite_static3, color.Cyan());
+		ClearView(s_effect_static, s_sprite_static4, color.Cyan());
+	}
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
 
@@ -135,11 +148,23 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
-	s_effect.BindShadingData();
+	{
+		s_effect.BindShadingData();
 
-	s_sprite.DrawGeometry();
+		s_sprite.DrawGeometry();
 
-	s_sprite2.DrawGeometry();
+		s_sprite2.DrawGeometry();
+
+		s_effect_static.BindShadingData();
+
+		s_sprite_static.DrawGeometry();
+
+		s_sprite_static2.DrawGeometry();
+
+		s_sprite_static3.DrawGeometry();
+
+		s_sprite_static4.DrawGeometry();
+	}
 
 	SwapRender();
 
@@ -161,6 +186,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
+
 	// Initialize the asset managers
 	{
 		if (!(result = cShader::s_manager.Initialize()))
@@ -197,6 +223,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			goto OnExit;
 		}
 	}
+
 	// Initialize the events
 	{
 		if (!(result = s_whenAllDataHasBeenSubmittedFromApplicationThread.Initialize(Concurrency::EventType::ResetAutomaticallyAfterBeingSignaled)))
@@ -224,6 +251,12 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
+
+		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd")))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 	}
 	// Initialize the geometry
 	{
@@ -234,6 +267,30 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 		}
 
 		if (!(result = s_sprite2.InitializeGeometry(0.25f, 0.75f, 0.5f, 1.5f)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		if (!(result = s_sprite_static.InitializeGeometry(1.0f, 1.0f, 0.5f, 0.5f)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		if (!(result = s_sprite_static2.InitializeGeometry(-0.5f, 1.0f, 0.5f, 0.5f)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		if (!(result = s_sprite_static3.InitializeGeometry(1.0f, -0.5f, 0.5f, 0.5f)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		if (!(result = s_sprite_static4.InitializeGeometry(-0.5f, -0.5f, 0.5f, 0.5f)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
@@ -251,11 +308,23 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	CleanUpGraphics();
 
-	s_sprite.CleanUpGeometry(result);
+	{
+		s_sprite.CleanUpGeometry(result);
 
-	s_sprite2.CleanUpGeometry(result);
+		s_sprite2.CleanUpGeometry(result);
 
-	s_effect.CleanUpShadingData(result);
+		s_effect.CleanUpShadingData(result);
+
+		s_sprite_static.CleanUpGeometry(result);
+
+		s_sprite_static2.CleanUpGeometry(result);
+
+		s_sprite_static3.CleanUpGeometry(result);
+
+		s_sprite_static4.CleanUpGeometry(result);
+
+		s_effect_static.CleanUpShadingData(result);
+	}
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();
