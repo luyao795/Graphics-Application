@@ -12,6 +12,7 @@
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Platform/Platform.h>
+#include <Engine/Results/Results.h>
 
 namespace
 {
@@ -150,12 +151,10 @@ OnExit:
 	return result;
 }
 
-void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearColor)
+void eae6320::Graphics::ClearView(Color i_clearColor)
 {
 #if defined (EAE6320_PLATFORM_D3D)
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
-	effect.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
-	sprite.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 	EAE6320_ASSERT(direct3dImmediateContext);
 
 	// Every frame an entirely new image will be created.
@@ -164,7 +163,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearC
 	{
 		EAE6320_ASSERT(s_renderTargetView);
 
-		// Black is usually used
+		// Clear back buffer to input color
 		const float clearColor[4] = { i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A() };
 		direct3dImmediateContext->ClearRenderTargetView(s_renderTargetView, clearColor);
 	}
@@ -173,7 +172,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearC
 	// Before drawing anything, then, the previous image will be erased
 	// by "clearing" the image buffer (filling it with a solid color)
 	{
-		// Black is usually used
+		// Clear back buffer to input color
 		{
 			glClearColor(i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A());
 			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);

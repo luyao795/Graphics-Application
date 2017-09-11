@@ -55,7 +55,7 @@ int main( int i_argumentCount, char** i_arguments )
 		int exitCode;
 		{
 			// Sprite vertex shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite.eae6320";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite.eae6320shader";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/Sprite.shd";
 
 			// Completion for Sprite vertex shader
@@ -84,7 +84,7 @@ int main( int i_argumentCount, char** i_arguments )
 		}
 		{
 			// Sprite fragment shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite.eae6320";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite.eae6320shader";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Fragment/Sprite.shd";
 
 			// Completion for Sprite fragment shader
@@ -112,7 +112,7 @@ int main( int i_argumentCount, char** i_arguments )
 			}
 
 			// Static fragment shader
-			const auto shader_sprite_static = engineSourceContentDir + "Shaders/Fragment/Static.eae6320";
+			const auto shader_sprite_static = engineSourceContentDir + "Shaders/Fragment/Static.eae6320shader";
 			const auto shader_sprite_static_built = gameInstallDir + "data/Shaders/Fragment/Static.shd";
 
 			// Completion for Sprite fragment shader
@@ -142,7 +142,7 @@ int main( int i_argumentCount, char** i_arguments )
 #if defined( EAE6320_PLATFORM_D3D )
 		{
 			// Sprite vertex shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.eae6320";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.eae6320shader";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_sprite.shd";
 
 			// Completion of Sprite vertex shader

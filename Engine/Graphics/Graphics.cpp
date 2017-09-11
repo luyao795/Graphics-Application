@@ -130,13 +130,7 @@ void eae6320::Graphics::RenderFrame()
 
 	{
 		Color color = Color();
-		ClearView(s_effect, s_sprite, color.Cyan());
-		ClearView(s_effect, s_sprite2, color.Cyan());
-
-		ClearView(s_effect_static, s_sprite_static, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static2, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static3, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static4, color.Cyan());
+		ClearView(color.Cyan());
 	}
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
@@ -246,13 +240,13 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the shading data
 	{
-		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd")))
+		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd", 0)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd")))
+		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd", 0)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;

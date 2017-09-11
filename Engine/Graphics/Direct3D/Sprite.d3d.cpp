@@ -16,7 +16,6 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, flo
 	auto result = eae6320::Results::Success;
 
 	auto* const direct3dDevice = eae6320::Graphics::sContext::g_context.direct3dDevice;
-	EAE6320_ASSERT(direct3dDevice);
 
 	// Initialize vertex format
 	{
@@ -148,6 +147,8 @@ void eae6320::Sprite::DrawGeometry()
 {
 	// Draw the geometry
 	{
+		auto* const direct3dImmediateContext = eae6320::Graphics::sContext::g_context.direct3dImmediateContext;
+		EAE6320_ASSERT(direct3dImmediateContext);
 		// Bind a specific vertex buffer to the device as a data source
 		{
 			EAE6320_ASSERT(s_vertexBuffer);
