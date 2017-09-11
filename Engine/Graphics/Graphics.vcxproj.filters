@@ -33,6 +33,7 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="GraphicsHandler.h" />
+    <ClInclude Include="Color.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D\cConstantBuffer.d3d.cpp">
@@ -86,6 +87,7 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsHandler.cpp" />
+    <ClCompile Include="Color.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />
