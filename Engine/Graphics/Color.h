@@ -18,7 +18,6 @@ namespace eae6320
 		class Color
 		{
 		public:
-
 			// This constructor is for when you want to call predefined functions
 			// below without defining the initial Color data.
 			Color()
