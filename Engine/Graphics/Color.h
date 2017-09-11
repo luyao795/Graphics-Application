@@ -73,7 +73,7 @@ namespace eae6320
 
 			Color Red() const
 			{
-				return Color(1.0f, 0.0f, 0.0f, 0.0f);
+				return Color(1.0f, 0.0f, 0.0f, 1.0f);
 			}
 
 			Color Green() const
