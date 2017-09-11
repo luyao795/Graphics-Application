@@ -60,7 +60,7 @@ namespace eae6320
 				return colorA;
 			}
 
-			// Those functions below return Color structs that represent most common colors
+			// Those functions below return Color instances that represent most common colors
 			Color Black() const
 			{
 				return Color(0.0f, 0.0f, 0.0f, 1.0f);
