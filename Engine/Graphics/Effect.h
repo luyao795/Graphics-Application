@@ -39,7 +39,11 @@ namespace eae6320
 		ID3D11DeviceContext* direct3dImmediateContext; // = Graphics::sContext::g_context.direct3dImmediateContext;
 #endif
 
+		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
+		// the file name of the fragment shader. Both file names should include extension.
+		// Do NOT include file path in these parameters.
 		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[]);
+
 		void CleanUpShadingData(eae6320::cResult result);
 		void BindShadingData();
 	};
