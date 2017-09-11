@@ -240,13 +240,13 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the shading data
 	{
-		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd")))
+		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd", 0)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd")))
+		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd", 0)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;

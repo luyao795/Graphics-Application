@@ -30,7 +30,8 @@ namespace eae6320
 		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
 		// the file name of the fragment shader. Both file names should include extension.
 		// Do NOT include file path in these parameters.
-		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[]);
+		// i_RenderState is the render state the user wants to use, the default value is 0.
+		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState);
 
 		void CleanUpShadingData(eae6320::cResult result);
 		void BindShadingData();

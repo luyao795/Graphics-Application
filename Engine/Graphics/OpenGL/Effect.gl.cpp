@@ -7,7 +7,7 @@
 
 #include "../Effect.h"
 
-eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[])
+eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
 {
 	auto result = eae6320::Results::Success;
 
@@ -30,8 +30,8 @@ eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileNam
 		goto OnExit;
 	}
 	{
-		constexpr uint8_t defaultRenderState = 0;
-		if (!(result = s_renderState.Initialize(defaultRenderState)))
+		// Default Render State is set to 0
+		if (!(result = s_renderState.Initialize(i_RenderState)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
