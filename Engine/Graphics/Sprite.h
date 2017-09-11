@@ -37,6 +37,7 @@ namespace eae6320
 #if defined (EAE6320_PLATFORM_D3D)
 		//ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
 #endif
+
 	private:
 
 #if defined ( EAE6320_PLATFORM_D3D )
