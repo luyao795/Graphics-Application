@@ -8,17 +8,23 @@
 #include "../Effect.h"
 #include "Includes.h"
 
-eae6320::cResult eae6320::Effect::InitializeShadingData()
+eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[])
 {
 	auto result = eae6320::Results::Success;
 
-	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Vertex/Sprite.shd",
+	char vertexPath[100] = "data/Shaders/Vertex/";
+	std::strcat(vertexPath, vertexShaderFileName);
+
+	char fragmentPath[100] = "data/Shaders/Fragment/";
+	std::strcat(fragmentPath, fragmentShaderFileName);
+
+	if (!(result = eae6320::Graphics::cShader::s_manager.Load(vertexPath,
 		s_vertexShader, eae6320::Graphics::ShaderTypes::Vertex)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
-	if (!(result = eae6320::Graphics::cShader::s_manager.Load("data/Shaders/Fragment/Sprite.shd",
+	if (!(result = eae6320::Graphics::cShader::s_manager.Load(fragmentPath,
 		s_fragmentShader, eae6320::Graphics::ShaderTypes::Fragment)))
 	{
 		EAE6320_ASSERT(false);

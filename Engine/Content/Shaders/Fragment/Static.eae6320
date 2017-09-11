@@ -1,0 +1,87 @@
+/*
+	This is an platform independent fragment shader used to render sprite
+*/
+
+#include <Shaders/shaders.inc>
+
+// Constant Buffers
+//=================
+
+#if defined (EAE6320_PLATFORM_GL)
+	layout( std140, binding = 0 ) uniform g_constantBuffer_perFrame
+	{
+		float g_elapsedSecondCount_systemTime;
+		float g_elapsedSecondCount_simulationTime;
+		// For vec4 alignment
+		vec2 g_padding;
+	};
+
+	layout( std140, binding = 1 ) uniform g_constantBuffer_perMaterial
+	{
+		vec4 g_color;
+	};
+
+	// Output
+	//=======
+
+	// Whatever color value is output from the fragment shader
+	// will determine the color of the corresponding pixel on the screen
+	out vec4 o_color;
+#elif defined (EAE6320_PLATFORM_D3D)
+	cbuffer g_constantBuffer_perFrame : register( b0 )
+	{
+		float g_elapsedSecondCount_systemTime;
+		float g_elapsedSecondCount_simulationTime;
+		// For float4 alignment
+		float2 g_padding;
+	}
+
+	cbuffer g_constantBuffer_perMaterial : register( b1 )
+	{
+		float4 g_color;
+	}
+#endif
+
+// Entry Point
+//============
+
+#if defined (EAE6320_PLATFORM_GL)
+	void main()
+{
+	// Output solid white
+	o_color = vec4(
+		// RGB
+		1.0, 1.0, 1.0,
+		// Alpha
+		1.0 );
+
+	// Make sure the range of those values is [0, 1]
+	//o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	//o_color.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	//o_color.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+}
+#elif defined (EAE6320_PLATFORM_D3D)
+	void main(
+
+	// Output
+	//=======
+
+	// Whatever color value is output from the fragment shader
+	// will determine the color of the corresponding pixel on the screen
+	out float4 o_color : SV_TARGET
+
+	)
+{
+	// Output solid white
+	o_color = float4(
+		// RGB
+		1.0, 1.0, 1.0,
+		// Alpha
+		1.0 );
+
+	// Make sure the range of those values is [0, 1]
+	//o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	//o_color.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	//o_color.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+}
+#endif

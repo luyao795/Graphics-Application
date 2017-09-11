@@ -11,7 +11,7 @@ Direct3D specific code for Sprite
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Sprite::InitializeGeometry()
+eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV)
 {
 	auto result = eae6320::Results::Success;
 
@@ -79,24 +79,24 @@ eae6320::cResult eae6320::Sprite::InitializeGeometry()
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
 		eae6320::Graphics::VertexFormats::sSprite vertexData[vertexCount];
 		{
-			// Direct3D Rendering order: clockwise
-			vertexData[0].x = 0.0f;
-			vertexData[0].y = 0.0f;
+			// Direct3D Rendering Order: Clockwise (CW)
+			vertexData[0].x = tr_X - sideH;
+			vertexData[0].y = tr_Y - sideV;
 
-			vertexData[1].x = 1.0f;
-			vertexData[1].y = 1.0f;
+			vertexData[1].x = tr_X;
+			vertexData[1].y = tr_Y;
 
-			vertexData[2].x = 1.0f;
-			vertexData[2].y = 0.0f;
+			vertexData[2].x = tr_X;
+			vertexData[2].y = tr_Y - sideV;
 
-			vertexData[3].x = 0.0f;
-			vertexData[3].y = 0.0f;
+			vertexData[3].x = tr_X - sideH;
+			vertexData[3].y = tr_Y - sideV;
 
-			vertexData[4].x = 0.0f;
-			vertexData[4].y = 1.0f;
+			vertexData[4].x = tr_X - sideH;
+			vertexData[4].y = tr_Y;
 
-			vertexData[5].x = 1.0f;
-			vertexData[5].y = 1.0f;
+			vertexData[5].x = tr_X;
+			vertexData[5].y = tr_Y;
 		}
 		D3D11_BUFFER_DESC bufferDescription{};
 		{

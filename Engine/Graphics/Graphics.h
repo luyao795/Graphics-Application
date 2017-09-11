@@ -69,6 +69,14 @@ namespace eae6320
 
 		cResult Initialize( const sInitializationParameters& i_initializationParameters );
 		cResult CleanUp();
+
+		void SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime);
+
+		cResult WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds);
+
+		cResult SignalThatAllDataForAFrameHasBeenSubmitted();
+
+		void RenderFrame();
 	}
 }
 
