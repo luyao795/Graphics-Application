@@ -164,7 +164,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearC
 	{
 		EAE6320_ASSERT(s_renderTargetView);
 
-		// Black is usually used
+		// Clear back buffer to input color
 		const float clearColor[4] = { i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A() };
 		direct3dImmediateContext->ClearRenderTargetView(s_renderTargetView, clearColor);
 	}
@@ -173,7 +173,7 @@ void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearC
 	// Before drawing anything, then, the previous image will be erased
 	// by "clearing" the image buffer (filling it with a solid color)
 	{
-		// Black is usually used
+		// Clear back buffer to input color
 		{
 			glClearColor(i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A());
 			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
