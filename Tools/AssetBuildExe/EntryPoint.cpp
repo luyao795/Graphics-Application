@@ -141,11 +141,11 @@ int main( int i_argumentCount, char** i_arguments )
 		}
 #if defined( EAE6320_PLATFORM_D3D )
 		{
-			// Sprite vertex shaders
+			// Sprite vertex shader
 			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.eae6320";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_sprite.shd";
 
-			// Completion of Sprite vertex shaders
+			// Completion of Sprite vertex shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
 			{
 				if (result = eae6320::Platform::ExecuteCommand((std::string("\"") + path_shaderBuilder
