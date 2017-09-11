@@ -130,13 +130,7 @@ void eae6320::Graphics::RenderFrame()
 
 	{
 		Color color = Color();
-		ClearView(s_effect, s_sprite, color.Cyan());
-		ClearView(s_effect, s_sprite2, color.Cyan());
-
-		ClearView(s_effect_static, s_sprite_static, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static2, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static3, color.Cyan());
-		ClearView(s_effect_static, s_sprite_static4, color.Cyan());
+		ClearView(color.Cyan());
 	}
 
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);

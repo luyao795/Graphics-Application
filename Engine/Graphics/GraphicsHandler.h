@@ -12,7 +12,6 @@
 #include "Color.h"
 
 #include <cstdint>
-#include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
@@ -29,7 +28,7 @@ namespace eae6320
 		eae6320::cResult InitializeViews(const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight);
 
 		// Platform specific code in RenderFrame function for clearing view
-		void ClearView(Effect &effect, Sprite &sprite, Color i_clearColor);
+		void ClearView(Color i_clearColor);
 
 		// Platform specific code in RenderFrame function for swapping render buffer
 		void SwapRender();

@@ -8,8 +8,9 @@ These are code snippets that represent sprites that are separated from Graphics 
 // Include Files
 //==============
 
-#include "sContext.h"
 #include "VertexFormats.h"
+#include "sContext.h"
+#include <Engine/Results/Results.h>
 
 #if defined ( EAE6320_PLATFORM_D3D )
 	#include <Engine/Graphics/Direct3D/Includes.h>
@@ -34,7 +35,7 @@ namespace eae6320
 		void DrawGeometry();
 
 #if defined (EAE6320_PLATFORM_D3D)
-		ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
+		//ID3D11DeviceContext* direct3dImmediateContext;// = Graphics::sContext::g_context.direct3dImmediateContext;
 #endif
 	private:
 

@@ -6,6 +6,7 @@
 //==============
 
 #include "../Effect.h"
+
 #include "Includes.h"
 
 eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[])
@@ -88,6 +89,8 @@ void eae6320::Effect::BindShadingData()
 	// Bind the shading data
 	{
 		{
+			auto* const direct3dImmediateContext = eae6320::Graphics::sContext::g_context.direct3dImmediateContext;
+			EAE6320_ASSERT(direct3dImmediateContext);
 			ID3D11ClassInstance* const* noInterfaces = nullptr;
 			constexpr unsigned int interfaceCount = 0;
 			// Vertex shader

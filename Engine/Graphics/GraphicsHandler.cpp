@@ -12,6 +12,7 @@
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Platform/Platform.h>
+#include <Engine/Results/Results.h>
 
 namespace
 {
@@ -150,12 +151,10 @@ OnExit:
 	return result;
 }
 
-void eae6320::Graphics::ClearView(Effect &effect, Sprite &sprite, Color i_clearColor)
+void eae6320::Graphics::ClearView(Color i_clearColor)
 {
 #if defined (EAE6320_PLATFORM_D3D)
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
-	effect.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
-	sprite.direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 	EAE6320_ASSERT(direct3dImmediateContext);
 
 	// Every frame an entirely new image will be created.
