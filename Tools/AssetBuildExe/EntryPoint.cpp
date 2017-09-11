@@ -54,49 +54,9 @@ int main( int i_argumentCount, char** i_arguments )
 		std::string errorMessage;
 		int exitCode;
 		{
-			// Example vertex shader
-			/*const auto shader_authored = engineSourceContentDir + "Shaders/Vertex/example."
-#if defined( EAE6320_PLATFORM_D3D )
-				"hlsl"
-#elif defined( EAE6320_PLATFORM_GL )
-				"glsl"
-#endif
-				;*/
-
 			// Sprite vertex shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite."
-#if defined( EAE6320_PLATFORM_D3D )
-				"hlsl"
-#elif defined( EAE6320_PLATFORM_GL )
-				"glsl"
-#endif
-				;
-			//const auto shader_built = gameInstallDir + "data/Shaders/Vertex/example.shd";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/Sprite.eae6320";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/Sprite.shd";
-
-			// Completion for example vertex shader
-			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage) )
-			{
-				if ( result = eae6320::Platform::ExecuteCommand( ( std::string( "\"" ) + path_shaderBuilder
-					+ "\" \"" + shader_authored + "\" \"" + shader_built + "\" vertex" ).c_str(),
-					&exitCode, &errorMessage ) )
-				{
-					if ( exitCode != EXIT_SUCCESS )
-					{
-						return exitCode;
-					}
-				}
-				else
-				{
-					eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-					goto OnExit;
-				}
-			}
-			else
-			{
-				eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-				goto OnExit;
-			}*/
 
 			// Completion for Sprite vertex shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
@@ -123,49 +83,9 @@ int main( int i_argumentCount, char** i_arguments )
 			}
 		}
 		{
-			// Example fragment shader
-			/*const auto shader_authored = engineSourceContentDir + "Shaders/Fragment/example."
-#if defined( EAE6320_PLATFORM_D3D )
-				"hlsl"
-#elif defined( EAE6320_PLATFORM_GL )
-				"glsl"
-#endif
-				;*/
-
 			// Sprite fragment shader
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite."
-#if defined( EAE6320_PLATFORM_D3D )
-				"hlsl"
-#elif defined( EAE6320_PLATFORM_GL )
-				"glsl"
-#endif
-				;
-			//const auto shader_built = gameInstallDir + "data/Shaders/Fragment/example.shd";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Fragment/Sprite.eae6320";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Fragment/Sprite.shd";
-
-			// Completion for example fragment shader
-			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage ) )
-			{
-				if ( result = eae6320::Platform::ExecuteCommand( ( std::string( "\"" ) + path_shaderBuilder
-					+ "\" \"" + shader_authored + "\" \"" + shader_built + "\" fragment" ).c_str(),
-					&exitCode, &errorMessage ) )
-				{
-					if ( exitCode != EXIT_SUCCESS )
-					{
-						return exitCode;
-					}
-				}
-				else
-				{
-					eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-					goto OnExit;
-				}
-			}
-			else
-			{
-				eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-				goto OnExit;
-			}*/
 
 			// Completion for Sprite fragment shader
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))
@@ -193,37 +113,9 @@ int main( int i_argumentCount, char** i_arguments )
 		}
 #if defined( EAE6320_PLATFORM_D3D )
 		{
-			// Example vertex shaders
-			/*const auto shader_authored = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_geometry.hlsl";
-			const auto shader_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_geometry.shd";*/
-
 			// Sprite vertex shaders
-			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.hlsl";
+			const auto shader_sprite = engineSourceContentDir + "Shaders/Vertex/vertexInputLayout_sprite.eae6320";
 			const auto shader_sprite_built = gameInstallDir + "data/Shaders/Vertex/vertexInputLayout_sprite.shd";
-
-			// Completion of example vertex shaders
-			/*if ( result = eae6320::Platform::CreateDirectoryIfItDoesntExist( shader_built, &errorMessage ) )
-			{
-				if ( result = eae6320::Platform::ExecuteCommand( ( std::string( "\"" ) + path_shaderBuilder
-					+ "\" \"" + shader_authored + "\" \"" + shader_built + "\" vertex" ).c_str(),
-					&exitCode, &errorMessage ) )
-				{
-					if ( exitCode != EXIT_SUCCESS )
-					{
-						return exitCode;
-					}
-				}
-				else
-				{
-					eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-					goto OnExit;
-				}
-			}
-			else
-			{
-				eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__, errorMessage.c_str() );
-				goto OnExit;
-			}*/
 
 			// Completion of Sprite vertex shaders
 			if (result = eae6320::Platform::CreateDirectoryIfItDoesntExist(shader_sprite_built, &errorMessage))

@@ -63,6 +63,8 @@ namespace
 
 	// This effect contains color changing property.
 	eae6320::Effect s_effect;
+	// This effect contains white static property.
+	//eae6320::Effect s_effect_static;
 
 	// Geometry Data
 	//--------------
