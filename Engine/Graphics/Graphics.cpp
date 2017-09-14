@@ -173,6 +173,7 @@ void eae6320::Graphics::RenderFrame()
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)
 {
 	auto result = Results::Success;
+	const uint8_t defaultRenderState = 0;
 
 	// Initialize the platform-specific context
 	if (!(result = sContext::g_context.Initialize(i_initializationParameters)))
@@ -240,13 +241,13 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the shading data
 	{
-		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd", 0)))
+		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd", defaultRenderState)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd", 0)))
+		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd", defaultRenderState)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
