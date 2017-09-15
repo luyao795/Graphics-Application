@@ -3,15 +3,8 @@
 
 #include "cExampleGame.h"
 
-#include <Engine/Asserts/Asserts.h>
 #include <Engine/UserInput/UserInput.h>
 #include <Engine/Graphics/Graphics.h>
-#include <Engine/Results/Results.h>
-#include <Engine/Logging/Logging.h>
-#include <Engine/UserOutput/UserOutput.h>
-#include <Engine/Graphics/Color.h>
-#include <Engine/Graphics/Effect.h>
-#include <Engine/Graphics/Sprite.h>
 
 // Inherited Implementation
 //=========================

@@ -4,16 +4,13 @@
 #include "Direct3D/Includes.h"
 #include "OpenGL/Includes.h"
 
-#include "GraphicsHandler.h"
 #include "Graphics.h"
+#include "GraphicsHandler.h"
 
 #include "cConstantBuffer.h"
 #include "ConstantBufferFormats.h"
-#include "cRenderState.h"
 #include "cSamplerState.h"
 #include "cShader.h"
-//#include "sContext.h"
-#include "VertexFormats.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Concurrency/cEvent.h>
