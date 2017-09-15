@@ -78,6 +78,8 @@ namespace eae6320
 		virtual cResult Initialize() override;
 		virtual cResult CleanUp() override;
 
+		virtual void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) override;
+
 	};
 }
 
