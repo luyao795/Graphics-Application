@@ -10,12 +10,12 @@ namespace eae6320
 {
 	Effect::Effect()
 	{
-
+		
 	}
 
 	Effect::~Effect()
 	{
-
+		
 	}
 
 	cResult Effect::Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect *& o_effect)
@@ -57,6 +57,19 @@ namespace eae6320
 				effect = nullptr;
 			}
 			o_effect = nullptr;
+		}
+		return result;
+	}
+
+	cResult Effect::CleanUp()
+	{
+		cResult result = Results::Success;
+		if (result = CleanUpShadingData())
+			this->DecrementReferenceCount();
+		else
+		{
+			EAE6320_ASSERTF(false, "Failed to clean up shading data.");
+			Logging::OutputError("Failed to clean up shading data.");
 		}
 		return result;
 	}

@@ -15,8 +15,9 @@ namespace eae6320
 
 	Sprite::~Sprite()
 	{
-
+		
 	}
+
 	cResult Sprite::Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite *& o_sprite)
 	{
 		cResult result = Results::Success;
@@ -29,15 +30,15 @@ namespace eae6320
 			if (!sprite)
 			{
 				result = Results::OutOfMemory;
-				EAE6320_ASSERTF(false, "Couldn't allocate memory for the sprite");
-				Logging::OutputError("Failed to allocate memory for the sprite");
+				EAE6320_ASSERTF(false, "Couldn't allocate memory for the sprite.");
+				Logging::OutputError("Failed to allocate memory for the sprite.");
 				goto OnExit;
 			}
 		}
 
 		if (!(result = sprite->InitializeGeometry(tr_X, tr_Y, sideH, sideV)))
 		{
-			EAE6320_ASSERTF(false, "Initialization of new sprite failed");
+			EAE6320_ASSERTF(false, "Initialization of new sprite failed.");
 			goto OnExit;
 		}
 
@@ -56,6 +57,19 @@ namespace eae6320
 				sprite = nullptr;
 			}
 			o_sprite = nullptr;
+		}
+		return result;
+	}
+
+	eae6320::cResult Sprite::CleanUp()
+	{
+		cResult result = Results::Success;
+		if(result = CleanUpGeometry())
+			this->DecrementReferenceCount();
+		else
+		{
+			EAE6320_ASSERTF(false, "Failed to clean up geometry.");
+			Logging::OutputError("Failed to clean up geometry.");
 		}
 		return result;
 	}

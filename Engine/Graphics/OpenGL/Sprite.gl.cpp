@@ -154,8 +154,9 @@ OnExit:
 	return result;
 }
 
-void eae6320::Sprite::CleanUpGeometry(eae6320::cResult result)
+eae6320::cResult eae6320::Sprite::CleanUpGeometry()
 {
+	cResult result = Results::Success;
 	{
 		if (s_vertexArrayId != 0)
 		{
@@ -208,6 +209,7 @@ void eae6320::Sprite::CleanUpGeometry(eae6320::cResult result)
 			s_vertexBufferId = 0;
 		}
 	}
+	return result;
 }
 
 void eae6320::Sprite::DrawGeometry()

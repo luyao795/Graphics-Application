@@ -191,8 +191,9 @@ OnExit:
 	return result;
 }
 
-void eae6320::Effect::CleanUpShadingData(eae6320::cResult result)
+eae6320::cResult eae6320::Effect::CleanUpShadingData()
 {
+	cResult result = Results::Success;
 	if (s_programId != 0)
 	{
 		glDeleteProgram(s_programId);
@@ -244,6 +245,7 @@ void eae6320::Effect::CleanUpShadingData(eae6320::cResult result)
 			}
 		}
 	}
+	return result;
 }
 
 void eae6320::Effect::BindShadingData()

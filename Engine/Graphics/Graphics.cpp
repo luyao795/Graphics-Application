@@ -63,21 +63,21 @@ namespace
 	//-------------
 
 	// This effect contains color changing property.
-	eae6320::Effect s_effect;
+	eae6320::Effect* s_effect = nullptr;
 	// This effect contains white static property.
-	eae6320::Effect s_effect_static;
+	eae6320::Effect* s_effect_static = nullptr;
 
 	// Geometry Data
 	//--------------
 
 	// These two sprites form the color changing plus sign.
-	eae6320::Sprite s_sprite;
-	eae6320::Sprite s_sprite2;
+	eae6320::Sprite* s_sprite = nullptr;
+	eae6320::Sprite* s_sprite2 = nullptr;
 	// These four sprites form the static white rectangles.
-	eae6320::Sprite s_sprite_static;
-	eae6320::Sprite s_sprite_static2;
-	eae6320::Sprite s_sprite_static3;
-	eae6320::Sprite s_sprite_static4;
+	eae6320::Sprite* s_sprite_static = nullptr;
+	eae6320::Sprite* s_sprite_static2 = nullptr;
+	eae6320::Sprite* s_sprite_static3 = nullptr;
+	eae6320::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -150,21 +150,21 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	{
-		s_effect.BindShadingData();
+		s_effect->BindShadingData();
 
-		s_sprite.DrawGeometry();
+		s_sprite->DrawGeometry();
 
-		s_sprite2.DrawGeometry();
+		s_sprite2->DrawGeometry();
 
-		s_effect_static.BindShadingData();
+		s_effect_static->BindShadingData();
 
-		s_sprite_static.DrawGeometry();
+		s_sprite_static->DrawGeometry();
 
-		s_sprite_static2.DrawGeometry();
+		s_sprite_static2->DrawGeometry();
 
-		s_sprite_static3.DrawGeometry();
+		s_sprite_static3->DrawGeometry();
 
-		s_sprite_static4.DrawGeometry();
+		s_sprite_static4->DrawGeometry();
 	}
 
 	SwapRender();
@@ -248,13 +248,13 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the shading data
 	{
-		if (!(result = s_effect.InitializeShadingData("Sprite.shd", "Sprite.shd", defaultRenderState)))
+		if (!(result = s_effect->Load("Sprite.shd", "Sprite.shd", defaultRenderState, s_effect)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_effect_static.InitializeShadingData("Sprite.shd", "Static.shd", defaultRenderState)))
+		if (!(result = s_effect_static->Load("Sprite.shd", "Static.shd", defaultRenderState, s_effect_static)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
@@ -262,37 +262,37 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 	}
 	// Initialize the geometry
 	{
-		if (!(result = s_sprite.InitializeGeometry(0.75f, 0.25f, 1.5f, 0.5f)))
+		if (!(result = s_sprite->Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_sprite2.InitializeGeometry(0.25f, 0.75f, 0.5f, 1.5f)))
+		if (!(result = s_sprite2->Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_sprite_static.InitializeGeometry(1.0f, 1.0f, 0.5f, 0.5f)))
+		if (!(result = s_sprite_static->Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_sprite_static2.InitializeGeometry(-0.5f, 1.0f, 0.5f, 0.5f)))
+		if (!(result = s_sprite_static2->Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_sprite_static3.InitializeGeometry(1.0f, -0.5f, 0.5f, 0.5f)))
+		if (!(result = s_sprite_static3->Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = s_sprite_static4.InitializeGeometry(-0.5f, -0.5f, 0.5f, 0.5f)))
+		if (!(result = s_sprite_static4->Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
@@ -311,21 +311,37 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	CleanUpGraphics();
 
 	{
-		s_sprite.CleanUpGeometry(result);
+		result = s_sprite->CleanUp();
+		if(result)
+			s_sprite = nullptr;
 
-		s_sprite2.CleanUpGeometry(result);
+		result = s_sprite2->CleanUp();
+		if (result)
+			s_sprite2 = nullptr;
 
-		s_effect.CleanUpShadingData(result);
+		result = s_effect->CleanUp();
+		if (result)
+			s_effect = nullptr;
 
-		s_sprite_static.CleanUpGeometry(result);
+		result = s_sprite_static->CleanUp();
+		if (result)
+			s_sprite_static = nullptr;
 
-		s_sprite_static2.CleanUpGeometry(result);
+		result = s_sprite_static2->CleanUp();
+		if (result)
+			s_sprite_static2 = nullptr;
 
-		s_sprite_static3.CleanUpGeometry(result);
+		result = s_sprite_static3->CleanUp();
+		if (result)
+			s_sprite_static3 = nullptr;
 
-		s_sprite_static4.CleanUpGeometry(result);
+		result = s_sprite_static4->CleanUp();
+		if (result)
+			s_sprite_static4 = nullptr;
 
-		s_effect_static.CleanUpShadingData(result);
+		result = s_effect_static->CleanUp();
+		if (result)
+			s_effect_static = nullptr;
 	}
 
 	{

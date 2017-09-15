@@ -45,8 +45,9 @@ OnExit:
 	return result;
 }
 
-void eae6320::Effect::CleanUpShadingData(eae6320::cResult result)
+eae6320::cResult eae6320::Effect::CleanUpShadingData()
 {
+	cResult result = Results::Success;
 	if (s_vertexShader)
 	{
 		const auto localResult = eae6320::Graphics::cShader::s_manager.Release(s_vertexShader);
@@ -82,6 +83,7 @@ void eae6320::Effect::CleanUpShadingData(eae6320::cResult result)
 			}
 		}
 	}
+	return result;
 }
 
 void eae6320::Effect::BindShadingData()

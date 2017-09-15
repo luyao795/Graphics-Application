@@ -15,7 +15,7 @@
 #include <Engine/Assets/ReferenceCountedAssets.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
-#include <Engine/Windows/Includes.h>
+	#include <Engine/Windows/Includes.h>
 #endif
 
 namespace eae6320
@@ -24,13 +24,19 @@ namespace eae6320
 	{
 	public:
 
-		Effect();
-		~Effect();
-
 		cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
 
 		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
+
+		void BindShadingData();
+
+		cResult CleanUp();
+
+	private:
+
+		Effect();
+		~Effect();
 
 		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
 		// the file name of the fragment shader. Both file names should include extension.
@@ -38,10 +44,7 @@ namespace eae6320
 		// i_RenderState is the render state the user wants to use, the default value is 0.
 		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState);
 
-		void CleanUpShadingData(eae6320::cResult result);
-		void BindShadingData();
-
-	private:
+		cResult CleanUpShadingData();
 
 		// Shading Data
 		//-------------

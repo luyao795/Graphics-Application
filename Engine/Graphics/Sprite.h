@@ -26,22 +26,25 @@ namespace eae6320
 	{
 	public:
 
-		Sprite();
-		~Sprite();
-
 		cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
 
 		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
 
+		void DrawGeometry();
+
+		cResult CleanUp();
+
+	private:
+
+		Sprite();
+		~Sprite();
+
 		// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
 		// sideV is length for vertical side
 		cResult InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV);
 
-		void CleanUpGeometry(eae6320::cResult result);
-		void DrawGeometry();
-
-	private:
+		cResult CleanUpGeometry();
 
 		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
