@@ -9,9 +9,11 @@
 //==============
 
 #include "Configuration.h"
+#include "Effect.h"
+#include "Sprite.h"
+#include "Color.h"
 
 #include <cstdint>
-#include <Engine/Graphics/Color.h>
 #include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -37,6 +39,8 @@ namespace eae6320
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
 
 		void SubmitColorToBeRendered(const Color colorForNextFrame);
+
+		void SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

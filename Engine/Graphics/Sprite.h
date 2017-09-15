@@ -26,7 +26,7 @@ namespace eae6320
 	{
 	public:
 
-		cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
+		static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
 
 		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)

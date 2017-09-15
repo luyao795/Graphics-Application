@@ -214,8 +214,9 @@ void eae6320::Graphics::SwapRender()
 #endif
 }
 
-eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializationParameters& i_initializationParameters, eae6320::cResult result)
+eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializationParameters& i_initializationParameters)
 {
+	cResult result = Results::Success;
 #if defined (EAE6320_PLATFORM_D3D)
 	// Initialize the views
 	{

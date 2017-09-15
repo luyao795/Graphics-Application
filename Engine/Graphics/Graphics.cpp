@@ -4,8 +4,6 @@
 #include "Direct3D/Includes.h"
 #include "OpenGL/Includes.h"
 
-#include "Effect.h"
-#include "Sprite.h"
 #include "GraphicsHandler.h"
 #include "Graphics.h"
 
@@ -14,7 +12,7 @@
 #include "cRenderState.h"
 #include "cSamplerState.h"
 #include "cShader.h"
-#include "sContext.h"
+//#include "sContext.h"
 #include "VertexFormats.h"
 
 #include <Engine/Asserts/Asserts.h>
@@ -41,6 +39,7 @@ namespace
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
+		std::vector<std::pair<eae6320::Effect*, eae6320::Sprite*>> cachedEffectSpritePairForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -59,25 +58,25 @@ namespace
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
 
-	// Shading Data
-	//-------------
+	//// Shading Data
+	////-------------
 
-	// This effect contains color changing property.
-	eae6320::Effect* s_effect = nullptr;
-	// This effect contains white static property.
-	eae6320::Effect* s_effect_static = nullptr;
+	//// This effect contains color changing property.
+	//eae6320::Effect* s_effect = nullptr;
+	//// This effect contains white static property.
+	//eae6320::Effect* s_effect_static = nullptr;
 
-	// Geometry Data
-	//--------------
+	//// Geometry Data
+	////--------------
 
-	// These two sprites form the color changing plus sign.
-	eae6320::Sprite* s_sprite = nullptr;
-	eae6320::Sprite* s_sprite2 = nullptr;
-	// These four sprites form the static white rectangles.
-	eae6320::Sprite* s_sprite_static = nullptr;
-	eae6320::Sprite* s_sprite_static2 = nullptr;
-	eae6320::Sprite* s_sprite_static3 = nullptr;
-	eae6320::Sprite* s_sprite_static4 = nullptr;
+	//// These two sprites form the color changing plus sign.
+	//eae6320::Sprite* s_sprite = nullptr;
+	//eae6320::Sprite* s_sprite2 = nullptr;
+	//// These four sprites form the static white rectangles.
+	//eae6320::Sprite* s_sprite_static = nullptr;
+	//eae6320::Sprite* s_sprite_static2 = nullptr;
+	//eae6320::Sprite* s_sprite_static3 = nullptr;
+	//eae6320::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -92,6 +91,15 @@ void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
+}
+
+void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	std::pair<eae6320::Effect*, eae6320::Sprite*> pair = std::make_pair(effect, sprite);
+	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(pair);
+	effect->IncrementReferenceCount();
+	sprite->IncrementReferenceCount();
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -150,21 +158,14 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	{
-		s_effect->BindShadingData();
+		for (int i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DrawGeometry();
 
-		s_sprite->DrawGeometry();
-
-		s_sprite2->DrawGeometry();
-
-		s_effect_static->BindShadingData();
-
-		s_sprite_static->DrawGeometry();
-
-		s_sprite_static2->DrawGeometry();
-
-		s_sprite_static3->DrawGeometry();
-
-		s_sprite_static4->DrawGeometry();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DecrementReferenceCount();
+		}
 	}
 
 	SwapRender();
@@ -175,6 +176,8 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// (At this point in the class there isn't anything that needs to be cleaned up)
 	}
+
+	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 }
 
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)
@@ -243,60 +246,7 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the views
 	{
-		result = InitializeRenderingView(i_initializationParameters, result);
-	}
-
-	// Initialize the shading data
-	{
-		if (!(result = s_effect->Load("Sprite.shd", "Sprite.shd", defaultRenderState, s_effect)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_effect_static->Load("Sprite.shd", "Static.shd", defaultRenderState, s_effect_static)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-	}
-	// Initialize the geometry
-	{
-		if (!(result = s_sprite->Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_sprite2->Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_sprite_static->Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_sprite_static2->Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_sprite_static3->Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = s_sprite_static4->Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
+		result = InitializeRenderingView(i_initializationParameters);
 	}
 
 OnExit:
@@ -310,39 +260,39 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	CleanUpGraphics();
 
-	{
-		result = s_sprite->CleanUp();
-		if(result)
-			s_sprite = nullptr;
+	//{
+	//	result = s_sprite->CleanUp();
+	//	if(result)
+	//		s_sprite = nullptr;
 
-		result = s_sprite2->CleanUp();
-		if (result)
-			s_sprite2 = nullptr;
+	//	result = s_sprite2->CleanUp();
+	//	if (result)
+	//		s_sprite2 = nullptr;
 
-		result = s_effect->CleanUp();
-		if (result)
-			s_effect = nullptr;
+	//	result = s_effect->CleanUp();
+	//	if (result)
+	//		s_effect = nullptr;
 
-		result = s_sprite_static->CleanUp();
-		if (result)
-			s_sprite_static = nullptr;
+	//	result = s_sprite_static->CleanUp();
+	//	if (result)
+	//		s_sprite_static = nullptr;
 
-		result = s_sprite_static2->CleanUp();
-		if (result)
-			s_sprite_static2 = nullptr;
+	//	result = s_sprite_static2->CleanUp();
+	//	if (result)
+	//		s_sprite_static2 = nullptr;
 
-		result = s_sprite_static3->CleanUp();
-		if (result)
-			s_sprite_static3 = nullptr;
+	//	result = s_sprite_static3->CleanUp();
+	//	if (result)
+	//		s_sprite_static3 = nullptr;
 
-		result = s_sprite_static4->CleanUp();
-		if (result)
-			s_sprite_static4 = nullptr;
+	//	result = s_sprite_static4->CleanUp();
+	//	if (result)
+	//		s_sprite_static4 = nullptr;
 
-		result = s_effect_static->CleanUp();
-		if (result)
-			s_effect_static = nullptr;
-	}
+	//	result = s_effect_static->CleanUp();
+	//	if (result)
+	//		s_effect_static = nullptr;
+	//}
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();
@@ -391,6 +341,9 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			}
 		}
 	}
+
+	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 
 	return result;
 }

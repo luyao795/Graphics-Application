@@ -11,6 +11,8 @@
 #include "Configuration.h"
 #include "Color.h"
 
+#include <Engine/Graphics/Graphics.h>
+
 #include <cstdint>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -34,7 +36,7 @@ namespace eae6320
 		void SwapRender();
 
 		// Direct3D specific code in Initialize function
-		eae6320::cResult InitializeRenderingView(const sInitializationParameters& i_initializationParameters, eae6320::cResult result);
+		eae6320::cResult InitializeRenderingView(const sInitializationParameters& i_initializationParameters);
 		
 		// Direct3D specific code in CleanUp function
 		void CleanUpGraphics();
