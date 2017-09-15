@@ -10,6 +10,8 @@ These are code snippets that represent sprites that are separated from Graphics 
 
 #include "VertexFormats.h"
 #include "sContext.h"
+
+#include <Engine/Assets/ReferenceCountedAssets.h>
 #include <Engine/Results/Results.h>
 
 #if defined ( EAE6320_PLATFORM_D3D )
@@ -27,6 +29,11 @@ namespace eae6320
 		Sprite();
 		~Sprite();
 
+		cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
+
 		// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
 		// sideV is length for vertical side
 		cResult InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV);
@@ -35,6 +42,8 @@ namespace eae6320
 		void DrawGeometry();
 
 	private:
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 #if defined ( EAE6320_PLATFORM_D3D )
 		// Geometry Data

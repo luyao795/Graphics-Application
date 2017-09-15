@@ -12,6 +12,8 @@
 #include "cShader.h"
 #include "sContext.h"
 
+#include <Engine/Assets/ReferenceCountedAssets.h>
+
 #if defined( EAE6320_PLATFORM_WINDOWS )
 #include <Engine/Windows/Includes.h>
 #endif
@@ -24,6 +26,11 @@ namespace eae6320
 
 		Effect();
 		~Effect();
+
+		cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
 
 		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
 		// the file name of the fragment shader. Both file names should include extension.
@@ -43,6 +50,8 @@ namespace eae6320
 		Graphics::cShader::Handle s_fragmentShader;
 
 		Graphics::cRenderState s_renderState;
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 #if defined ( EAE6320_PLATFORM_GL )
 		GLuint s_programId = 0;
