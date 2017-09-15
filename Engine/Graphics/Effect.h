@@ -25,8 +25,6 @@ namespace eae6320
 		Effect();
 		~Effect();
 
-		
-
 		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
 		// the file name of the fragment shader. Both file names should include extension.
 		// Do NOT include file path in these parameters.
