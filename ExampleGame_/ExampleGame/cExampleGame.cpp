@@ -9,6 +9,7 @@
 #include <Engine/Results/Results.h>
 #include <Engine/Logging/Logging.h>
 #include <Engine/UserOutput/UserOutput.h>
+#include <Engine/Graphics/Color.h>
 
 // Inherited Implementation
 //=========================
@@ -42,5 +43,6 @@ eae6320::cResult eae6320::cExampleGame::CleanUp()
 
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
+	eae6320::Graphics::SubmitColorToBeRendered(COLOR_DEFAULT.Magenta());
 	eae6320::Graphics::SubmitElapsedTime(i_elapsedSecondCount_systemTime, i_elapsedSecondCount_sinceLastSimulationUpdate);
 }

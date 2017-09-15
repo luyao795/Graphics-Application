@@ -40,6 +40,7 @@ namespace
 	struct sDataRequiredToRenderAFrame
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
+		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -87,6 +88,12 @@ void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_syste
 	constantData_perFrame.g_elapsedSecondCount_simulationTime = i_elapsedSecondCount_simulationTime;
 }
 
+void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
+}
+
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
 {
 	return Concurrency::WaitForEvent(s_whenDataForANewFrameCanBeSubmittedFromApplicationThread, i_timeToWait_inMilliseconds);
@@ -128,12 +135,12 @@ void eae6320::Graphics::RenderFrame()
 		}
 	}
 
-	{
-		Color color = Color();
-		ClearView(color.Cyan());
-	}
-
 	EAE6320_ASSERT(s_dataBeingRenderedByRenderThread);
+	// Update color for next frame
+	{
+		const Color cachedColor = s_dataBeingRenderedByRenderThread->cachedColorForRenderingInNextFrame;
+		ClearView(cachedColor);
+	}
 
 	// Update the per-frame constant buffer
 	{

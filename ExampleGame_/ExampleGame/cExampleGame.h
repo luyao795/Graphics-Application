@@ -15,6 +15,9 @@
 	#include "Resource Files/Resource.h"
 #endif
 
+#define COLOR_DEFAULT eae6320::Graphics::Color()
+#define COLOR(R, G, B, A) eae6320::Graphics::Color(R, G, B, A)
+
 // Class Declaration
 //==================
 

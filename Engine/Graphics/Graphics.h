@@ -11,6 +11,7 @@
 #include "Configuration.h"
 
 #include <cstdint>
+#include <Engine/Graphics/Color.h>
 #include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -34,6 +35,8 @@ namespace eae6320
 		// of how the application submits the total elapsed times
 		// for the frame currently being submitted
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
+
+		void SubmitColorToBeRendered(const Color colorForNextFrame);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
