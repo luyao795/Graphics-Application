@@ -8,6 +8,7 @@
 #include "GraphicsHandler.h"
 
 #include <Engine/Asserts/Asserts.h>
+#include <Engine/Logging/Logging.h>
 #include <Engine/Platform/Platform.h>
 #include <Engine/Results/Results.h>
 

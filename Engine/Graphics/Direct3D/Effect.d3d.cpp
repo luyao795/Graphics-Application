@@ -5,9 +5,12 @@
 // Include Files
 //==============
 
+#include "../sContext.h"
 #include "../Effect.h"
 
 #include "Includes.h"
+
+#include <Engine/Results/Results.h>
 
 eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
 {

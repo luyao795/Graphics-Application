@@ -4,6 +4,8 @@
 #include "cExampleGame.h"
 
 #include <Engine/UserInput/UserInput.h>
+#include <Engine/Graphics/Effect.h>
+#include <Engine/Graphics/Sprite.h>
 #include <Engine/Graphics/Graphics.h>
 
 // Inherited Implementation

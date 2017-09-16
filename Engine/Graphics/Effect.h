@@ -8,9 +8,8 @@
 // Include Files
 //==============
 
-#include "cRenderState.h"
 #include "cShader.h"
-#include "sContext.h"
+#include "cRenderState.h"
 
 #include <Engine/Assets/ReferenceCountedAssets.h>
 

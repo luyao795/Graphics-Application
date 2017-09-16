@@ -5,6 +5,7 @@ OpenGL specific code for Sprite
 // Include Files
 //==============
 
+#include "../VertexFormats.h"
 #include "../Sprite.h"
 
 #include <Engine/Asserts/Asserts.h>

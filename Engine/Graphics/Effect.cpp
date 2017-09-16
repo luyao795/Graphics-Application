@@ -5,6 +5,7 @@
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
+#include <Engine/Results/Results.h>
 
 namespace eae6320
 {

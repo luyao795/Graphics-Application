@@ -7,11 +7,16 @@
 #include "Graphics.h"
 #include "GraphicsHandler.h"
 
+#include "cShader.h"
 #include "cConstantBuffer.h"
 #include "ConstantBufferFormats.h"
 #include "cSamplerState.h"
+#include "sContext.h"
+
+#include <vector>
 
 #include <Engine/Concurrency/cEvent.h>
+#include <Engine/Logging/Logging.h>
 #include <Engine/UserOutput/UserOutput.h>
 
 namespace
@@ -87,7 +92,7 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
-	std::pair<Effect*, Sprite*> pair = std::make_pair(effect, sprite);
+	std::pair<eae6320::Effect*, eae6320::Sprite*> pair = std::make_pair(effect, sprite);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(pair);
 	effect->IncrementReferenceCount();
 	sprite->IncrementReferenceCount();
@@ -149,7 +154,7 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	{
-		for (int i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 		{
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DrawGeometry();

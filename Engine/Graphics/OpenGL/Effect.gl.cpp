@@ -7,6 +7,8 @@
 
 #include "../Effect.h"
 
+#include <Engine/Results/Results.h>
+
 eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
 {
 	auto result = eae6320::Results::Success;

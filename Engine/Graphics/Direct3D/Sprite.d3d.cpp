@@ -5,6 +5,8 @@ Direct3D specific code for Sprite
 // Include Files
 //==============
 
+#include "../sContext.h"
+#include "../VertexFormats.h"
 #include "../Sprite.h"
 
 #include <Engine/Asserts/Asserts.h>

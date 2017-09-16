@@ -8,9 +8,6 @@ These are code snippets that represent sprites that are separated from Graphics 
 // Include Files
 //==============
 
-#include "VertexFormats.h"
-#include "sContext.h"
-
 #include <Engine/Assets/ReferenceCountedAssets.h>
 #include <Engine/Results/Results.h>
 
