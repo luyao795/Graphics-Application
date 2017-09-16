@@ -255,40 +255,6 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	CleanUpGraphics();
 
-	//{
-	//	result = s_sprite->CleanUp();
-	//	if(result)
-	//		s_sprite = nullptr;
-
-	//	result = s_sprite2->CleanUp();
-	//	if (result)
-	//		s_sprite2 = nullptr;
-
-	//	result = s_effect->CleanUp();
-	//	if (result)
-	//		s_effect = nullptr;
-
-	//	result = s_sprite_static->CleanUp();
-	//	if (result)
-	//		s_sprite_static = nullptr;
-
-	//	result = s_sprite_static2->CleanUp();
-	//	if (result)
-	//		s_sprite_static2 = nullptr;
-
-	//	result = s_sprite_static3->CleanUp();
-	//	if (result)
-	//		s_sprite_static3 = nullptr;
-
-	//	result = s_sprite_static4->CleanUp();
-	//	if (result)
-	//		s_sprite_static4 = nullptr;
-
-	//	result = s_effect_static->CleanUp();
-	//	if (result)
-	//		s_effect_static = nullptr;
-	//}
-
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();
 		if (!localResult)
