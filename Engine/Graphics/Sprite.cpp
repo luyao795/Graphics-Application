@@ -15,7 +15,7 @@ namespace eae6320
 
 	Sprite::~Sprite()
 	{
-		
+
 	}
 
 	cResult Sprite::Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite *& o_sprite)

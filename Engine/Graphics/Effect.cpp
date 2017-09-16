@@ -15,7 +15,7 @@ namespace eae6320
 
 	Effect::~Effect()
 	{
-		
+
 	}
 
 	cResult Effect::Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect *& o_effect)

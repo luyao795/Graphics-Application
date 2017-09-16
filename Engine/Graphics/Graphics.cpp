@@ -84,10 +84,10 @@ void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(Effect* effect, Sprite* sprite)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
-	std::pair<eae6320::Effect*, eae6320::Sprite*> pair = std::make_pair(effect, sprite);
+	std::pair<Effect*, Sprite*> pair = std::make_pair(effect, sprite);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(pair);
 	effect->IncrementReferenceCount();
 	sprite->IncrementReferenceCount();

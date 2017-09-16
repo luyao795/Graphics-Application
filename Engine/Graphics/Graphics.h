@@ -40,7 +40,7 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite);
+		void SubmitEffectSpritePairToBeRendered(Effect* effect, Sprite* sprite);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
