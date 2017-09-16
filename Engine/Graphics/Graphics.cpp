@@ -10,15 +10,9 @@
 #include "cConstantBuffer.h"
 #include "ConstantBufferFormats.h"
 #include "cSamplerState.h"
-#include "cShader.h"
 
-#include <Engine/Asserts/Asserts.h>
 #include <Engine/Concurrency/cEvent.h>
-#include <Engine/Logging/Logging.h>
-#include <Engine/Platform/Platform.h>
-#include <Engine/Time/Time.h>
 #include <Engine/UserOutput/UserOutput.h>
-#include <utility>
 
 namespace
 {
