@@ -9,6 +9,8 @@
 #include "cSamplerState.h"
 #include "sContext.h"
 
+#include "Effect.h"
+#include "Sprite.h"
 #include "GraphicsHandler.h"
 #include "Graphics.h"
 
