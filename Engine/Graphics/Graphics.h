@@ -38,9 +38,9 @@ namespace eae6320
 		// for the frame currently being submitted
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
 
-		void SubmitColorToBeRendered(const Color colorForNextFrame);
+		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRendered(Effect* effect, Sprite* sprite);
+		void SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

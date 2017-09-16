@@ -78,13 +78,13 @@ void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_syste
 	constantData_perFrame.g_elapsedSecondCount_simulationTime = i_elapsedSecondCount_simulationTime;
 }
 
-void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
+void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(Effect* effect, Sprite* sprite)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	std::pair<Effect*, Sprite*> pair = std::make_pair(effect, sprite);

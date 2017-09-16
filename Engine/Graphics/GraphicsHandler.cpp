@@ -5,9 +5,6 @@
 #include "OpenGL/Includes.h"
 
 #include "sContext.h"
-
-#include "Effect.h"
-#include "Sprite.h"
 #include "GraphicsHandler.h"
 
 #include <Engine/Asserts/Asserts.h>
