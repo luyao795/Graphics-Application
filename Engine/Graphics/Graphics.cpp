@@ -52,26 +52,6 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
-
-	//// Shading Data
-	////-------------
-
-	//// This effect contains color changing property.
-	//eae6320::Graphics::Effect* s_effect = nullptr;
-	//// This effect contains white static property.
-	//eae6320::Graphics::Effect* s_effect_static = nullptr;
-
-	//// Geometry Data
-	////--------------
-
-	//// These two sprites form the color changing plus sign.
-	//eae6320::Graphics::Sprite* s_sprite = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite2 = nullptr;
-	//// These four sprites form the static white rectangles.
-	//eae6320::Graphics::Sprite* s_sprite_static = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
