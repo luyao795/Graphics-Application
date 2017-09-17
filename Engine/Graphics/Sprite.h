@@ -43,8 +43,6 @@ namespace eae6320
 
 		cResult CleanUpGeometry();
 
-		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
-
 #if defined ( EAE6320_PLATFORM_D3D )
 		// Geometry Data
 		//--------------
@@ -63,6 +61,8 @@ namespace eae6320
 		// A vertex array encapsulates the vertex data as well as the vertex input layout
 		GLuint s_vertexArrayId = 0;
 #endif
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNT()		
 	};
 }
 

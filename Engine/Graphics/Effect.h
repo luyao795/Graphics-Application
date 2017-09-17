@@ -51,13 +51,13 @@ namespace eae6320
 		Graphics::cShader::Handle s_vertexShader;
 		Graphics::cShader::Handle s_fragmentShader;
 
-		Graphics::cRenderState s_renderState;
-
-		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
-
 #if defined ( EAE6320_PLATFORM_GL )
 		GLuint s_programId = 0;
 #endif
+
+		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
+
+		Graphics::cRenderState s_renderState;
 	};
 }
 
