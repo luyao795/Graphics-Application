@@ -55,9 +55,10 @@ namespace eae6320
 		GLuint s_programId = 0;
 #endif
 
+		Graphics::cRenderState s_renderState;
+
 		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
-		Graphics::cRenderState s_renderState;
 	};
 }
 
