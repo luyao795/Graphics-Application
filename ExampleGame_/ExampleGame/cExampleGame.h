@@ -9,11 +9,13 @@
 //==============
 
 #include <Engine/Application/cbApplication.h>
-#include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include "Resource Files/Resource.h"
 #endif
+
+#define COLOR_DEFAULT eae6320::Graphics::Color()
+#define COLOR(R, G, B, A) eae6320::Graphics::Color(R, G, B, A)
 
 // Class Declaration
 //==================
@@ -77,6 +79,8 @@ namespace eae6320
 
 		virtual cResult Initialize() override;
 		virtual cResult CleanUp() override;
+
+		virtual void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) override;
 
 	};
 }

@@ -9,6 +9,7 @@
 //==============
 
 #include "Configuration.h"
+#include "Color.h"
 
 #include <cstdint>
 #include <Engine/Results/Results.h>
@@ -24,6 +25,9 @@ namespace eae6320
 {
 	namespace Graphics
 	{
+		class Effect;
+		class Sprite;
+
 		// Submission
 		//-----------
 
@@ -34,6 +38,10 @@ namespace eae6320
 		// of how the application submits the total elapsed times
 		// for the frame currently being submitted
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
+
+		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
+
+		void SubmitEffectSpritePairToBeRendered(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

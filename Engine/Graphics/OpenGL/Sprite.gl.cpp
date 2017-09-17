@@ -5,12 +5,13 @@ OpenGL specific code for Sprite
 // Include Files
 //==============
 
+#include "../VertexFormats.h"
 #include "../Sprite.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV)
+eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV)
 {
 	auto result = eae6320::Results::Success;
 
@@ -154,8 +155,9 @@ OnExit:
 	return result;
 }
 
-void eae6320::Sprite::CleanUpGeometry(eae6320::cResult result)
+eae6320::cResult eae6320::Graphics::Sprite::CleanUpGeometry()
 {
+	cResult result = Results::Success;
 	{
 		if (s_vertexArrayId != 0)
 		{
@@ -208,9 +210,10 @@ void eae6320::Sprite::CleanUpGeometry(eae6320::cResult result)
 			s_vertexBufferId = 0;
 		}
 	}
+	return result;
 }
 
-void eae6320::Sprite::DrawGeometry()
+void eae6320::Graphics::Sprite::DrawGeometry()
 {
 	// Draw the geometry
 	{

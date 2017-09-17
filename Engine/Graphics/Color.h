@@ -32,10 +32,25 @@ namespace eae6320
 			// with corresponding RGBA values.
 			Color(const float r, const float g, const float b, const float a)
 			{
-				colorR = r;
-				colorG = g;
-				colorB = b;
-				colorA = a;
+				if (isInRange(r))
+					colorR = r;
+				else
+					colorR = 0.0f;
+
+				if (isInRange(g))
+					colorG = g;
+				else
+					colorG = 0.0f;
+
+				if (isInRange(b))
+					colorB = b;
+				else
+					colorB = 0.0f;
+
+				if (isInRange(a))
+					colorA = a;
+				else
+					colorA = 0.0f;
 			}
 
 			// Those functions below return individual components of the current color
@@ -57,6 +72,39 @@ namespace eae6320
 			float A() const
 			{
 				return colorA;
+			}
+
+			// Those functions below set individual components to given values
+			void R(const float r)
+			{
+				if (isInRange(r))
+					colorR = r;
+				else
+					colorR = 0.0f;
+			}
+
+			void G(const float g)
+			{
+				if (isInRange(g))
+					colorG = g;
+				else
+					colorG = 0.0f;
+			}
+
+			void B(const float b)
+			{
+				if (isInRange(b))
+					colorB = b;
+				else
+					colorB = 0.0f;
+			}
+
+			void A(const float a)
+			{
+				if (isInRange(a))
+					colorA = a;
+				else
+					colorA = 0.0f;
 			}
 
 			// Those functions below return Color instances that represent most common colors
@@ -98,6 +146,11 @@ namespace eae6320
 			Color Magenta() const
 			{
 				return Color(1.0f, 0.0f, 1.0f, 1.0f);
+			}
+
+			bool isInRange(const float component) const
+			{
+				return ((component >= 0.0f) && (component <= 1.0f));
 			}
 
 		private:

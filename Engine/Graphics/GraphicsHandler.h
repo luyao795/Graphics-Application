@@ -17,6 +17,8 @@
 	#include <Engine/Windows/Includes.h>
 #endif
 
+struct sInitializationParameters;
+
 // Interface
 //==========
 
@@ -34,7 +36,7 @@ namespace eae6320
 		void SwapRender();
 
 		// Direct3D specific code in Initialize function
-		eae6320::cResult InitializeRenderingView(const sInitializationParameters& i_initializationParameters, eae6320::cResult result);
+		eae6320::cResult InitializeRenderingView(const sInitializationParameters& i_initializationParameters);
 		
 		// Direct3D specific code in CleanUp function
 		void CleanUpGraphics();

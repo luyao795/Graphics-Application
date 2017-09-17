@@ -5,12 +5,10 @@
 #include "OpenGL/Includes.h"
 
 #include "sContext.h"
-
-#include "Effect.h"
-#include "Sprite.h"
 #include "GraphicsHandler.h"
 
 #include <Engine/Asserts/Asserts.h>
+#include <Engine/Logging/Logging.h>
 #include <Engine/Platform/Platform.h>
 #include <Engine/Results/Results.h>
 
@@ -214,8 +212,9 @@ void eae6320::Graphics::SwapRender()
 #endif
 }
 
-eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializationParameters& i_initializationParameters, eae6320::cResult result)
+eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializationParameters& i_initializationParameters)
 {
+	cResult result = Results::Success;
 #if defined (EAE6320_PLATFORM_D3D)
 	// Initialize the views
 	{
