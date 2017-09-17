@@ -34,7 +34,7 @@ namespace
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
-		std::vector<std::pair<eae6320::Effect*, eae6320::Sprite*>> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<std::pair<eae6320::Graphics::Effect*, eae6320::Graphics::Sprite*>> cachedEffectSpritePairForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -57,21 +57,21 @@ namespace
 	////-------------
 
 	//// This effect contains color changing property.
-	//eae6320::Effect* s_effect = nullptr;
+	//eae6320::Graphics::Effect* s_effect = nullptr;
 	//// This effect contains white static property.
-	//eae6320::Effect* s_effect_static = nullptr;
+	//eae6320::Graphics::Effect* s_effect_static = nullptr;
 
 	//// Geometry Data
 	////--------------
 
 	//// These two sprites form the color changing plus sign.
-	//eae6320::Sprite* s_sprite = nullptr;
-	//eae6320::Sprite* s_sprite2 = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite2 = nullptr;
 	//// These four sprites form the static white rectangles.
-	//eae6320::Sprite* s_sprite_static = nullptr;
-	//eae6320::Sprite* s_sprite_static2 = nullptr;
-	//eae6320::Sprite* s_sprite_static3 = nullptr;
-	//eae6320::Sprite* s_sprite_static4 = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite_static = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
+	//eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -88,10 +88,10 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
-	std::pair<eae6320::Effect*, eae6320::Sprite*> pair = std::make_pair(effect, sprite);
+	std::pair<eae6320::Graphics::Effect*, eae6320::Graphics::Sprite*> pair = std::make_pair(effect, sprite);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(pair);
 	effect->IncrementReferenceCount();
 	sprite->IncrementReferenceCount();

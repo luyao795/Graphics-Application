@@ -19,47 +19,50 @@
 
 namespace eae6320
 {
-	class Effect
+	namespace Graphics
 	{
-	public:
+		class Effect
+		{
+		public:
 
-		static cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
+			static cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
 
-		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
-		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+				EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
 
-		void BindShadingData();
+				void BindShadingData();
 
-		cResult CleanUp();
+			cResult CleanUp();
 
-	private:
+		private:
 
-		Effect();
-		~Effect();
+			Effect();
+			~Effect();
 
-		// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
-		// the file name of the fragment shader. Both file names should include extension.
-		// Do NOT include file path in these parameters.
-		// i_RenderState is the render state the user wants to use, the default value is 0.
-		cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState);
+			// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
+			// the file name of the fragment shader. Both file names should include extension.
+			// Do NOT include file path in these parameters.
+			// i_RenderState is the render state the user wants to use, the default value is 0.
+			cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState);
 
-		cResult CleanUpShadingData();
+			cResult CleanUpShadingData();
 
-		// Shading Data
-		//-------------
+			// Shading Data
+			//-------------
 
-		Graphics::cShader::Handle s_vertexShader;
-		Graphics::cShader::Handle s_fragmentShader;
+			Graphics::cShader::Handle s_vertexShader;
+			Graphics::cShader::Handle s_fragmentShader;
 
 #if defined ( EAE6320_PLATFORM_GL )
-		GLuint s_programId = 0;
+			GLuint s_programId = 0;
 #endif
 
-		Graphics::cRenderState s_renderState;
+			Graphics::cRenderState s_renderState;
 
-		EAE6320_ASSETS_DECLAREREFERENCECOUNT()
+			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
-	};
+		};
+	}
 }
 
 #endif // !EAE6320_EFFECT_H

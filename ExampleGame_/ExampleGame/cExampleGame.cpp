@@ -18,23 +18,22 @@ namespace
 {
 	// Shading Data
 	//-------------
-
 	// This effect contains color changing property.
-	eae6320::Effect* s_effect = nullptr;
+	eae6320::Graphics::Effect* s_effect = nullptr;
 	// This effect contains white static property.
-	eae6320::Effect* s_effect_static = nullptr;
+	eae6320::Graphics::Effect* s_effect_static = nullptr;
 
 	// Geometry Data
 	//--------------
 
 	// These two sprites form the color changing plus sign.
-	eae6320::Sprite* s_sprite = nullptr;
-	eae6320::Sprite* s_sprite2 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite = nullptr;
+	eae6320::Graphics::Sprite* s_sprite2 = nullptr;
 	// These four sprites form the static white rectangles.
-	eae6320::Sprite* s_sprite_static = nullptr;
-	eae6320::Sprite* s_sprite_static2 = nullptr;
-	eae6320::Sprite* s_sprite_static3 = nullptr;
-	eae6320::Sprite* s_sprite_static4 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -58,13 +57,13 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 
 	// Initialize the shading data
 	{
-		if (!(result = eae6320::Effect::Load("Sprite.shd", "Sprite.shd", defaultRenderState, s_effect)))
+		if (!(result = eae6320::Graphics::Effect::Load("Sprite.shd", "Sprite.shd", defaultRenderState, s_effect)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Effect::Load("Sprite.shd", "Static.shd", defaultRenderState, s_effect_static)))
+		if (!(result = eae6320::Graphics::Effect::Load("Sprite.shd", "Static.shd", defaultRenderState, s_effect_static)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
@@ -73,37 +72,37 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 
 	// Initialize the geometry
 	{
-		if (!(result = eae6320::Sprite::Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
+		if (!(result = eae6320::Graphics::Sprite::Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Sprite::Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
+		if (!(result = eae6320::Graphics::Sprite::Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Sprite::Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
+		if (!(result = eae6320::Graphics::Sprite::Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Sprite::Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
+		if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Sprite::Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
+		if (!(result = eae6320::Graphics::Sprite::Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Sprite::Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
+		if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;

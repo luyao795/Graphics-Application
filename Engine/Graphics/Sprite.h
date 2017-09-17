@@ -19,51 +19,54 @@ These are code snippets that represent sprites that are separated from Graphics 
 
 namespace eae6320
 {
-	class Sprite
+	namespace Graphics
 	{
-	public:
+		class Sprite
+		{
+		public:
 
-		static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
+			static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
 
-		EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
-		EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+				EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
 
-		void DrawGeometry();
+				void DrawGeometry();
 
-		cResult CleanUp();
+			cResult CleanUp();
 
-	private:
+		private:
 
-		Sprite();
-		~Sprite();
+			Sprite();
+			~Sprite();
 
-		// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
-		// sideV is length for vertical side
-		cResult InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV);
+			// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
+			// sideV is length for vertical side
+			cResult InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV);
 
-		cResult CleanUpGeometry();
+			cResult CleanUpGeometry();
 
 #if defined ( EAE6320_PLATFORM_D3D )
-		// Geometry Data
-		//--------------
+			// Geometry Data
+			//--------------
 
-		// A vertex buffer holds the data for each vertex
-		ID3D11Buffer* s_vertexBuffer = nullptr;
-		// D3D has an "input layout" object that associates the layout of the vertex format struct
-		// with the input from a vertex shader
-		ID3D11InputLayout* s_vertexInputLayout = nullptr;
+			// A vertex buffer holds the data for each vertex
+			ID3D11Buffer* s_vertexBuffer = nullptr;
+			// D3D has an "input layout" object that associates the layout of the vertex format struct
+			// with the input from a vertex shader
+			ID3D11InputLayout* s_vertexInputLayout = nullptr;
 #elif defined ( EAE6320_PLATFORM_GL )
-		// Geometry Data
-		//--------------
+			// Geometry Data
+			//--------------
 
-		// A vertex buffer holds the data for each vertex
-		GLuint s_vertexBufferId = 0;
-		// A vertex array encapsulates the vertex data as well as the vertex input layout
-		GLuint s_vertexArrayId = 0;
+			// A vertex buffer holds the data for each vertex
+			GLuint s_vertexBufferId = 0;
+			// A vertex array encapsulates the vertex data as well as the vertex input layout
+			GLuint s_vertexArrayId = 0;
 #endif
 
-		EAE6320_ASSETS_DECLAREREFERENCECOUNT()		
-	};
+			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
+		};
+	}
 }
 
 #endif // !EAE6320_SPRITE_H

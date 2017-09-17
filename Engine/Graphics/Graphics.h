@@ -23,10 +23,10 @@
 
 namespace eae6320
 {
-	class Sprite;
-	class Effect;
 	namespace Graphics
 	{
+		class Effect;
+		class Sprite;
 
 		// Submission
 		//-----------
@@ -41,7 +41,7 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRendered(eae6320::Effect* effect, eae6320::Sprite* sprite);
+		void SubmitEffectSpritePairToBeRendered(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

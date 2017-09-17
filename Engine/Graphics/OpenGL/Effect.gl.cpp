@@ -9,7 +9,7 @@
 
 #include <Engine/Results/Results.h>
 
-eae6320::cResult eae6320::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
+eae6320::cResult eae6320::Graphics::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
 {
 	auto result = eae6320::Results::Success;
 
@@ -193,7 +193,7 @@ OnExit:
 	return result;
 }
 
-eae6320::cResult eae6320::Effect::CleanUpShadingData()
+eae6320::cResult eae6320::Graphics::Effect::CleanUpShadingData()
 {
 	cResult result = Results::Success;
 	if (s_programId != 0)
@@ -250,7 +250,7 @@ eae6320::cResult eae6320::Effect::CleanUpShadingData()
 	return result;
 }
 
-void eae6320::Effect::BindShadingData()
+void eae6320::Graphics::Effect::BindShadingData()
 {
 	// Bind the shading data
 	{
