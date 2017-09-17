@@ -18,6 +18,7 @@ namespace eae6320
 		class Color
 		{
 		public:
+
 			// This constructor is for when you want to call predefined functions
 			// below without defining the initial Color data.
 			Color()
@@ -32,25 +33,13 @@ namespace eae6320
 			// with corresponding RGBA values.
 			Color(const float r, const float g, const float b, const float a)
 			{
-				if (isInRange(r))
-					colorR = r;
-				else
-					colorR = 0.0f;
+				colorR = (isInRange(r)) ? r : ClampComponent(r);
 
-				if (isInRange(g))
-					colorG = g;
-				else
-					colorG = 0.0f;
+				colorG = (isInRange(g)) ? g : ClampComponent(g);
 
-				if (isInRange(b))
-					colorB = b;
-				else
-					colorB = 0.0f;
+				colorB = (isInRange(b)) ? b : ClampComponent(b);
 
-				if (isInRange(a))
-					colorA = a;
-				else
-					colorA = 0.0f;
+				colorA = (isInRange(a)) ? a : ClampComponent(a);
 			}
 
 			// Those functions below return individual components of the current color
@@ -77,34 +66,27 @@ namespace eae6320
 			// Those functions below set individual components to given values
 			void R(const float r)
 			{
-				if (isInRange(r))
-					colorR = r;
-				else
-					colorR = 0.0f;
+				colorR = (isInRange(r)) ? r : ClampComponent(r);
 			}
 
 			void G(const float g)
 			{
-				if (isInRange(g))
-					colorG = g;
-				else
-					colorG = 0.0f;
+				colorG = (isInRange(g)) ? g : ClampComponent(g);
 			}
 
 			void B(const float b)
 			{
-				if (isInRange(b))
-					colorB = b;
-				else
-					colorB = 0.0f;
+				colorB = (isInRange(b)) ? b : ClampComponent(b);
 			}
 
 			void A(const float a)
 			{
-				if (isInRange(a))
-					colorA = a;
-				else
-					colorA = 0.0f;
+				colorA = (isInRange(a)) ? a : ClampComponent(a);
+			}
+
+			float ClampComponent(const float comp) const
+			{
+				return (comp > 1.0f) ? 1.0f : ((comp < 0.0f) ? 0.0f : comp);
 			}
 
 			// Those functions below return Color instances that represent most common colors
@@ -154,6 +136,7 @@ namespace eae6320
 			}
 
 		private:
+
 			float colorR, colorG, colorB, colorA;
 		};
 	}
