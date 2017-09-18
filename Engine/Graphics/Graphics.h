@@ -9,7 +9,6 @@
 //==============
 
 #include "Configuration.h"
-#include "Color.h"
 
 #include <cstdint>
 #include <Engine/Results/Results.h>
@@ -25,6 +24,7 @@ namespace eae6320
 {
 	namespace Graphics
 	{
+		class Color;
 		class Effect;
 		class Sprite;
 

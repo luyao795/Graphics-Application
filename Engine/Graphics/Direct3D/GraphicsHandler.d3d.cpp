@@ -1,16 +1,14 @@
 // Include Files
 //==============
 
-#include "Direct3D/Includes.h"
-#include "OpenGL/Includes.h"
+#include "Includes.h"
 
-#include "sContext.h"
-#include "GraphicsHandler.h"
+#include "../sContext.h"
+#include "../GraphicsHandler.h"
+#include "../Color.h"
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
-#include <Engine/Platform/Platform.h>
-#include <Engine/Results/Results.h>
 
 namespace
 {
@@ -24,7 +22,7 @@ namespace
 eae6320::cResult eae6320::Graphics::InitializeViews(const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight)
 {
 	auto result = eae6320::Results::Success;
-#if defined (EAE6320_PLATFORM_D3D)
+
 	ID3D11Texture2D* backBuffer = nullptr;
 	ID3D11Texture2D* depthBuffer = nullptr;
 
@@ -145,13 +143,12 @@ OnExit:
 		depthBuffer->Release();
 		depthBuffer = nullptr;
 	}
-#endif
+
 	return result;
 }
 
 void eae6320::Graphics::ClearView(Color i_clearColor)
 {
-#if defined (EAE6320_PLATFORM_D3D)
 	auto* const direct3dImmediateContext = sContext::g_context.direct3dImmediateContext;
 	EAE6320_ASSERT(direct3dImmediateContext);
 
@@ -165,28 +162,10 @@ void eae6320::Graphics::ClearView(Color i_clearColor)
 		const float clearColor[4] = { i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A() };
 		direct3dImmediateContext->ClearRenderTargetView(s_renderTargetView, clearColor);
 	}
-#elif defined (EAE6320_PLATFORM_GL)
-	// Every frame an entirely new image will be created.
-	// Before drawing anything, then, the previous image will be erased
-	// by "clearing" the image buffer (filling it with a solid color)
-	{
-		// Clear back buffer to input color
-		{
-			glClearColor(i_clearColor.R(), i_clearColor.G(), i_clearColor.B(), i_clearColor.A());
-			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
-		}
-		{
-			constexpr GLbitfield clearColor = GL_COLOR_BUFFER_BIT;
-			glClear(clearColor);
-			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
-		}
-	}
-#endif
 }
 
 void eae6320::Graphics::SwapRender()
 {
-#if defined (EAE6320_PLATFORM_D3D)
 	// Everything has been drawn to the "back buffer", which is just an image in memory.
 	// In order to display it the contents of the back buffer must be "presented"
 	// (or "swapped" with the "front buffer")
@@ -198,24 +177,12 @@ void eae6320::Graphics::SwapRender()
 		const auto result = swapChain->Present(swapImmediately, presentNextFrame);
 		EAE6320_ASSERT(SUCCEEDED(result));
 	}
-#elif defined (EAE6320_PLATFORM_GL)
-	// Everything has been drawn to the "back buffer", which is just an image in memory.
-	// In order to display it the contents of the back buffer must be "presented"
-	// (or "swapped" with the "front buffer")
-	{
-		const auto deviceContext = sContext::g_context.deviceContext;
-		EAE6320_ASSERT(deviceContext != NULL);
-
-		const auto glResult = SwapBuffers(deviceContext);
-		EAE6320_ASSERT(glResult != FALSE);
-	}
-#endif
 }
 
 eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializationParameters& i_initializationParameters)
 {
 	cResult result = Results::Success;
-#if defined (EAE6320_PLATFORM_D3D)
+
 	// Initialize the views
 	{
 		if (!(result = InitializeViews(i_initializationParameters.resolutionWidth, i_initializationParameters.resolutionHeight)))
@@ -224,16 +191,13 @@ eae6320::cResult eae6320::Graphics::InitializeRenderingView(const sInitializatio
 			goto OnExit;
 		}
 	}
-#elif defined (EAE6320_PLATFORM_GL)
-	goto OnExit;
-#endif
+
 OnExit:
 	return result;
 }
 
 void eae6320::Graphics::CleanUpGraphics()
 {
-#if defined (EAE6320_PLATFORM_D3D)
 	if (s_renderTargetView)
 	{
 		s_renderTargetView->Release();
@@ -244,5 +208,4 @@ void eae6320::Graphics::CleanUpGraphics()
 		s_depthStencilView->Release();
 		s_depthStencilView = nullptr;
 	}
-#endif
 }

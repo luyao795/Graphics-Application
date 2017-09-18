@@ -8,6 +8,7 @@
 // Include Files
 //==============
 
+#include <Engine/Graphics/Color.h>
 #include <Engine/Application/cbApplication.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
