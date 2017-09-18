@@ -28,9 +28,9 @@ namespace eae6320
 			static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite*& o_sprite);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
-				EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
+			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
 
-				void DrawGeometry();
+			void DrawGeometry();
 
 			cResult CleanUp();
 
