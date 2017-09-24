@@ -38,30 +38,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\..\..\..\Desktop\AssetBuildLibrary\AssetBuildFunctions.lua">
+    <CustomBuild Include="AssetBuildFunctions.lua">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Identity)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Identity)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling %(Identity)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling %(Identity)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutputDir)%(Identity)" /y</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputDir)%(Identity)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutputDir)%(Identity)" /y</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutputDir)%(Identity)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(OutputDir)luac.exe" -o "$(OutputDir)%(Identity)" "%(FullPath)" </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compiling %(Identity)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputDir)%(Identity)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutputDir)luac.exe</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(OutputDir)luac.exe" -o "$(OutputDir)%(Identity)" "%(FullPath)" </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compiling %(Identity)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutputDir)%(Identity)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutputDir)luac.exe</AdditionalInputs>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ExcludedFromBuild>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "%(FullPath)" "$(OutputDir)%(Identity)" /y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutputDir)%(Identity)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" "$(OutputDir)%(Identity)" /y</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutputDir)%(Identity)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <PropertyGroup Label="Globals">
