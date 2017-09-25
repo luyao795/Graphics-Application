@@ -9,6 +9,7 @@
 #include "cSamplerState.h"
 #include "sContext.h"
 
+#include "Color.h"
 #include "Effect.h"
 #include "Sprite.h"
 #include "GraphicsHandler.h"
@@ -52,26 +53,6 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
-
-	//// Shading Data
-	////-------------
-
-	//// This effect contains color changing property.
-	//eae6320::Graphics::Effect* s_effect = nullptr;
-	//// This effect contains white static property.
-	//eae6320::Graphics::Effect* s_effect_static = nullptr;
-
-	//// Geometry Data
-	////--------------
-
-	//// These two sprites form the color changing plus sign.
-	//eae6320::Graphics::Sprite* s_sprite = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite2 = nullptr;
-	//// These four sprites form the static white rectangles.
-	//eae6320::Graphics::Sprite* s_sprite_static = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
-	//eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -161,8 +142,6 @@ void eae6320::Graphics::RenderFrame()
 		}
 	}
 
-	SwapRender();
-
 	// Once everything has been drawn the data that was submitted for this frame
 	// should be cleaned up and cleared.
 	// so that the struct can be re-used (i.e. so that data for a new frame can be submitted to it)
@@ -176,6 +155,8 @@ void eae6320::Graphics::RenderFrame()
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 	}
+
+	SwapRender();
 }
 
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)
@@ -307,6 +288,18 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	}
 
 	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DecrementReferenceCount();
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second = nullptr;
+		}
+	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 
 	return result;

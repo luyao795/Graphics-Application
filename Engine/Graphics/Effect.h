@@ -28,9 +28,9 @@ namespace eae6320
 			static cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
-				EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
+			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
 
-				void BindShadingData();
+			void BindShadingData();
 
 			cResult CleanUp();
 

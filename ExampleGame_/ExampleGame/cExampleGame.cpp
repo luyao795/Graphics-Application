@@ -164,6 +164,4 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static2);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static3);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static4);
-
-	eae6320::Graphics::SubmitElapsedTime(i_elapsedSecondCount_systemTime, i_elapsedSecondCount_sinceLastSimulationUpdate);
 }

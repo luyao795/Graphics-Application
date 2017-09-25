@@ -9,15 +9,12 @@
 //==============
 
 #include "Configuration.h"
-#include "Color.h"
 
 #include <cstdint>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
 #endif
-
-struct sInitializationParameters;
 
 // Interface
 //==========
@@ -26,6 +23,8 @@ namespace eae6320
 {
 	namespace Graphics
 	{
+		struct sInitializationParameters;
+
 		// Direct3D specific helper function
 		eae6320::cResult InitializeViews(const unsigned int i_resolutionWidth, const unsigned int i_resolutionHeight);
 

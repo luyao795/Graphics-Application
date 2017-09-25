@@ -86,8 +86,13 @@
     <ClCompile Include="OpenGL\Sprite.gl.cpp">
       <Filter>OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsHandler.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="OpenGL\GraphicsHandler.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct3D\GraphicsHandler.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />
