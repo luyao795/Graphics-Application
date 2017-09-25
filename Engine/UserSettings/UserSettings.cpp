@@ -20,7 +20,7 @@ namespace
 	uint16_t s_resolutionWidth = 0;
 	auto s_resolutionWidth_validity = eae6320::Results::Failure;
 
-	constexpr auto* const s_userSettingsFileName = "settings.ini";
+	constexpr auto* const s_userSettingsFileName = "Settings.ini";
 }
 
 // Helper Function Declarations
@@ -231,7 +231,7 @@ namespace
 
 		// Resolution Width
 		{
-			const char* key_width = "resolutionWidth";
+			const char* key_width = "ResolutionWidth";
 
 			lua_pushstring( &io_luaState, key_width );
 			lua_gettable( &io_luaState, -2 );
@@ -271,7 +271,7 @@ namespace
 		}
 		// Resolution Height
 		{
-			const char* key_height = "resolutionHeight";
+			const char* key_height = "ResolutionHeight";
 
 			lua_pushstring( &io_luaState, key_height );
 			lua_gettable( &io_luaState, -2 );

@@ -192,6 +192,24 @@ function BuildAssets()
 			end
 		end
 	end
+	-- Copy the Settings to the installation location
+	do		
+		local sourceSettings = GetFilesInDirectory( OutputDir )
+		for i, sourceSetting in ipairs( sourceSettings ) do
+			local sourceFileName = sourceSetting:sub( #OutputDir + 1 )
+			if sourceFileName == "Settings.ini" then
+				local targetPath = GameInstallDir .. sourceFileName
+				local result, errorMessage = CopyFile( sourceSetting, targetPath )
+				if result then
+					-- Display a message
+					print( "Installed " .. sourceFileName )
+				else
+					wereThereErrors = true
+					OutputErrorMessage( "The setting \"" .. sourceSetting .. "\" couldn't be copied to \"" .. targetPath .. "\": " .. errorMessage )
+				end
+			end
+		end
+	end
 
 	return not wereThereErrors
 end
