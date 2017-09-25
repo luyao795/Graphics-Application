@@ -68,8 +68,8 @@ function BuildAssets()
 	do
 		local path_shaderBuilder = OutputDir .. "ShaderBuilder.exe"
 		do
-			local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/example.shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Vertex/example.shd"
+			local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/Sprite.eae6320shader"
+			local shader_built = GameInstallDir .. "data/Shaders/Vertex/Sprite.shd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" vertex"
@@ -94,8 +94,8 @@ function BuildAssets()
 			end
 		end
 		do
-			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/example.shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Fragment/example.shd"
+			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/Sprite.eae6320shader"
+			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Sprite.shd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" fragment"
@@ -120,60 +120,8 @@ function BuildAssets()
 			end
 		end
 		do
-			local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/sprite.shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Vertex/sprite.shd"
-			CreateDirectoryIfItDoesntExist( shader_built )
-			local command = "\"" .. path_shaderBuilder .. "\""
-				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" vertex"
-			local result, exitCode = ExecuteCommand( command )
-			if result then
-				if exitCode == 0 then
-					-- Display a message for each asset
-					print( "Built " .. shader_authored )
-				else
-					wereThereErrors = true
-					-- The builder should already output a descriptive error message if there was an error
-					-- (remember that you write the builder code,
-					-- and so if the build process failed it means that _your_ code has returned an error code)
-					-- but it can be helpful to still return an additional vague error message here
-					-- in case there is a bug in the specific builder that doesn't output an error message
-					OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), shader_authored )
-				end
-			else
-				wereThereErrors = true
-				-- If the command wasn't executed then the second return value is an error message
-				OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), shader_authored )
-			end
-		end
-		do
-			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/sprite.shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Fragment/sprite.shd"
-			CreateDirectoryIfItDoesntExist( shader_built )
-			local command = "\"" .. path_shaderBuilder .. "\""
-				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" fragment"
-			local result, exitCode = ExecuteCommand( command )
-			if result then
-				if exitCode == 0 then
-					-- Display a message for each asset
-					print( "Built " .. shader_authored )
-				else
-					wereThereErrors = true
-					-- The builder should already output a descriptive error message if there was an error
-					-- (remember that you write the builder code,
-					-- and so if the build process failed it means that _your_ code has returned an error code)
-					-- but it can be helpful to still return an additional vague error message here
-					-- in case there is a bug in the specific builder that doesn't output an error message
-					OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), shader_authored )
-				end
-			else
-				wereThereErrors = true
-				-- If the command wasn't executed then the second return value is an error message
-				OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), shader_authored )
-			end
-		end
-		do
-			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/sprite_alt.shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Fragment/sprite_alt.shd"
+			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/Static.eae6320shader"
+			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Static.shd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" fragment"
@@ -200,33 +148,7 @@ function BuildAssets()
 
 		if EAE6320_PLATFORM_D3D then
 			do
-				local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/vertexInputLayout_geometry.shader"
-				local shader_built = GameInstallDir .. "data/Shaders/Vertex/vertexInputLayout_geometry.shd"
-				CreateDirectoryIfItDoesntExist( shader_built )
-				local command = "\"" .. path_shaderBuilder .. "\""
-					.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" vertex"
-				local result, exitCode = ExecuteCommand( command )
-				if result then
-					if exitCode == 0 then
-						-- Display a message for each asset
-						print( "Built " .. shader_authored )
-					else
-						wereThereErrors = true
-						-- The builder should already output a descriptive error message if there was an error
-						-- (remember that you write the builder code,
-						-- and so if the build process failed it means that _your_ code has returned an error code)
-						-- but it can be helpful to still return an additional vague error message here
-						-- in case there is a bug in the specific builder that doesn't output an error message
-						OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), shader_authored )
-					end
-				else
-					wereThereErrors = true
-					-- If the command wasn't executed then the second return value is an error message
-					OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), shader_authored )
-				end
-			end
-			do
-				local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/vertexInputLayout_sprite.shader"
+				local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/vertexInputLayout_sprite.eae6320shader"
 				local shader_built = GameInstallDir .. "data/Shaders/Vertex/vertexInputLayout_sprite.shd"
 				CreateDirectoryIfItDoesntExist( shader_built )
 				local command = "\"" .. path_shaderBuilder .. "\""
