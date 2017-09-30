@@ -26,9 +26,6 @@
     <ClCompile Include="Windows\cTextureBuilder.win.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Engine\Assets\Assets.vcxproj">
-      <Project>{e803347f-34d1-43ac-b234-5f8940fab26a}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\Engine\Platform\Platform.vcxproj">
       <Project>{7462d3a7-9936-442e-877c-89efda754596}</Project>
     </ProjectReference>
