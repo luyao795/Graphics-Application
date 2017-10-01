@@ -11,6 +11,7 @@
 #include "Configuration.h"
 
 #include <cstdint>
+#include <Engine/Graphics/cTexture.h>
 #include <Engine/Results/Results.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -41,7 +42,7 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRendered(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite);
+		void SubmitEffectSpritePairToBeRenderedWithTexture(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite, eae6320::Graphics::cTexture::Handle texture);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

@@ -227,10 +227,10 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(COLOR_DEFAULT.Magenta());
 
 	// Submit Effect Sprite pair data
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect, s_sprite);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect, s_sprite2);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static2);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static3);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRendered(s_effect_static, s_sprite_static4);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect, s_sprite, pikachuTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect, s_sprite2, pikachuTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static, pokeballTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static2, electroballTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static3, pokeballTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static4, electroballTexture);
 }
