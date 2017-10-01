@@ -69,7 +69,7 @@ function BuildAssets()
 		local path_shaderBuilder = OutputDir .. "ShaderBuilder.exe"
 		do
 			local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/Sprite.eae6320shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Vertex/Sprite.shd"
+			local shader_built = GameInstallDir .. "data/Shaders/Vertex/Sprite.binshd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" vertex"
@@ -95,7 +95,7 @@ function BuildAssets()
 		end
 		do
 			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/Sprite.eae6320shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Sprite.shd"
+			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Sprite.binshd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" fragment"
@@ -121,7 +121,7 @@ function BuildAssets()
 		end
 		do
 			local shader_authored = EngineSourceContentDir .. "Shaders/Fragment/Static.eae6320shader"
-			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Static.shd"
+			local shader_built = GameInstallDir .. "data/Shaders/Fragment/Static.binshd"
 			CreateDirectoryIfItDoesntExist( shader_built )
 			local command = "\"" .. path_shaderBuilder .. "\""
 				.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" fragment"
@@ -149,7 +149,7 @@ function BuildAssets()
 		if EAE6320_PLATFORM_D3D then
 			do
 				local shader_authored = EngineSourceContentDir .. "Shaders/Vertex/vertexInputLayout_sprite.eae6320shader"
-				local shader_built = GameInstallDir .. "data/Shaders/Vertex/vertexInputLayout_sprite.shd"
+				local shader_built = GameInstallDir .. "data/Shaders/Vertex/vertexInputLayout_sprite.binshd"
 				CreateDirectoryIfItDoesntExist( shader_built )
 				local command = "\"" .. path_shaderBuilder .. "\""
 					.. " \"" .. shader_authored .. "\" \"" .. shader_built .. "\" vertex"
@@ -175,6 +175,90 @@ function BuildAssets()
 			end
 		end
 	end
+
+	-- Build the textures and copy them to the installation location
+	do
+		local path_textureBuilder = OutputDir .. "TextureBuilder.exe"
+		do
+			local texture_authored = EngineSourceContentDir .. "Textures/Pikachu.png"
+			local texture_built = GameInstallDir .. "data/Textures/Pikachu.bintxr"
+			CreateDirectoryIfItDoesntExist( texture_built )
+			local command = "\"" .. path_textureBuilder .. "\""
+				.. " \"" .. texture_authored .. "\" \"" .. texture_built .. "\""
+			local result, exitCode = ExecuteCommand( command )
+			if result then
+				if exitCode == 0 then
+					-- Display a message for each asset
+					print( "Built " .. texture_authored )
+				else
+					wereThereErrors = true
+					-- The builder should already output a descriptive error message if there was an error
+					-- (remember that you write the builder code,
+					-- and so if the build process failed it means that _your_ code has returned an error code)
+					-- but it can be helpful to still return an additional vague error message here
+					-- in case there is a bug in the specific builder that doesn't output an error message
+					OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), texture_authored )
+				end
+			else
+				wereThereErrors = true
+				-- If the command wasn't executed then the second return value is an error message
+				OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), texture_authored )
+			end
+		end
+		do
+			local texture_authored = EngineSourceContentDir .. "Textures/Pokeball.png"
+			local texture_built = GameInstallDir .. "data/Textures/Pokeball.bintxr"
+			CreateDirectoryIfItDoesntExist( texture_built )
+			local command = "\"" .. path_textureBuilder .. "\""
+				.. " \"" .. texture_authored .. "\" \"" .. texture_built .. "\""
+			local result, exitCode = ExecuteCommand( command )
+			if result then
+				if exitCode == 0 then
+					-- Display a message for each asset
+					print( "Built " .. texture_authored )
+				else
+					wereThereErrors = true
+					-- The builder should already output a descriptive error message if there was an error
+					-- (remember that you write the builder code,
+					-- and so if the build process failed it means that _your_ code has returned an error code)
+					-- but it can be helpful to still return an additional vague error message here
+					-- in case there is a bug in the specific builder that doesn't output an error message
+					OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), texture_authored )
+				end
+			else
+				wereThereErrors = true
+				-- If the command wasn't executed then the second return value is an error message
+				OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), texture_authored )
+			end
+		end
+		do
+			local texture_authored = EngineSourceContentDir .. "Textures/Electroball.png"
+			local texture_built = GameInstallDir .. "data/Textures/Electroball.bintxr"
+			CreateDirectoryIfItDoesntExist( texture_built )
+			local command = "\"" .. path_textureBuilder .. "\""
+				.. " \"" .. texture_authored .. "\" \"" .. texture_built .. "\""
+			local result, exitCode = ExecuteCommand( command )
+			if result then
+				if exitCode == 0 then
+					-- Display a message for each asset
+					print( "Built " .. texture_authored )
+				else
+					wereThereErrors = true
+					-- The builder should already output a descriptive error message if there was an error
+					-- (remember that you write the builder code,
+					-- and so if the build process failed it means that _your_ code has returned an error code)
+					-- but it can be helpful to still return an additional vague error message here
+					-- in case there is a bug in the specific builder that doesn't output an error message
+					OutputErrorMessage( "The command " .. command .. " failed with exit code " .. tostring( exitCode ), texture_authored )
+				end
+			else
+				wereThereErrors = true
+				-- If the command wasn't executed then the second return value is an error message
+				OutputErrorMessage( "The command " .. command .. " couldn't be executed: " .. tostring( exitCode ), texture_authored )
+			end
+		end
+	end
+
 	-- Copy the licenses to the installation location
 	do
 		CreateDirectoryIfItDoesntExist( GameLicenseDir )
@@ -192,6 +276,7 @@ function BuildAssets()
 			end
 		end
 	end
+
 	-- Copy the Settings to the installation location
 	do		
 		local sourceSettings = GetFilesInDirectory( OutputDir )

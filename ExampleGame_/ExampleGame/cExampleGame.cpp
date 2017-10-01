@@ -57,13 +57,13 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 
 	// Initialize the shading data
 	{
-		if (!(result = eae6320::Graphics::Effect::Load("Sprite.shd", "Sprite.shd", defaultRenderState, s_effect)))
+		if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
 
-		if (!(result = eae6320::Graphics::Effect::Load("Sprite.shd", "Static.shd", defaultRenderState, s_effect_static)))
+		if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", defaultRenderState, s_effect_static)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
