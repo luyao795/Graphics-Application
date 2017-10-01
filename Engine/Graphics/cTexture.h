@@ -70,12 +70,12 @@ namespace eae6320
 
 			static cResult Load( const char* const i_path, cTexture*& o_texture );
 
-			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( cTexture );
+			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( cTexture )
 
 			// Reference Counting
 			//-------------------
 
-			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS();
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 
 			// Data
 			//=====
@@ -88,7 +88,7 @@ namespace eae6320
 			GLuint m_textureId = 0;
 #endif
 
-			EAE6320_ASSETS_DECLAREREFERENCECOUNT();
+			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 			TextureFormats::sTextureInfo m_info;
 

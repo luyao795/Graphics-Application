@@ -4,6 +4,7 @@
 #include "cExampleGame.h"
 
 #include <Engine/UserInput/UserInput.h>
+#include <Engine/Graphics/cTexture.h>
 #include <Engine/Graphics/Effect.h>
 #include <Engine/Graphics/Sprite.h>
 #include <Engine/Graphics/Graphics.h>
@@ -34,6 +35,11 @@ namespace
 	eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
 	eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
 	eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
+
+	// Texture Data
+	eae6320::Graphics::cTexture::Handle pikachuTexture;
+	eae6320::Graphics::cTexture::Handle pokeballTexture;
+	eae6320::Graphics::cTexture::Handle electroballTexture;
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -70,7 +76,7 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 		}
 	}
 
-	// Initialize the geometry
+	// Initialize the geometry data
 	{
 		if (!(result = eae6320::Graphics::Sprite::Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
 		{
@@ -103,6 +109,30 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 		}
 
 		if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	// Initialize the texture data
+	{
+		char texturePath_pikachu[100] = "data/Textures/";
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pikachu, "Pikachu.bintxr"), pikachuTexture)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		char texturePath_pokeball[100] = "data/Textures/";
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pokeball, "Pokeball.bintxr"), pokeballTexture)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+
+		char texturePath_electroball[100] = "data/Textures/";
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_electroball, "Electroball.bintxr"), electroballTexture)))
 		{
 			EAE6320_ASSERT(false);
 			goto OnExit;
@@ -171,6 +201,21 @@ eae6320::cResult eae6320::cExampleGame::CleanUp()
 			result = s_effect_static->CleanUp();
 			if (result)
 				s_effect_static = nullptr;
+		}
+
+		if (pikachuTexture.IsValid())
+		{
+			eae6320::Graphics::cTexture::s_manager.Release(pikachuTexture);
+		}
+
+		if (pokeballTexture.IsValid())
+		{
+			eae6320::Graphics::cTexture::s_manager.Release(pokeballTexture);
+		}
+
+		if (electroballTexture.IsValid())
+		{
+			eae6320::Graphics::cTexture::s_manager.Release(electroballTexture);
 		}
 	}
 	return result;
