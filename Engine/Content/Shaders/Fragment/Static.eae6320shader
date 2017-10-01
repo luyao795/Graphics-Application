@@ -75,7 +75,7 @@
 	// Input
 	//======
 	in const float4 i_position : SV_POSITION,
-	in const float2 i_uv : TEXCOORD0,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
