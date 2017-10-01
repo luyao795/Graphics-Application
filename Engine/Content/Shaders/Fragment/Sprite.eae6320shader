@@ -20,6 +20,12 @@
 	{
 		vec4 g_color;
 	};
+	
+	layout( binding = 0 ) uniform sampler2D g_color_texture;
+	
+	// Input
+	//======
+	layout( location = 0 ) in vec2 i_texcoord;
 
 	// Output
 	//=======
@@ -42,26 +48,41 @@
 	}
 #endif
 
+	Texture2D g_color_texture : register( t0 );
+	
+	SamplerState g_color_samplerState : register( s0 );
+
 // Entry Point
 //============
 
 #if defined (EAE6320_PLATFORM_GL)
 	void main()
 {
+	vec4 sampledColor = texture2D( g_color_texture, i_texcoord );
+	
 	// Output solid white
-	o_color = vec4(
+	vec4 gradientColor = vec4(
 		// RGB
 		1.0, 1.0, 1.0,
 		// Alpha
 		1.0 );
 
 	// Make sure the range of those values is [0, 1]
-	o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	o_color.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	o_color.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	
+	vec4 combinedColor = vec4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
+	
+	o_color = combinedColor;
 }
 #elif defined (EAE6320_PLATFORM_D3D)
 	void main(
+	
+	// Input
+	//======
+	in const float4 i_position : SV_POSITION,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
@@ -72,16 +93,22 @@
 
 	)
 {
+	const float4 sampledColor = g_color_texture.Sample( g_color_samplerState, i_texcoord );
+	
 	// Output solid white
-	o_color = float4(
+	float4 gradientColor = float4(
 		// RGB
 		1.0, 1.0, 1.0,
 		// Alpha
 		1.0 );
 
 	// Make sure the range of those values is [0, 1]
-	o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	o_color.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	o_color.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+	
+	float4 combinedColor = float4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
+	
+	o_color = combinedColor;
 }
 #endif

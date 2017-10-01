@@ -35,9 +35,12 @@
 
 	// These values come from one of the VertexFormats::sGeometry that the vertex buffer was filled with in C code
 	layout( location = 0 ) in vec2 i_position;
+	layout( location = 1 ) in vec2 i_texcoord;
 
 	// Output
 	//=======
+	
+	layout( location = 0 ) out vec2 o_texcoord;
 
 	// The vertex shader must always output a position value,
 	// but unlike HLSL where the value is explicit
@@ -71,8 +74,10 @@
 	{
 		// Calculate the position of this vertex on screen
 		{
-			// This example shader sets the "out" position directly from the "in" position:
+			// This shader sets the "out" position directly from the "in" position:
 			gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
+			// This shader sets the "out" texcoord directly from the "in" texcoord:
+			o_texcoord = i_texcoord;
 			// Both of the following lines are exactly equivalent to the one above
 			//gl_Position = vec4( i_position.xy, 0.0, 1.0 );
 			//gl_Position = vec4( i_position, 0.0, 1.0 );
@@ -89,22 +94,26 @@
 	// The "semantics" (the keywords in all caps after the colon) are arbitrary,
 	// but must match the C call to CreateInputLayout()
 
-	// These values come from one of the VertexFormats::sGeometry that the vertex buffer was filled with in C code
-	in const float2 i_position : POSITION,
+	// These values come from one of the VertexFormats::sSprite that the vertex buffer was filled with in C code
+	in const float2 i_position : POSITION,	
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
 
 	// An SV_POSITION value must always be output from every vertex shader
 	// so that the GPU can figure out which fragments need to be shaded
-	out float4 o_position : SV_POSITION
+	out float4 o_position : SV_POSITION,
+	out float2 o_texcoord : TEXCOORD0
 
 	)
 {
 	// Calculate the position of this vertex on screen
 	{
-		// This example shader sets the "out" position directly from the "in" position:
+		// This shader sets the "out" position directly from the "in" position:
 		o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
+		// This shader sets the "out" texcoord directly from the "in" texcoord:
+		o_texcoord = i_texcoord;
 		// Both of the following lines are exactly equivalent to the one above
 		//o_position = float4( i_position.xy, 0.0, 1.0 );
 		//o_position = float4( i_position, 0.0, 1.0 );

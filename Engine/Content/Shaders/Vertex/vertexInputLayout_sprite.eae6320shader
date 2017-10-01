@@ -16,13 +16,15 @@ void main(
 	// but must match the C call to CreateInputLayout()
 
 	in const float2 i_position : POSITION,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
 
 	// An SV_POSITION value must always be output from every vertex shader
 	// so that the GPU can figure out which fragments need to be shaded
-	out float4 o_position : SV_POSITION
+	out float4 o_position : SV_POSITION,
+	out float2 o_texcoord : TEXCOORD0
 
 	)
 {

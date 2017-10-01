@@ -34,8 +34,8 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// (by using so-called "semantic" names so that, for example,
 			// "POSITION" here matches with "POSITION" in shader code).
 			// Note that OpenGL uses arbitrarily assignable number IDs to do the same thing.
-			constexpr unsigned int vertexElementCount = 1;
-			D3D11_INPUT_ELEMENT_DESC layoutDescription[vertexElementCount] = {};
+			constexpr unsigned int vertexElementCount = 2;
+			D3D11_INPUT_ELEMENT_DESC layoutDescription[1] = {};
 			{
 				// Slot 0
 
@@ -50,6 +50,25 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 					positionElement.Format = DXGI_FORMAT_R32G32_FLOAT;
 					positionElement.InputSlot = 0;
 					positionElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, x);
+					positionElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					positionElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
+				}
+			}
+			D3D11_INPUT_ELEMENT_DESC layoutDescription[2] = {};
+			{
+				// Slot 1
+
+				// TEXCOORD0
+				// 2 floats == 8 bytes
+				// Offset = 0
+				{
+					auto& positionElement = layoutDescription[0];
+
+					positionElement.SemanticName = "TEXCOORD";
+					positionElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
+					positionElement.Format = DXGI_FORMAT_R32G32_FLOAT;
+					positionElement.InputSlot = 1;
+					positionElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, u) - offsetof(eae6320::Graphics::VertexFormats::sSprite, x);
 					positionElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					positionElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}
