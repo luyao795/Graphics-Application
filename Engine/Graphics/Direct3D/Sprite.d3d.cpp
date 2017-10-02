@@ -67,7 +67,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 					texcoordElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
 					texcoordElement.Format = DXGI_FORMAT_R32G32_FLOAT;
 					texcoordElement.InputSlot = 1;
-					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, u) - offsetof(eae6320::Graphics::VertexFormats::sSprite, x);
+					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, u);
 					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}

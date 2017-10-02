@@ -8,6 +8,7 @@
 //=================
 
 #if defined (EAE6320_PLATFORM_GL)
+	
 	layout( std140, binding = 0 ) uniform g_constantBuffer_perFrame
 	{
 		float g_elapsedSecondCount_systemTime;
@@ -21,10 +22,10 @@
 		vec4 g_color;
 	};
 	
-	layout( binding = 0 ) uniform sampler2D g_color_texture;
-	
 	// Input
 	//======
+	layout( binding = 0 ) uniform sampler2D g_color_texture;
+	
 	layout( location = 0 ) in vec2 i_texcoord;
 
 	// Output
@@ -34,6 +35,11 @@
 	// will determine the color of the corresponding pixel on the screen
 	out vec4 o_color;
 #elif defined (EAE6320_PLATFORM_D3D)
+
+	Texture2D g_color_texture : register( t0 );
+	
+	SamplerState g_color_samplerState : register( s0 );
+	
 	cbuffer g_constantBuffer_perFrame : register( b0 )
 	{
 		float g_elapsedSecondCount_systemTime;
@@ -47,10 +53,6 @@
 		float4 g_color;
 	}
 #endif
-
-	Texture2D g_color_texture : register( t0 );
-	
-	SamplerState g_color_samplerState : register( s0 );
 
 // Entry Point
 //============

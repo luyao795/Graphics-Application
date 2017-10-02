@@ -135,11 +135,12 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
-	// Bind shading data and draw geometry
+	// Bind shading data, bind texture and draw geometry
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 		{
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.first->BindShadingData();
+			eae6320::Graphics::cTexture::s_manager.Get(s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second)->Bind(0);
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.second->DrawGeometry();
 		}
 	}
@@ -240,6 +241,22 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 {
 	auto result = Results::Success;
 
+	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.first->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.second->DecrementReferenceCount();
+			eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second);
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.first = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.second = nullptr;
+		}
+	}
+	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
 	CleanUpGraphics();
 
 	{
@@ -289,22 +306,6 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			}
 		}
 	}
-
-	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
-
-	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
-	{
-		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
-		{
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.first->DecrementReferenceCount();
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.second->DecrementReferenceCount();
-			eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second);
-
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.first = nullptr;
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first.second = nullptr;
-		}
-	}
-	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 
 	return result;
 }

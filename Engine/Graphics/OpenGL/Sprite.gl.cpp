@@ -157,7 +157,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			constexpr GLint elementCount = 2;
 			constexpr GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
 			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride,
-				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sSprite, u) - offsetof(eae6320::Graphics::VertexFormats::sSprite, x)));
+				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sSprite, u)));
 			const auto errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)
 			{
