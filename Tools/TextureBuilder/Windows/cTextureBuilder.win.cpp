@@ -51,7 +51,7 @@ eae6320::cResult eae6320::Assets::cTextureBuilder::Build( const std::vector<std:
 		{
 			result = Results::Failure;
 			Assets::OutputErrorMessageWithFileInfo( m_path_source,
-				"DirectXTex couldn't be used because COM couldn't be initiazed" );
+				"DirectXTex couldn't be used because COM couldn't be initialized" );
 			goto OnExit;
 		}
 	}
