@@ -45,11 +45,19 @@ namespace
 void eae6320::cExampleGame::UpdateBasedOnInput()
 {
 	// Is the user pressing the ESC key?
-	if ( UserInput::IsKeyPressed( UserInput::KeyCodes::Escape ) )
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Escape))
 	{
 		// Exit the application
-		const auto result = Exit( EXIT_SUCCESS );
-		EAE6320_ASSERT( result );
+		const auto result = Exit(EXIT_SUCCESS);
+		EAE6320_ASSERT(result);
+	}
+
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
+	{
+		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static, electroballTexture);
+		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static2, pokeballTexture);
+		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static3, electroballTexture);
+		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static4, pokeballTexture);
 	}
 }
 
