@@ -79,21 +79,34 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// OpenGL Rendering Order: Counterclockwise (CCW)
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
+			vertexData[0].u = 0.0f;
+			vertexData[0].v = 0.0f;
+
 
 			vertexData[1].x = tr_X;
-			vertexData[1].y = tr_Y - sideV;;
+			vertexData[1].y = tr_Y - sideV;
+			vertexData[1].u = 1.0f;
+			vertexData[1].v = 0.0f;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y;
+			vertexData[2].u = 1.0f;
+			vertexData[2].v = 1.0f;
 
 			vertexData[3].x = tr_X - sideH;
 			vertexData[3].y = tr_Y - sideV;
+			vertexData[3].u = 0.0f;
+			vertexData[3].v = 0.0f;
 
 			vertexData[4].x = tr_X;
 			vertexData[4].y = tr_Y;
+			vertexData[4].u = 1.0f;
+			vertexData[4].v = 1.0f;
 
 			vertexData[5].x = tr_X - sideH;
 			vertexData[5].y = tr_Y;
+			vertexData[5].u = 0.0f;
+			vertexData[5].v = 1.0f;
 		}
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));

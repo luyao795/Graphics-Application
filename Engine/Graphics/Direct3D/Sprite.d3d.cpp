@@ -66,7 +66,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 					texcoordElement.SemanticName = "TEXCOORD";
 					texcoordElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
 					texcoordElement.Format = DXGI_FORMAT_R32G32_FLOAT;
-					texcoordElement.InputSlot = 1;
+					texcoordElement.InputSlot = 0;
 					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, u);
 					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
@@ -101,21 +101,33 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// Direct3D Rendering Order: Clockwise (CW)
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
+			vertexData[0].u = 0.0f;
+			vertexData[0].v = 1.0f;
 
 			vertexData[1].x = tr_X;
 			vertexData[1].y = tr_Y;
+			vertexData[1].u = 1.0f;
+			vertexData[1].v = 0.0f;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y - sideV;
+			vertexData[2].u = 1.0f;
+			vertexData[2].v = 1.0f;
 
 			vertexData[3].x = tr_X - sideH;
 			vertexData[3].y = tr_Y - sideV;
+			vertexData[3].u = 0.0f;
+			vertexData[3].v = 1.0f;
 
 			vertexData[4].x = tr_X - sideH;
 			vertexData[4].y = tr_Y;
+			vertexData[4].u = 0.0f;
+			vertexData[4].v = 0.0f;
 
 			vertexData[5].x = tr_X;
 			vertexData[5].y = tr_Y;
+			vertexData[5].u = 1.0f;
+			vertexData[5].v = 0.0f;
 		}
 		D3D11_BUFFER_DESC bufferDescription{};
 		{
