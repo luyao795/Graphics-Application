@@ -106,170 +106,310 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	const uint8_t defaultRenderState = 0;
 
 	// Initialize the shading data
+	if (!(result = InitializeEffect()))
 	{
-		if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", defaultRenderState, s_effect_static)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
+		EAE6320_ASSERT(false);
+		goto OnExit;
 	}
 
 	// Initialize the geometry data
+	if (!(result = InitializeSprite()))
 	{
-		if (!(result = eae6320::Graphics::Sprite::Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Sprite::Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Sprite::Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Sprite::Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
+		EAE6320_ASSERT(false);
+		goto OnExit;
 	}
 
 	// Initialize the texture data
+	if (!(result = InitializeTexture()))
 	{
-		char texturePath_pikachu[100] = "data/Textures/";
-		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pikachu, "Pikachu.bintxr"), pikachuTexture)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		char texturePath_pokeball[100] = "data/Textures/";
-		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pokeball, "Pokeball.bintxr"), pokeballTexture)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
-
-		char texturePath_electroball[100] = "data/Textures/";
-		if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_electroball, "Electroball.bintxr"), electroballTexture)))
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
+		EAE6320_ASSERT(false);
+		goto OnExit;
 	}
 
 	// Initialize the rendering data
+	InitializeRenderData();
+
+OnExit:
+	return result;
+}
+
+eae6320::cResult eae6320::cExampleGame::InitializeEffect()
+{
+	cResult result = Results::Success;
+	const uint8_t defaultRenderState = 0;
+
+	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", defaultRenderState, s_effect_static)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+OnExit:
+	return result;
+}
+
+eae6320::cResult eae6320::cExampleGame::InitializeSprite()
+{
+	cResult result = Results::Success;
+
+	if (!(result = eae6320::Graphics::Sprite::Load(0.75f, 0.25f, 1.5f, 0.5f, s_sprite)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Sprite::Load(0.25f, 0.75f, 0.5f, 1.5f, s_sprite2)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Sprite::Load(1.0f, 1.0f, 0.5f, 0.5f, s_sprite_static)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, 1.0f, 0.5f, 0.5f, s_sprite_static2)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Sprite::Load(1.0f, -0.5f, 0.5f, 0.5f, s_sprite_static3)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Sprite::Load(-0.5f, -0.5f, 0.5f, 0.5f, s_sprite_static4)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+OnExit:
+	return result;
+}
+
+eae6320::cResult eae6320::cExampleGame::InitializeTexture()
+{
+	cResult result = Results::Success;
+
+	char texturePath_pikachu[100] = "data/Textures/";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pikachu, "Pikachu.bintxr"), pikachuTexture)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	char texturePath_pokeball[100] = "data/Textures/";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_pokeball, "Pokeball.bintxr"), pokeballTexture)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	char texturePath_electroball[100] = "data/Textures/";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(strcat(texturePath_electroball, "Electroball.bintxr"), electroballTexture)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+OnExit:
+	return result;
+}
+
+void eae6320::cExampleGame::InitializeRenderData()
+{
 	s_render = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite, pikachuTexture);
 	s_render2 = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite2, pikachuTexture);
 	s_render_static = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static, pokeballTexture);
 	s_render_static2 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static2, electroballTexture);
 	s_render_static3 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static3, pokeballTexture);
 	s_render_static4 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static4, electroballTexture);
-
-OnExit:
-	return result;
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
 {
 	cResult result = Results::Success;
+
+	// Clean up the shading data
+	if (!(result = CleanUpEffect()))
 	{
-		if (s_sprite)
-		{
-			result = s_sprite->CleanUp();
-			if (result)
-				s_sprite = nullptr;
-		}
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
 
-		if (s_sprite2)
-		{
-			result = s_sprite2->CleanUp();
-			if (result)
-				s_sprite2 = nullptr;
-		}
+	// Clean up the geometry data
+	if (!(result = CleanUpSprite()))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
 
-		if (s_effect)
-		{
-			result = s_effect->CleanUp();
-			if (result)
-				s_effect = nullptr;
-		}
+	// Clean up the texture data
+	if (!(result = CleanUpTexture()))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
 
-		if (s_sprite_static)
-		{
-			result = s_sprite_static->CleanUp();
-			if (result)
-				s_sprite_static = nullptr;
-		}
+OnExit:
+	return result;
+}
 
-		if (s_sprite_static2)
-		{
-			result = s_sprite_static2->CleanUp();
-			if (result)
-				s_sprite_static2 = nullptr;
-		}
+eae6320::cResult eae6320::cExampleGame::CleanUpEffect()
+{
+	cResult result = Results::Success;
 
-		if (s_sprite_static3)
+	if (s_effect)
+	{
+		result = s_effect->CleanUp();
+		if (result)
+			s_effect = nullptr;
+		else
 		{
-			result = s_sprite_static3->CleanUp();
-			if (result)
-				s_sprite_static3 = nullptr;
-		}
-
-		if (s_sprite_static4)
-		{
-			result = s_sprite_static4->CleanUp();
-			if (result)
-				s_sprite_static4 = nullptr;
-		}
-
-		if (s_effect_static)
-		{
-			result = s_effect_static->CleanUp();
-			if (result)
-				s_effect_static = nullptr;
-		}
-
-		if (pikachuTexture.IsValid())
-		{
-			eae6320::Graphics::cTexture::s_manager.Release(pikachuTexture);
-		}
-
-		if (pokeballTexture.IsValid())
-		{
-			eae6320::Graphics::cTexture::s_manager.Release(pokeballTexture);
-		}
-
-		if (electroballTexture.IsValid())
-		{
-			eae6320::Graphics::cTexture::s_manager.Release(electroballTexture);
+			EAE6320_ASSERT(false);
+			goto OnExit;
 		}
 	}
+
+	if (s_effect_static)
+	{
+		result = s_effect_static->CleanUp();
+		if (result)
+			s_effect_static = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+OnExit:
+	return result;
+}
+
+eae6320::cResult eae6320::cExampleGame::CleanUpSprite()
+{
+	cResult result = Results::Success;
+
+	if (s_sprite)
+	{
+		result = s_sprite->CleanUp();
+		if (result)
+			s_sprite = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_sprite2)
+	{
+		result = s_sprite2->CleanUp();
+		if (result)
+			s_sprite2 = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_sprite_static)
+	{
+		result = s_sprite_static->CleanUp();
+		if (result)
+			s_sprite_static = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_sprite_static2)
+	{
+		result = s_sprite_static2->CleanUp();
+		if (result)
+			s_sprite_static2 = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_sprite_static3)
+	{
+		result = s_sprite_static3->CleanUp();
+		if (result)
+			s_sprite_static3 = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_sprite_static4)
+	{
+		result = s_sprite_static4->CleanUp();
+		if (result)
+			s_sprite_static4 = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+OnExit:
+	return result;
+}
+
+eae6320::cResult eae6320::cExampleGame::CleanUpTexture()
+{
+	cResult result = Results::Success;
+
+	if (pikachuTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(pikachuTexture)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (pokeballTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(pokeballTexture)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (electroballTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(electroballTexture)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+OnExit:
 	return result;
 }
 
