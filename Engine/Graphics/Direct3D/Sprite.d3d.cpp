@@ -59,7 +59,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 
 				// TEXCOORD0
 				// 2 floats == 8 bytes
-				// Offset = 0
+				// Offset = 8
 				{
 					auto& texcoordElement = layoutDescription[1];
 

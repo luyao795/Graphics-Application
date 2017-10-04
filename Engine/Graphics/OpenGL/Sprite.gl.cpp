@@ -164,7 +164,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 
 		// Texcoord (1)
 		// 2 floats == 8 bytes
-		// Offset = 0
+		// Offset = 8
 		{
 			constexpr GLuint vertexElementLocation = 1;
 			constexpr GLint elementCount = 2;
