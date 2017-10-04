@@ -29,6 +29,26 @@ namespace eae6320
 		class Effect;
 		class Sprite;
 
+		// Struct for storing data to be submitted
+		struct DataSetForRendering
+		{
+			DataSetForRendering()
+			{
+
+			}
+
+			DataSetForRendering(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Sprite* i_sprite, eae6320::Graphics::cTexture::Handle i_texture)
+			{
+				effect = i_effect;
+				sprite = i_sprite;
+				texture = i_texture;
+			}
+
+			eae6320::Graphics::Effect* effect;
+			eae6320::Graphics::Sprite* sprite;
+			eae6320::Graphics::cTexture::Handle texture;
+		};
+
 		// Submission
 		//-----------
 
@@ -42,7 +62,7 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRenderedWithTexture(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite, eae6320::Graphics::cTexture::Handle texture);
+		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRendering renderData);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
@@ -77,6 +97,7 @@ namespace eae6320
 		};
 
 		cResult Initialize( const sInitializationParameters& i_initializationParameters );
+
 		cResult CleanUp();
 
 		void SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime);

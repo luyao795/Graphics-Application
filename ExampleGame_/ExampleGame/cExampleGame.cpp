@@ -26,7 +26,6 @@ namespace
 
 	// Geometry Data
 	//--------------
-
 	// These two sprites form the color changing plus sign.
 	eae6320::Graphics::Sprite* s_sprite = nullptr;
 	eae6320::Graphics::Sprite* s_sprite2 = nullptr;
@@ -40,6 +39,19 @@ namespace
 	eae6320::Graphics::cTexture::Handle pikachuTexture;
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
+
+	// Combined Rendering Data
+	eae6320::Graphics::DataSetForRendering s_render = eae6320::Graphics::DataSetForRendering();
+	eae6320::Graphics::DataSetForRendering s_render2 = eae6320::Graphics::DataSetForRendering();
+	eae6320::Graphics::DataSetForRendering s_render_static = eae6320::Graphics::DataSetForRendering();
+	eae6320::Graphics::DataSetForRendering s_render_static2 = eae6320::Graphics::DataSetForRendering();
+	eae6320::Graphics::DataSetForRendering s_render_static3 = eae6320::Graphics::DataSetForRendering();
+	eae6320::Graphics::DataSetForRendering s_render_static4 = eae6320::Graphics::DataSetForRendering();
+
+	// External counter used for Rendering based on Time
+	float previousTimeElapsedCounter = 0.0f;
+	float currentTimeElapsedCounter = 0.0f;
+	bool flagForSwappingTexturesBasedOnTime = false;
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -54,10 +66,34 @@ void eae6320::cExampleGame::UpdateBasedOnInput()
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
 	{
-		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static, electroballTexture);
-		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static2, pokeballTexture);
-		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static3, electroballTexture);
-		eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static4, pokeballTexture);
+		s_render_static.texture = electroballTexture;
+		s_render_static2.texture = pokeballTexture;
+	}
+	else
+	{
+		s_render_static.texture = pokeballTexture;
+		s_render_static2.texture = electroballTexture;
+	}
+}
+
+void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
+{
+	currentTimeElapsedCounter += i_elapsedSecondCount_sinceLastUpdate;
+	if (currentTimeElapsedCounter - previousTimeElapsedCounter > 1.0f)
+	{
+		flagForSwappingTexturesBasedOnTime = !flagForSwappingTexturesBasedOnTime;
+		previousTimeElapsedCounter = currentTimeElapsedCounter;
+	}
+
+	if (flagForSwappingTexturesBasedOnTime)
+	{
+		s_render_static3.texture = electroballTexture;
+		s_render_static4.texture = pokeballTexture;
+	}
+	else
+	{
+		s_render_static3.texture = pokeballTexture;
+		s_render_static4.texture = electroballTexture;
 	}
 }
 
@@ -147,6 +183,14 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 		}
 	}
 
+	// Initialize the rendering data
+	s_render = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite, pikachuTexture);
+	s_render2 = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite2, pikachuTexture);
+	s_render_static = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static, pokeballTexture);
+	s_render_static2 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static2, electroballTexture);
+	s_render_static3 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static3, pokeballTexture);
+	s_render_static4 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static4, electroballTexture);
+
 OnExit:
 	return result;
 }
@@ -235,10 +279,10 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(COLOR_DEFAULT.Magenta());
 
 	// Submit Effect Sprite pair data
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect, s_sprite, pikachuTexture);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect, s_sprite2, pikachuTexture);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static, pokeballTexture);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static2, electroballTexture);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static3, pokeballTexture);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_effect_static, s_sprite_static4, electroballTexture);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render2);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 }
