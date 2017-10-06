@@ -33,7 +33,11 @@ namespace eae6320
 				// POSITION
 				// 2 floats == 8 bytes
 				// Offset = 0
-				float x, y;
+				//====================
+				// TEXCOORD0
+				// 2 floats == 8 bytes
+				// Offset = 8
+				float x, y, u, v;
 			};
 		}
 	}

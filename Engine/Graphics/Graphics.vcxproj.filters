@@ -34,6 +34,8 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="GraphicsHandler.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="cTexture.h" />
+    <ClInclude Include="TextureFormats.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D\cConstantBuffer.d3d.cpp">
@@ -93,6 +95,13 @@
     <ClCompile Include="Direct3D\GraphicsHandler.d3d.cpp">
       <Filter>Direct3D</Filter>
     </ClCompile>
+    <ClCompile Include="Direct3D\cTexture.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\cTexture.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="cTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />

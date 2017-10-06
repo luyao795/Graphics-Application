@@ -24,7 +24,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 		// Load the compiled binary vertex shader for the input layout
 		eae6320::Platform::sDataFromFile vertexShaderDataFromFile;
 		std::string errorMessage;
-		if (result = eae6320::Platform::LoadBinaryFile("data/Shaders/Vertex/vertexInputLayout_sprite.shd", vertexShaderDataFromFile, &errorMessage))
+		if (result = eae6320::Platform::LoadBinaryFile("data/Shaders/Vertex/vertexInputLayout_sprite.binshd", vertexShaderDataFromFile, &errorMessage))
 		{
 			// Create the vertex layout
 
@@ -34,7 +34,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// (by using so-called "semantic" names so that, for example,
 			// "POSITION" here matches with "POSITION" in shader code).
 			// Note that OpenGL uses arbitrarily assignable number IDs to do the same thing.
-			constexpr unsigned int vertexElementCount = 1;
+			constexpr unsigned int vertexElementCount = 2;
 			D3D11_INPUT_ELEMENT_DESC layoutDescription[vertexElementCount] = {};
 			{
 				// Slot 0
@@ -52,6 +52,24 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 					positionElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, x);
 					positionElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					positionElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
+				}
+			}
+			{
+				// Slot 1
+
+				// TEXCOORD0
+				// 2 floats == 8 bytes
+				// Offset = 8
+				{
+					auto& texcoordElement = layoutDescription[1];
+
+					texcoordElement.SemanticName = "TEXCOORD";
+					texcoordElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
+					texcoordElement.Format = DXGI_FORMAT_R32G32_FLOAT;
+					texcoordElement.InputSlot = 0;
+					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sSprite, u);
+					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}
 			}
 
@@ -83,21 +101,33 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// Direct3D Rendering Order: Clockwise (CW)
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
+			vertexData[0].u = 0.0f;
+			vertexData[0].v = 1.0f;
 
 			vertexData[1].x = tr_X;
 			vertexData[1].y = tr_Y;
+			vertexData[1].u = 1.0f;
+			vertexData[1].v = 0.0f;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y - sideV;
+			vertexData[2].u = 1.0f;
+			vertexData[2].v = 1.0f;
 
 			vertexData[3].x = tr_X - sideH;
 			vertexData[3].y = tr_Y - sideV;
+			vertexData[3].u = 0.0f;
+			vertexData[3].v = 1.0f;
 
 			vertexData[4].x = tr_X - sideH;
 			vertexData[4].y = tr_Y;
+			vertexData[4].u = 0.0f;
+			vertexData[4].v = 0.0f;
 
 			vertexData[5].x = tr_X;
 			vertexData[5].y = tr_Y;
+			vertexData[5].u = 1.0f;
+			vertexData[5].v = 0.0f;
 		}
 		D3D11_BUFFER_DESC bufferDescription{};
 		{

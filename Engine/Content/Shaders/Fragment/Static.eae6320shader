@@ -20,6 +20,12 @@
 	{
 		vec4 g_color;
 	};
+	
+	// Input
+	//======
+	layout( binding = 0 ) uniform sampler2D g_color_texture;
+	
+	layout( location = 0 ) in vec2 i_texcoord;
 
 	// Output
 	//=======
@@ -28,6 +34,11 @@
 	// will determine the color of the corresponding pixel on the screen
 	out vec4 o_color;
 #elif defined (EAE6320_PLATFORM_D3D)
+
+	Texture2D g_color_texture : register( t0 );
+	
+	SamplerState g_color_samplerState : register( s0 );
+
 	cbuffer g_constantBuffer_perFrame : register( b0 )
 	{
 		float g_elapsedSecondCount_systemTime;
@@ -48,12 +59,15 @@
 #if defined (EAE6320_PLATFORM_GL)
 	void main()
 {
+	vec4 sampledColor = texture2D( g_color_texture, i_texcoord );
+	
+	o_color = sampledColor;
 	// Output solid white
-	o_color = vec4(
+	//o_color = vec4(
 		// RGB
-		1.0, 1.0, 1.0,
+	//	1.0, 1.0, 1.0,
 		// Alpha
-		1.0 );
+	//	1.0 );
 
 	// Make sure the range of those values is [0, 1]
 	//o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
@@ -62,6 +76,11 @@
 }
 #elif defined (EAE6320_PLATFORM_D3D)
 	void main(
+	
+	// Input
+	//======
+	in const float4 i_position : SV_POSITION,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
@@ -72,12 +91,15 @@
 
 	)
 {
+	const float4 sampledColor = g_color_texture.Sample( g_color_samplerState, i_texcoord );
+	
+	o_color = sampledColor;
 	// Output solid white
-	o_color = float4(
+	//o_color = float4(
 		// RGB
-		1.0, 1.0, 1.0,
+	//	1.0, 1.0, 1.0,
 		// Alpha
-		1.0 );
+	//	1.0 );
 
 	// Make sure the range of those values is [0, 1]
 	//o_color.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;

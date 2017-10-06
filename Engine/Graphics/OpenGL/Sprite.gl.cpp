@@ -79,21 +79,34 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			// OpenGL Rendering Order: Counterclockwise (CCW)
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
+			vertexData[0].u = 0.0f;
+			vertexData[0].v = 0.0f;
+
 
 			vertexData[1].x = tr_X;
-			vertexData[1].y = tr_Y - sideV;;
+			vertexData[1].y = tr_Y - sideV;
+			vertexData[1].u = 1.0f;
+			vertexData[1].v = 0.0f;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y;
+			vertexData[2].u = 1.0f;
+			vertexData[2].v = 1.0f;
 
 			vertexData[3].x = tr_X - sideH;
 			vertexData[3].y = tr_Y - sideV;
+			vertexData[3].u = 0.0f;
+			vertexData[3].v = 0.0f;
 
 			vertexData[4].x = tr_X;
 			vertexData[4].y = tr_Y;
+			vertexData[4].u = 1.0f;
+			vertexData[4].v = 1.0f;
 
 			vertexData[5].x = tr_X - sideH;
 			vertexData[5].y = tr_Y;
+			vertexData[5].u = 0.0f;
+			vertexData[5].v = 1.0f;
 		}
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sSprite);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
@@ -125,6 +138,39 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 			constexpr GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
 			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride,
 				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sSprite, x)));
+			const auto errorCode = glGetError();
+			if (errorCode == GL_NO_ERROR)
+			{
+				glEnableVertexAttribArray(vertexElementLocation);
+				const GLenum errorCode = glGetError();
+				if (errorCode != GL_NO_ERROR)
+				{
+					result = eae6320::Results::Failure;
+					EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					eae6320::Logging::OutputError("OpenGL failed to enable the POSITION vertex attribute at location %u: %s",
+						vertexElementLocation, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					goto OnExit;
+				}
+			}
+			else
+			{
+				result = eae6320::Results::Failure;
+				EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+				eae6320::Logging::OutputError("OpenGL failed to set the POSITION vertex attribute at location %u: %s",
+					vertexElementLocation, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+				goto OnExit;
+			}
+		}
+
+		// Texcoord (1)
+		// 2 floats == 8 bytes
+		// Offset = 8
+		{
+			constexpr GLuint vertexElementLocation = 1;
+			constexpr GLint elementCount = 2;
+			constexpr GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
+			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride,
+				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sSprite, u)));
 			const auto errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)
 			{

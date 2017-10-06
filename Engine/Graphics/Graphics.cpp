@@ -12,6 +12,7 @@
 #include "Color.h"
 #include "Effect.h"
 #include "Sprite.h"
+#include "cTexture.h"
 #include "GraphicsHandler.h"
 #include "Graphics.h"
 
@@ -35,7 +36,7 @@ namespace
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
-		std::vector<std::pair<eae6320::Graphics::Effect*, eae6320::Graphics::Sprite*>> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRendering> cachedEffectSpritePairForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -69,13 +70,13 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRendered(eae6320::Graphics::Effect* effect, eae6320::Graphics::Sprite* sprite)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRendering renderData)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
-	std::pair<eae6320::Graphics::Effect*, eae6320::Graphics::Sprite*> pair = std::make_pair(effect, sprite);
-	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(pair);
-	effect->IncrementReferenceCount();
-	sprite->IncrementReferenceCount();
+	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(renderData);
+	renderData.effect->IncrementReferenceCount();
+	renderData.sprite->IncrementReferenceCount();
+	eae6320::Graphics::cTexture::s_manager.Get(renderData.texture)->IncrementReferenceCount();
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -133,12 +134,13 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
-	// Bind shading data and draw geometry
+	// Bind shading data, bind texture and draw geometry
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 		{
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->BindShadingData();
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DrawGeometry();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
+			eae6320::Graphics::cTexture::s_manager.Get(s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture)->Bind(0);
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
 		}
 	}
 
@@ -149,8 +151,9 @@ void eae6320::Graphics::RenderFrame()
 		{
 			for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 			{
-				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->DecrementReferenceCount();
-				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DecrementReferenceCount();
+				eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture);
 			}
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
@@ -237,6 +240,22 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 {
 	auto result = Results::Success;
 
+	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DecrementReferenceCount();
+			eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture);
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite = nullptr;
+		}
+	}
+	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
 	CleanUpGraphics();
 
 	{
@@ -286,21 +305,6 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 			}
 		}
 	}
-
-	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
-
-	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
-	{
-		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
-		{
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first->DecrementReferenceCount();
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second->DecrementReferenceCount();
-
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].first = nullptr;
-			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].second = nullptr;
-		}
-	}
-	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 
 	return result;
 }
