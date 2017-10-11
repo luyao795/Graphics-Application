@@ -7,8 +7,7 @@
 // Constant Buffers
 //=================
 
-#if defined (EAE6320_PLATFORM_GL)
-	layout( std140, binding = 0 ) uniform g_constantBuffer_perFrame
+	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
 	{
 		float g_elapsedSecondCount_systemTime;
 		float g_elapsedSecondCount_simulationTime;
@@ -16,16 +15,21 @@
 		vec2 g_padding;
 	};
 
-	layout( std140, binding = 1 ) uniform g_constantBuffer_perMaterial
+	DeclareConstantBuffer(g_constantBuffer_perMaterial, 1)
 	{
 		vec4 g_color;
 	};
 
-	layout( std140, binding = 2 ) uniform g_constantBuffer_perDrawCall
+	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
 	{
 		// This is a placeholder to prevent an empty constant buffer declaration
 		vec4 DUMMY;
 	};
+
+	// Entry Point
+	//============
+
+#if defined (EAE6320_PLATFORM_GL)
 
 	// Input
 	//======
@@ -42,50 +46,10 @@
 	
 	layout( location = 0 ) out vec2 o_texcoord;
 
-	// The vertex shader must always output a position value,
-	// but unlike HLSL where the value is explicit
-	// GLSL has an automatically-required variable named "gl_Position"
-#elif defined (EAE6320_PLATFORM_D3D)
-	cbuffer g_constantBuffer_perFrame : register( b0 )
-	{
-		float g_elapsedSecondCount_systemTime;
-		float g_elapsedSecondCount_simulationTime;
-		// For float4 alignment
-		float2 g_padding;
-	}
-
-	cbuffer g_constantBuffer_perMaterial : register( b1 )
-	{
-		float4 g_color;
-	}
-
-	cbuffer g_constantBuffer_perDrawCall : register( b2 )
-	{
-		// This is a placeholder to prevent an empty constant buffer declaration
-		float4 DUMMY;
-	}
-#endif
-
-	// Entry Point
-	//============
-
-#if defined (EAE6320_PLATFORM_GL)
 	void main()
-	{
-		// Calculate the position of this vertex on screen
-		{
-			// This shader sets the "out" position directly from the "in" position:
-			gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
-			// This shader sets the "out" texcoord directly from the "in" texcoord:
-			o_texcoord = i_texcoord;
-			// Both of the following lines are exactly equivalent to the one above
-			//gl_Position = vec4( i_position.xy, 0.0, 1.0 );
-			//gl_Position = vec4( i_position, 0.0, 1.0 );
-			//gl_Position.x = i_position.x * abs( sin( g_elapsedSecondCount_simulationTime ) );
-			//gl_Position.y = i_position.y * abs( cos( g_elapsedSecondCount_simulationTime ) );
-		}
-	}
+	
 #elif defined (EAE6320_PLATFORM_D3D)
+
 	void main(
 
 	// Input
@@ -107,18 +71,19 @@
 	out float2 o_texcoord : TEXCOORD0
 
 	)
-{
-	// Calculate the position of this vertex on screen
-	{
-		// This shader sets the "out" position directly from the "in" position:
-		o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
-		// This shader sets the "out" texcoord directly from the "in" texcoord:
-		o_texcoord = i_texcoord;
-		// Both of the following lines are exactly equivalent to the one above
-		//o_position = float4( i_position.xy, 0.0, 1.0 );
-		//o_position = float4( i_position, 0.0, 1.0 );
-		//o_position.x = i_position.x * abs( sin( g_elapsedSecondCount_simulationTime ) );
-		//o_position.y = i_position.y * abs( cos( g_elapsedSecondCount_simulationTime ) );
-	}
-}
 #endif
+	{
+		// Calculate the position of this vertex on screen
+		{
+	#if defined (EAE6320_PLATFORM_GL)
+			// This shader sets the "out" position directly from the "in" position:
+			gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
+	#elif defined (EAE6320_PLATFORM_D3D)
+			// This shader sets the "out" position directly from the "in" position:
+			o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
+	#endif
+			// This shader sets the "out" texcoord directly from the "in" texcoord:
+			o_texcoord = i_texcoord;
+
+		}
+	}
