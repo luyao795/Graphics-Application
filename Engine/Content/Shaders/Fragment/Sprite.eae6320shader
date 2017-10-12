@@ -77,6 +77,7 @@
 		gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
 		gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
 		gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+		gradientColor.a = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
 		
 		vec4 combinedColor = vec4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
 		
