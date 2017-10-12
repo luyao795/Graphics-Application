@@ -20,6 +20,7 @@
 #include <cstdint>
 
 #include <Engine/Asserts/Asserts.h>
+#include <limits>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
@@ -43,7 +44,7 @@
 	#define EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()	\
 		void IncrementReferenceCount()	\
 		{	\
-			EAE6320_ASSERT( m_referenceCount > 0 );	\
+			EAE6320_ASSERT( ( m_referenceCount > 0 ) && ( m_referenceCount < std::numeric_limits<decltype( m_referenceCount )>::max() ) );	\
 			EAE6320_ASSERT( ( reinterpret_cast<uintptr_t>( &m_referenceCount ) % 2 ) == 0 );	\
 			auto* const referenceCount_asSigned = reinterpret_cast<short*>( &m_referenceCount );	\
 			InterlockedIncrementNoFence16( referenceCount_asSigned );	\
@@ -69,8 +70,8 @@
 #define EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( tClassName )	\
 	tClassName( const tClassName& i_instanceToBeCopied ) = delete;	\
 	tClassName& operator =( const tClassName& i_instanceToBeCopied ) = delete;	\
-	tClassName( tClassName&& i_instanceToBeMoved ) = delete;	\
-	tClassName& operator =( tClassName&& i_instanceToBeMoved ) = delete;
+	tClassName( tClassName&& io_instanceToBeMoved ) = delete;	\
+	tClassName& operator =( tClassName&& io_instanceToBeMoved ) = delete;
 
 // Data
 //=====

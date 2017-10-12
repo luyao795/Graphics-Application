@@ -76,7 +76,7 @@ void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetFor
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(renderData);
 	renderData.effect->IncrementReferenceCount();
 	renderData.sprite->IncrementReferenceCount();
-	eae6320::Graphics::cTexture::s_manager.Get(renderData.texture)->IncrementReferenceCount();
+	renderData.texture->IncrementReferenceCount();
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -139,7 +139,7 @@ void eae6320::Graphics::RenderFrame()
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 		{
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
-			eae6320::Graphics::cTexture::s_manager.Get(s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture)->Bind(0);
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
 		}
 	}
@@ -153,7 +153,7 @@ void eae6320::Graphics::RenderFrame()
 			{
 				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
 				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DecrementReferenceCount();
-				eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture);
+				s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
 			}
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
@@ -248,7 +248,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		{
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DecrementReferenceCount();
-			eae6320::Graphics::cTexture::s_manager.Release(s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture);
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
 
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect = nullptr;
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite = nullptr;
