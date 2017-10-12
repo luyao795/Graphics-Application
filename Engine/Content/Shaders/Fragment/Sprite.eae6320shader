@@ -81,5 +81,4 @@
 		vec4 combinedColor = vec4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
 		
 		o_color = combinedColor;
-
 	}

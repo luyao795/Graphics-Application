@@ -67,5 +67,4 @@
 		vec4 sampledColor = CreateSampledColor( g_color_texture, i_texcoord, g_color_samplerState );
 		
 		o_color = sampledColor;
-
 	}
