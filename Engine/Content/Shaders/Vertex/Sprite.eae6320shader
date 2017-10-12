@@ -71,7 +71,9 @@
 	out float2 o_texcoord : TEXCOORD0
 
 	)
+	
 #endif
+
 	{
 		// Calculate the position of this vertex on screen
 		{

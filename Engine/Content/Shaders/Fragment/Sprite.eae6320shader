@@ -7,9 +7,7 @@
 // Constant Buffers
 //=================
 
-#if defined (EAE6320_PLATFORM_GL)
-	
-	layout( std140, binding = 0 ) uniform g_constantBuffer_perFrame
+	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
 	{
 		float g_elapsedSecondCount_systemTime;
 		float g_elapsedSecondCount_simulationTime;
@@ -17,14 +15,22 @@
 		vec2 g_padding;
 	};
 
-	layout( std140, binding = 1 ) uniform g_constantBuffer_perMaterial
+	DeclareConstantBuffer(g_constantBuffer_perMaterial, 1)
 	{
 		vec4 g_color;
 	};
 	
+	DeclareTextureBuffer(g_color_texture, 0);
+	
+	DeclareSamplerState(g_color_samplerState, 0);
+
+// Entry Point
+//============
+
+#if defined (EAE6320_PLATFORM_GL)
+
 	// Input
 	//======
-	layout( binding = 0 ) uniform sampler2D g_color_texture;
 	
 	layout( location = 0 ) in vec2 i_texcoord;
 
@@ -34,51 +40,11 @@
 	// Whatever color value is output from the fragment shader
 	// will determine the color of the corresponding pixel on the screen
 	out vec4 o_color;
-#elif defined (EAE6320_PLATFORM_D3D)
-
-	Texture2D g_color_texture : register( t0 );
 	
-	SamplerState g_color_samplerState : register( s0 );
-	
-	cbuffer g_constantBuffer_perFrame : register( b0 )
-	{
-		float g_elapsedSecondCount_systemTime;
-		float g_elapsedSecondCount_simulationTime;
-		// For float4 alignment
-		float2 g_padding;
-	}
-
-	cbuffer g_constantBuffer_perMaterial : register( b1 )
-	{
-		float4 g_color;
-	}
-#endif
-
-// Entry Point
-//============
-
-#if defined (EAE6320_PLATFORM_GL)
 	void main()
-{
-	vec4 sampledColor = texture2D( g_color_texture, i_texcoord );
-	
-	// Output solid white
-	vec4 gradientColor = vec4(
-		// RGB
-		1.0, 1.0, 1.0,
-		// Alpha
-		1.0 );
 
-	// Make sure the range of those values is [0, 1]
-	gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	
-	vec4 combinedColor = vec4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
-	
-	o_color = combinedColor;
-}
 #elif defined (EAE6320_PLATFORM_D3D)
+
 	void main(
 	
 	// Input
@@ -94,23 +60,26 @@
 	out float4 o_color : SV_TARGET
 
 	)
-{
-	const float4 sampledColor = g_color_texture.Sample( g_color_samplerState, i_texcoord );
 	
-	// Output solid white
-	float4 gradientColor = float4(
-		// RGB
-		1.0, 1.0, 1.0,
-		// Alpha
-		1.0 );
-
-	// Make sure the range of those values is [0, 1]
-	gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
-	
-	float4 combinedColor = float4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
-	
-	o_color = combinedColor;
-}
 #endif
+
+	{
+		vec4 sampledColor = CreateSampledColor( g_color_texture, i_texcoord, g_color_samplerState );
+		
+		// Output solid white
+		vec4 gradientColor = vec4(
+			// RGB
+			1.0, 1.0, 1.0,
+			// Alpha
+			1.0 );
+
+		// Make sure the range of those values is [0, 1]
+		gradientColor.r = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+		gradientColor.g = (cos( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+		gradientColor.b = (sin( g_elapsedSecondCount_simulationTime ) + 1) / 2;
+		
+		vec4 combinedColor = vec4(sampledColor.r * gradientColor.r, sampledColor.g * gradientColor.g, sampledColor.b * gradientColor.b, sampledColor.a * gradientColor.a);
+		
+		o_color = combinedColor;
+
+	}
