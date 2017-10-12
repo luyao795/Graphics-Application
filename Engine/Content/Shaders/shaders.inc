@@ -51,5 +51,6 @@
 	#define DeclareTextureBuffer( i_name, i_id ) layout( binding = i_id ) uniform sampler2D i_name
 	#define DeclareSamplerState( i_name, i_id )
 	#define CreateSampledColor( i_texture, i_texcoord, i_samplerState ) texture2D( i_texture, i_texcoord )
+	#define o_position gl_Position
 
 #endif

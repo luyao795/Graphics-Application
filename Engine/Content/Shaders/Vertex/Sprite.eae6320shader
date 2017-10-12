@@ -76,13 +76,8 @@
 
 	// Calculate the position of this vertex on screen
 	{
-#if defined (EAE6320_PLATFORM_GL)
 		// This shader sets the "out" position directly from the "in" position:
-		gl_Position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
-#elif defined (EAE6320_PLATFORM_D3D)
-		// This shader sets the "out" position directly from the "in" position:
-		o_position = float4( i_position.x, i_position.y, 0.0, 1.0 );
-#endif
+		o_position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
 		// This shader sets the "out" texcoord directly from the "in" texcoord:
 		o_texcoord = i_texcoord;
 	}
