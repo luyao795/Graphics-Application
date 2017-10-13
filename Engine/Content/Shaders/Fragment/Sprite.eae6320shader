@@ -6,19 +6,6 @@
 
 // Constant Buffers
 //=================
-
-	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
-	{
-		float g_elapsedSecondCount_systemTime;
-		float g_elapsedSecondCount_simulationTime;
-		// For vec4 alignment
-		vec2 g_padding;
-	};
-
-	DeclareConstantBuffer(g_constantBuffer_perMaterial, 1)
-	{
-		vec4 g_color;
-	};
 	
 	DeclareTextureBuffer(g_color_texture, 0);
 	

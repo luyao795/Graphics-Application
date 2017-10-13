@@ -12,8 +12,8 @@
 
 #endif
 
-// Types
-//======
+// Types and Variables
+//====================
 
 #if defined( EAE6320_PLATFORM_D3D )
 
@@ -32,11 +32,12 @@
 	#define float2x2 mat2
 	#define float3x3 mat3
 	#define float4x4 mat4
+	#define o_position gl_Position
 
 #endif
 
-// Constant Buffers
-//=================
+// Constant Buffers Declaration
+//=============================
 
 #if defined( EAE6320_PLATFORM_D3D )
 
@@ -51,6 +52,27 @@
 	#define DeclareTextureBuffer( i_name, i_id ) layout( binding = i_id ) uniform sampler2D i_name
 	#define DeclareSamplerState( i_name, i_id )
 	#define CreateSampledColor( i_texture, i_texcoord, i_samplerState ) texture2D( i_texture, i_texcoord )
-	#define o_position gl_Position
 
 #endif
+
+// Constant Buffers Definition
+//============================
+
+	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
+	{
+		float g_elapsedSecondCount_systemTime;
+		float g_elapsedSecondCount_simulationTime;
+		// For vec4 alignment
+		vec2 g_padding;
+	};
+
+	DeclareConstantBuffer(g_constantBuffer_perMaterial, 1)
+	{
+		vec4 g_color;
+	};
+
+	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
+	{
+		// This is a placeholder to prevent an empty constant buffer declaration
+		vec4 DUMMY;
+	};

@@ -4,28 +4,6 @@
 
 #include <Shaders/shaders.inc>
 
-// Constant Buffers
-//=================
-
-	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
-	{
-		float g_elapsedSecondCount_systemTime;
-		float g_elapsedSecondCount_simulationTime;
-		// For vec4 alignment
-		vec2 g_padding;
-	};
-
-	DeclareConstantBuffer(g_constantBuffer_perMaterial, 1)
-	{
-		vec4 g_color;
-	};
-
-	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
-	{
-		// This is a placeholder to prevent an empty constant buffer declaration
-		vec4 DUMMY;
-	};
-
 	// Entry Point
 	//============
 
