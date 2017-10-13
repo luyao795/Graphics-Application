@@ -66,13 +66,13 @@ void eae6320::cExampleGame::UpdateBasedOnInput()
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
 	{
-		s_render_static.texture = electroballTexture;
-		s_render_static2.texture = pokeballTexture;
+		s_render_static.texture = eae6320::Graphics::cTexture::s_manager.Get(electroballTexture);
+		s_render_static2.texture = eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture);
 	}
 	else
 	{
-		s_render_static.texture = pokeballTexture;
-		s_render_static2.texture = electroballTexture;
+		s_render_static.texture = eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture);
+		s_render_static2.texture = eae6320::Graphics::cTexture::s_manager.Get(electroballTexture);
 	}
 }
 
@@ -87,13 +87,13 @@ void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_s
 
 	if (flagForSwappingTexturesBasedOnTime)
 	{
-		s_render_static3.texture = electroballTexture;
-		s_render_static4.texture = pokeballTexture;
+		s_render_static3.texture = eae6320::Graphics::cTexture::s_manager.Get(electroballTexture);
+		s_render_static4.texture = eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture);
 	}
 	else
 	{
-		s_render_static3.texture = pokeballTexture;
-		s_render_static4.texture = electroballTexture;
+		s_render_static3.texture = eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture);
+		s_render_static4.texture = eae6320::Graphics::cTexture::s_manager.Get(electroballTexture);
 	}
 }
 
@@ -229,12 +229,12 @@ OnExit:
 
 void eae6320::cExampleGame::InitializeRenderData()
 {
-	s_render = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite, pikachuTexture);
-	s_render2 = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite2, pikachuTexture);
-	s_render_static = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static, pokeballTexture);
-	s_render_static2 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static2, electroballTexture);
-	s_render_static3 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static3, pokeballTexture);
-	s_render_static4 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static4, electroballTexture);
+	s_render = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite, eae6320::Graphics::cTexture::s_manager.Get(pikachuTexture));
+	s_render2 = eae6320::Graphics::DataSetForRendering(s_effect, s_sprite2, eae6320::Graphics::cTexture::s_manager.Get(pikachuTexture));
+	s_render_static = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static, eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture));
+	s_render_static2 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static2, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
+	s_render_static3 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static3, eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture));
+	s_render_static4 = eae6320::Graphics::DataSetForRendering(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()

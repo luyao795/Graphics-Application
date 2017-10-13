@@ -37,7 +37,7 @@ namespace eae6320
 
 			}
 
-			DataSetForRendering(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Sprite* i_sprite, eae6320::Graphics::cTexture::Handle i_texture)
+			DataSetForRendering(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Sprite* i_sprite, eae6320::Graphics::cTexture* i_texture)
 			{
 				effect = i_effect;
 				sprite = i_sprite;
@@ -46,7 +46,7 @@ namespace eae6320
 
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Sprite* sprite;
-			eae6320::Graphics::cTexture::Handle texture;
+			eae6320::Graphics::cTexture* texture;
 		};
 
 		// Submission
