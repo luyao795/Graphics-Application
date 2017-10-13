@@ -252,6 +252,7 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect = nullptr;
 			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture = nullptr;
 		}
 	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
