@@ -73,8 +73,8 @@ namespace eae6320
 				this->DecrementReferenceCount();
 			else
 			{
-				EAE6320_ASSERTF(false, "Failed to clean up shading data.");
-				Logging::OutputError("Failed to clean up shading data.");
+				EAE6320_ASSERTF(false, "Failed to clean up shading data");
+				Logging::OutputError("Failed to clean up shading data");
 			}
 			return result;
 		}
