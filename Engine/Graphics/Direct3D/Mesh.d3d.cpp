@@ -101,22 +101,47 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 			// Direct3D Rendering Order: Clockwise (CW)
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
+			vertexData[0].r = 255;
+			vertexData[0].g = 255;
+			vertexData[0].b = 0;
+			vertexData[0].a = 255;
 
 			vertexData[1].x = tr_X;
 			vertexData[1].y = tr_Y;
+			vertexData[1].r = 255;
+			vertexData[1].g = 0;
+			vertexData[1].b = 255;
+			vertexData[1].a = 255;
 
 			vertexData[2].x = tr_X;
 			vertexData[2].y = tr_Y - sideV;
+			vertexData[2].r = 255;
+			vertexData[2].g = 255;
+			vertexData[2].b = 0;
+			vertexData[2].a = 255;
 
 			vertexData[3].x = tr_X - sideH;
 			vertexData[3].y = tr_Y - sideV;
+			vertexData[3].r = 255;
+			vertexData[3].g = 255;
+			vertexData[3].b = 0;
+			vertexData[3].a = 255;
 
 			vertexData[4].x = tr_X - sideH;
 			vertexData[4].y = tr_Y;
+			vertexData[4].r = 0;
+			vertexData[4].g = 255;
+			vertexData[4].b = 0;
+			vertexData[4].a = 255;
 
 			vertexData[5].x = tr_X;
 			vertexData[5].y = tr_Y;
+			vertexData[5].r = 255;
+			vertexData[5].g = 0;
+			vertexData[5].b = 255;
+			vertexData[5].a = 255;
 		}
+
 		D3D11_BUFFER_DESC VertexBufferDescription{};
 		{
 			const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
@@ -146,22 +171,56 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 
 	// Index Buffer
 	{
-		//D3D11_BUFFER_DESC IndexBufferDescription{};
-		//{
-		//	const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
-		//	EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(VertexBufferDescription.ByteWidth) * 8)));
-		//	IndexBufferDescription.ByteWidth = static_cast<unsigned int>(bufferSize);
-		//	IndexBufferDescription.Usage = D3D11_USAGE_IMMUTABLE; // In our class the buffer will never change after it's been created
-		//	IndexBufferDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		//	IndexBufferDescription.CPUAccessFlags = 0;	// No CPU access is necessary
-		//	IndexBufferDescription.MiscFlags = 0;
-		//	IndexBufferDescription.StructureByteStride = 0; // Not used
-		//}
-		//D3D11_SUBRESOURCE_DATA InitialIndexData{};
-		//{
-		//	InitialIndexData.pSysMem = vertexData;
-		//	// (The other data members are ignored for non-texture buffers)
-		//}
+		constexpr unsigned int rectangleCount = 1;
+		constexpr unsigned int vertexCountPerRectangle = 4;
+		const auto indexCount = rectangleCount * vertexCountPerRectangle;
+		eae6320::Graphics::VertexFormats::sMesh meshData[indexCount];
+		{
+			meshData[0].x = tr_X - sideH;
+			meshData[0].y = tr_Y - sideV;
+			meshData[0].r = 255;
+			meshData[0].g = 255;
+			meshData[0].b = 0;
+			meshData[0].a = 255;
+
+			meshData[1].x = tr_X;
+			meshData[1].y = tr_Y;
+			meshData[1].r = 255;
+			meshData[1].g = 0;
+			meshData[1].b = 255;
+			meshData[1].a = 255;
+
+			meshData[2].x = tr_X;
+			meshData[2].y = tr_Y - sideV;
+			meshData[2].r = 255;
+			meshData[2].g = 255;
+			meshData[2].b = 0;
+			meshData[2].a = 255;
+
+			meshData[4].x = tr_X - sideH;
+			meshData[4].y = tr_Y;
+			meshData[4].r = 0;
+			meshData[4].g = 255;
+			meshData[4].b = 0;
+			meshData[4].a = 255;
+		}
+
+		D3D11_BUFFER_DESC IndexBufferDescription{};
+		{
+			const auto bufferSize = indexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
+			EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(IndexBufferDescription.ByteWidth) * 8)));
+			IndexBufferDescription.ByteWidth = static_cast<unsigned int>(bufferSize);
+			IndexBufferDescription.Usage = D3D11_USAGE_IMMUTABLE; // In our class the buffer will never change after it's been created
+			IndexBufferDescription.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			IndexBufferDescription.CPUAccessFlags = 0;	// No CPU access is necessary
+			IndexBufferDescription.MiscFlags = 0;
+			IndexBufferDescription.StructureByteStride = 0; // Not used
+		}
+		D3D11_SUBRESOURCE_DATA InitialIndexData{};
+		{
+			InitialIndexData.pSysMem = meshData;
+			// (The other data members are ignored for non-texture buffers)
+		}
 	}
 
 OnExit:
