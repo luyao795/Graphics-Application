@@ -51,7 +51,7 @@ namespace eae6320
 
 			// A vertex buffer holds the data for each vertex
 			ID3D11Buffer* s_vertexBuffer = nullptr;
-			// A index buffer holds the data for indices
+			// An index buffer holds the data for indices
 			ID3D11Buffer* s_indexBuffer = nullptr;
 			// D3D has an "input layout" object that associates the layout of the vertex format struct
 			// with the input from a vertex shader
@@ -62,7 +62,7 @@ namespace eae6320
 
 			// A vertex buffer holds the data for each vertex
 			GLuint s_vertexBufferId = 0;
-			// A index buffer holds the data for indices
+			// An index buffer holds the data for indices
 			GLuint s_indexBufferId = 0;
 			// A vertex array encapsulates the vertex data as well as the vertex input layout
 			GLuint s_vertexArrayId = 0;

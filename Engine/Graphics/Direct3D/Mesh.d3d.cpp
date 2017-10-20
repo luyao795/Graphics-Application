@@ -197,12 +197,12 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 			meshData[2].b = 0;
 			meshData[2].a = 255;
 
-			meshData[4].x = tr_X - sideH;
-			meshData[4].y = tr_Y;
-			meshData[4].r = 0;
-			meshData[4].g = 255;
-			meshData[4].b = 0;
-			meshData[4].a = 255;
+			meshData[3].x = tr_X - sideH;
+			meshData[3].y = tr_Y;
+			meshData[3].r = 0;
+			meshData[3].g = 255;
+			meshData[3].b = 0;
+			meshData[3].a = 255;
 		}
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
