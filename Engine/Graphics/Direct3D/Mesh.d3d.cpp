@@ -241,6 +241,11 @@ eae6320::cResult eae6320::Graphics::Mesh::CleanUpMesh()
 		s_vertexInputLayout->Release();
 		s_vertexInputLayout = nullptr;
 	}
+	if (s_indexBuffer)
+	{
+		s_indexBuffer->Release();
+		s_indexBuffer = nullptr;
+	}
 	return result;
 }
 
@@ -261,6 +266,13 @@ void eae6320::Graphics::Mesh::DrawMesh()
 			constexpr unsigned int bufferOffset = 0;
 			direct3dImmediateContext->IASetVertexBuffers(startingSlot, vertexBufferCount, &s_vertexBuffer, &bufferStride, &bufferOffset);
 		}
+		// Bind the index buffer to the device
+		{
+			EAE6320_ASSERT(s_indexBuffer);
+			// The indices start at the beginning of the buffer
+			const unsigned int offset = 0;
+			direct3dImmediateContext->IASetIndexBuffer(s_indexBuffer, DXGI_FORMAT_R16_UINT, offset);
+		}
 		// Specify what kind of data the vertex buffer holds
 		{
 			// Set the layout (which defines how to interpret a single vertex)
@@ -275,14 +287,13 @@ void eae6320::Graphics::Mesh::DrawMesh()
 		}
 		// Render triangles from the currently-bound vertex buffer
 		{
-			// As of this comment only a single triangle is drawn
-			// (you will have to update this code in future assignments!)
-			constexpr unsigned int triangleCount = 2;
-			constexpr unsigned int vertexCountPerTriangle = 3;
-			constexpr auto vertexCountToRender = triangleCount * vertexCountPerTriangle;
+			constexpr unsigned int rectangleCount = 1;
+			constexpr unsigned int vertexCountPerRectangle = 4;
+			const auto indexCount = rectangleCount * vertexCountPerRectangle;
 			// It's possible to start rendering primitives in the middle of the stream
-			constexpr unsigned int indexOfFirstVertexToRender = 0;
-			direct3dImmediateContext->Draw(vertexCountToRender, indexOfFirstVertexToRender);
+			const unsigned int indexOfFirstIndexToUse = 0;
+			const unsigned int offsetToAddToEachIndex = 0;
+			direct3dImmediateContext->DrawIndexed(static_cast<unsigned int>(indexCount), indexOfFirstIndexToUse, offsetToAddToEachIndex);
 		}
 	}
 }

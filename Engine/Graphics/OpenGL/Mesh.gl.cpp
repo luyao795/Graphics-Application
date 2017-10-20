@@ -80,7 +80,6 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 			vertexData[0].x = tr_X - sideH;
 			vertexData[0].y = tr_Y - sideV;
 
-
 			vertexData[1].x = tr_X;
 			vertexData[1].y = tr_Y - sideV;
 
