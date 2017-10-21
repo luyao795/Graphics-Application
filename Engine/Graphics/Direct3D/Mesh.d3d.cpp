@@ -97,18 +97,6 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		// The size of the vertex data array should be the same as the size of the input index array
-		// as each index represents a vertex for rendering on screen
-		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += 3)
-		{
-			// Direct3D Rendering Order: Clockwise (CW)
-			// Since the input is clockwise (CW), thus example input
-			// like ABC should be assigned here with the order ABC
-			vertexData[i] = meshData[indexData[i]];
-			vertexData[i + 1] = meshData[indexData[i + 1]];
-			vertexData[i + 2] = meshData[indexData[i + 2]];
-		}
 
 		D3D11_BUFFER_DESC VertexBufferDescription{};
 		{
@@ -123,7 +111,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		}
 		D3D11_SUBRESOURCE_DATA InitialVertexData{};
 		{
-			InitialVertexData.pSysMem = vertexData;
+			InitialVertexData.pSysMem = meshData;
 			// (The other data members are ignored for non-texture buffers)
 		}
 

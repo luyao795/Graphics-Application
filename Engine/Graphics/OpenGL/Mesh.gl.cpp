@@ -102,22 +102,10 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		// The size of the vertex data array should be the same as the size of the input index array
-		// as each index represents a vertex for rendering on screen
-		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += 3)
-		{
-			// OpenGL Rendering Order: Counterclockwise (CCW)
-			// Since the input is clockwise (CW), thus example input
-			// like ABC should be assigned here with the order CBA
-			vertexData[i] = meshData[indexData[i + 2]];
-			vertexData[i + 1] = meshData[indexData[i + 1]];
-			vertexData[i + 2] = meshData[indexData[i]];
-		}
 
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
-		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(vertexData),
+		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(meshData),
 			// In our class we won't ever read from the buffer
 			GL_STATIC_DRAW);
 		const auto errorCode = glGetError();
