@@ -107,14 +107,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
+			// OpenGL Rendering Order: Counterclockwise (CCW)
 			// Since the input is clockwise (CW), thus example input
 			// like ABC should be assigned here with the order CBA
 			vertexData[i] = meshData[indexData[i + 2]];
 			vertexData[i + 1] = meshData[indexData[i + 1]];
 			vertexData[i + 2] = meshData[indexData[i]];
 		}
-		// OpenGL Rendering Order: Counterclockwise (CCW)
-		
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
 		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(vertexData),
@@ -132,42 +131,10 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Assign the data to the index buffer
 	{
-		constexpr unsigned int rectangleCount = 1;
-		constexpr unsigned int vertexCountPerRectangle = 4;
-		const auto indexCount = rectangleCount * vertexCountPerRectangle;
-		eae6320::Graphics::VertexFormats::sMesh meshData[indexCount];
-		{
-			meshData[0].x = 0;// tr_X - sideH;
-			meshData[0].y = 0;// tr_Y - sideV;
-			meshData[0].r = 255;
-			meshData[0].g = 255;
-			meshData[0].b = 0;
-			meshData[0].a = 255;
-
-			meshData[1].x = 0;// tr_X;
-			meshData[1].y = 0;// tr_Y;
-			meshData[1].r = 255;
-			meshData[1].g = 0;
-			meshData[1].b = 255;
-			meshData[1].a = 255;
-
-			meshData[2].x = 0;// tr_X;
-			meshData[2].y = 0;// tr_Y - sideV;
-			meshData[2].r = 255;
-			meshData[2].g = 255;
-			meshData[2].b = 0;
-			meshData[2].a = 255;
-
-			meshData[3].x = 0;// tr_X - sideH;
-			meshData[3].y = 0;// tr_Y;
-			meshData[3].r = 0;
-			meshData[3].g = 255;
-			meshData[3].b = 0;
-			meshData[3].a = 255;
-		}
-		const auto bufferSize = indexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
+		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
+		const auto bufferSize = indexArraySize * sizeof(uint16_t);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(meshData),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(indexData),
 			// In our class we won't ever read from the buffer
 			GL_STATIC_DRAW);
 		const auto errorCode = glGetError();
