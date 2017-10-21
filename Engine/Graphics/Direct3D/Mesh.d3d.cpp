@@ -140,6 +140,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	// Index Buffer
 	{
 		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
+		uint16_t d3dIndexData[indexArraySize];
+		for (size_t i = 0; i < indexArraySize; i += 3)
+		{
+			d3dIndexData[i] = indexData[i];
+			d3dIndexData[i + 1] = indexData[i + 1];
+			d3dIndexData[i + 2] = indexData[i + 2];
+		}
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
 		{
@@ -154,7 +161,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		}
 		D3D11_SUBRESOURCE_DATA InitialIndexData{};
 		{
-			InitialIndexData.pSysMem = indexData;
+			InitialIndexData.pSysMem = d3dIndexData;
 			// (The other data members are ignored for non-texture buffers)
 		}
 

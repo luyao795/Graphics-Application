@@ -133,10 +133,17 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	// Assign the data to the index buffer
 	{
 		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
+		uint16_t glIndexData[indexArraySize];
+		for (size_t i = 0; i < indexArraySize; i += 3)
+		{
+			glIndexData[i] = indexData[i + 2];
+			glIndexData[i + 1] = indexData[i + 1];
+			glIndexData[i + 2] = indexData[i];
+		}
 
 		const auto bufferSize = indexArraySize * sizeof(uint16_t);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(indexData),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(glIndexData),
 			// In our class we won't ever read from the buffer
 			GL_STATIC_DRAW);
 		const auto errorCode = glGetError();
