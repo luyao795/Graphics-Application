@@ -136,6 +136,9 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		uint16_t glIndexData[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
+			// OpenGL Rendering Order: Counterclockwise (CCW)
+			// Since the input is clockwise (CW), thus example input
+			// like ABC should be assigned here with the order CBA
 			glIndexData[i] = indexData[i + 2];
 			glIndexData[i + 1] = indexData[i + 1];
 			glIndexData[i + 2] = indexData[i];

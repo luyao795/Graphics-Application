@@ -143,6 +143,9 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		uint16_t d3dIndexData[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
+			// Direct3D Rendering Order: Clockwise (CW)
+			// Since the input is clockwise (CW), thus example input
+			// like ABC should be assigned here with the order ABC
 			d3dIndexData[i] = indexData[i];
 			d3dIndexData[i + 1] = indexData[i + 1];
 			d3dIndexData[i + 2] = indexData[i + 2];
