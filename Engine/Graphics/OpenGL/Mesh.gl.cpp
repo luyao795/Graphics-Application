@@ -98,10 +98,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Assign the data to the vertex buffer
 	{
-		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
-		constexpr unsigned int vertexCountPerTriangle = 3;
-		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
-		const auto vertexCount = triangleCount * vertexCountPerTriangle;
+		const auto vertexCount = sizeof(meshData) / sizeof(meshData[0]);
 
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
@@ -159,8 +156,8 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		{
 			constexpr GLuint vertexElementLocation = 0;
 			constexpr GLint elementCount = 2;
-			constexpr GLboolean notNormalized = GL_FALSE;	// The given floats should be used as-is
-			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, notNormalized, stride,
+			constexpr GLboolean shouldBeNormalized = GL_FALSE;	// The given floats should be used as-is
+			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, shouldBeNormalized, stride,
 				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sMesh, x)));
 			const auto errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)
@@ -192,8 +189,8 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		{
 			constexpr GLuint vertexElementLocation = 1;
 			constexpr GLint elementCount = 4;
-			constexpr GLboolean notNormalized = GL_TRUE;	// The given floats should be used as-is
-			glVertexAttribPointer(vertexElementLocation, elementCount, GL_UNSIGNED_BYTE, notNormalized, stride,
+			constexpr GLboolean shouldBeNormalized = GL_TRUE;	// The given uint8_ts should be normalized
+			glVertexAttribPointer(vertexElementLocation, elementCount, GL_UNSIGNED_BYTE, shouldBeNormalized, stride,
 				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sMesh, r)));
 			const auto errorCode = glGetError();
 			if (errorCode == GL_NO_ERROR)

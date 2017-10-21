@@ -93,10 +93,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Vertex Buffer
 	{
-		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
-		constexpr unsigned int vertexCountPerTriangle = 3;
-		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
-		const auto vertexCount = triangleCount * vertexCountPerTriangle;
+		const auto vertexCount = sizeof(meshData) / sizeof(meshData[0]);
 
 		D3D11_BUFFER_DESC VertexBufferDescription{};
 		{
