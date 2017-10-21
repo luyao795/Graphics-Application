@@ -82,7 +82,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 			{
 				result = eae6320::Results::Failure;
 				EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
-				eae6320::Logging::OutputError("OpenGL failed to bind a new vertex buffer: %s",
+				eae6320::Logging::OutputError("OpenGL failed to bind a new index buffer: %s",
 					reinterpret_cast<const char*>(gluErrorString(errorCode)));
 				goto OnExit;
 			}
@@ -91,7 +91,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		{
 			result = eae6320::Results::Failure;
 			EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
-			eae6320::Logging::OutputError("OpenGL failed to get an unused vertex buffer ID: %s",
+			eae6320::Logging::OutputError("OpenGL failed to get an unused index buffer ID: %s",
 				reinterpret_cast<const char*>(gluErrorString(errorCode)));
 			goto OnExit;
 		}
@@ -101,7 +101,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
 		constexpr unsigned int vertexCountPerTriangle = 3;
 		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
-		const unsigned int vertexCount = triangleCount * vertexCountPerTriangle;
+		const auto vertexCount = triangleCount * vertexCountPerTriangle;
 		// The size of the vertex data array should be the same as the size of the input index array
 		// as each index represents a vertex for rendering on screen
 		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
@@ -114,6 +114,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 			vertexData[i + 1] = meshData[indexData[i + 1]];
 			vertexData[i + 2] = meshData[indexData[i]];
 		}
+
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
 		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(vertexData),
@@ -132,6 +133,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	// Assign the data to the index buffer
 	{
 		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
+
 		const auto bufferSize = indexArraySize * sizeof(uint16_t);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(indexData),
@@ -142,7 +144,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		{
 			result = eae6320::Results::Failure;
 			EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
-			eae6320::Logging::OutputError("OpenGL failed to allocate the vertex buffer: %s",
+			eae6320::Logging::OutputError("OpenGL failed to allocate the index buffer: %s",
 				reinterpret_cast<const char*>(gluErrorString(errorCode)));
 			goto OnExit;
 		}
@@ -311,16 +313,13 @@ void eae6320::Graphics::Mesh::DrawMesh()
 		}
 		// Render triangles from the currently-bound vertex buffer
 		{
-			constexpr unsigned int rectangleCount = 1;
-			constexpr unsigned int vertexCountPerRectangle = 4;
-			const auto indexCount = rectangleCount * vertexCountPerRectangle;
 			// The mode defines how to interpret multiple vertices as a single "primitive";
 			// a triangle list is defined
 			// (meaning that every primitive is a triangle and will be defined by three vertices)
 			constexpr GLenum mode = GL_TRIANGLES;
 			// It's possible to start rendering primitives in the middle of the stream
 			const GLvoid* const offset = 0;
-			glDrawElements(mode, static_cast<GLsizei>(indexCount), GL_UNSIGNED_SHORT, offset);
+			glDrawElements(mode, static_cast<GLsizei>(s_indexCount), GL_UNSIGNED_SHORT, offset);
 			EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
 		}
 	}

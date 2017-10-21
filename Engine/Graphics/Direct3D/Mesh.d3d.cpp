@@ -93,53 +93,21 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Vertex Buffer
 	{
-		constexpr unsigned int triangleCount = 2;
+		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
 		constexpr unsigned int vertexCountPerTriangle = 3;
+		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
 		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		eae6320::Graphics::VertexFormats::sMesh vertexData[vertexCount];
+		// The size of the vertex data array should be the same as the size of the input index array
+		// as each index represents a vertex for rendering on screen
+		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
+		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
-			vertexData[0].x = tr_X - sideH;
-			vertexData[0].y = tr_Y - sideV;
-			vertexData[0].r = 255;
-			vertexData[0].g = 255;
-			vertexData[0].b = 0;
-			vertexData[0].a = 255;
-
-			vertexData[1].x = tr_X;
-			vertexData[1].y = tr_Y;
-			vertexData[1].r = 255;
-			vertexData[1].g = 0;
-			vertexData[1].b = 255;
-			vertexData[1].a = 255;
-
-			vertexData[2].x = tr_X;
-			vertexData[2].y = tr_Y - sideV;
-			vertexData[2].r = 255;
-			vertexData[2].g = 255;
-			vertexData[2].b = 0;
-			vertexData[2].a = 255;
-
-			vertexData[3].x = tr_X - sideH;
-			vertexData[3].y = tr_Y - sideV;
-			vertexData[3].r = 255;
-			vertexData[3].g = 255;
-			vertexData[3].b = 0;
-			vertexData[3].a = 255;
-
-			vertexData[4].x = tr_X - sideH;
-			vertexData[4].y = tr_Y;
-			vertexData[4].r = 0;
-			vertexData[4].g = 255;
-			vertexData[4].b = 0;
-			vertexData[4].a = 255;
-
-			vertexData[5].x = tr_X;
-			vertexData[5].y = tr_Y;
-			vertexData[5].r = 255;
-			vertexData[5].g = 0;
-			vertexData[5].b = 255;
-			vertexData[5].a = 255;
+			// Since the input is clockwise (CW), thus example input
+			// like ABC should be assigned here with the order ABC
+			vertexData[i] = meshData[indexData[i]];
+			vertexData[i + 1] = meshData[indexData[i + 1]];
+			vertexData[i + 2] = meshData[indexData[i + 2]];
 		}
 
 		D3D11_BUFFER_DESC VertexBufferDescription{};
@@ -171,43 +139,11 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 
 	// Index Buffer
 	{
-		constexpr unsigned int rectangleCount = 1;
-		constexpr unsigned int vertexCountPerRectangle = 4;
-		const auto indexCount = rectangleCount * vertexCountPerRectangle;
-		eae6320::Graphics::VertexFormats::sMesh meshData[indexCount];
-		{
-			meshData[0].x = tr_X - sideH;
-			meshData[0].y = tr_Y - sideV;
-			meshData[0].r = 255;
-			meshData[0].g = 255;
-			meshData[0].b = 0;
-			meshData[0].a = 255;
-
-			meshData[1].x = tr_X;
-			meshData[1].y = tr_Y;
-			meshData[1].r = 255;
-			meshData[1].g = 0;
-			meshData[1].b = 255;
-			meshData[1].a = 255;
-
-			meshData[2].x = tr_X;
-			meshData[2].y = tr_Y - sideV;
-			meshData[2].r = 255;
-			meshData[2].g = 255;
-			meshData[2].b = 0;
-			meshData[2].a = 255;
-
-			meshData[3].x = tr_X - sideH;
-			meshData[3].y = tr_Y;
-			meshData[3].r = 0;
-			meshData[3].g = 255;
-			meshData[3].b = 0;
-			meshData[3].a = 255;
-		}
+		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
 		{
-			const auto bufferSize = indexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
+			const auto bufferSize = indexArraySize * sizeof(uint16_t);
 			EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(IndexBufferDescription.ByteWidth) * 8)));
 			IndexBufferDescription.ByteWidth = static_cast<unsigned int>(bufferSize);
 			IndexBufferDescription.Usage = D3D11_USAGE_IMMUTABLE; // In our class the buffer will never change after it's been created
@@ -218,8 +154,17 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		}
 		D3D11_SUBRESOURCE_DATA InitialIndexData{};
 		{
-			InitialIndexData.pSysMem = meshData;
+			InitialIndexData.pSysMem = indexData;
 			// (The other data members are ignored for non-texture buffers)
+		}
+
+		const auto d3dResultForIndexBuffer = direct3dDevice->CreateBuffer(&IndexBufferDescription, &InitialIndexData, &s_indexBuffer);
+		if (FAILED(d3dResultForIndexBuffer))
+		{
+			result = eae6320::Results::Failure;
+			EAE6320_ASSERTF(false, "Mesh index buffer creation failed (HRESULT %#010x)", d3dResultForIndexBuffer);
+			eae6320::Logging::OutputError("Direct3D failed to create a mesh index buffer (HRESULT %#010x)", d3dResultForIndexBuffer);
+			goto OnExit;
 		}
 	}
 
@@ -287,13 +232,10 @@ void eae6320::Graphics::Mesh::DrawMesh()
 		}
 		// Render triangles from the currently-bound vertex buffer
 		{
-			constexpr unsigned int rectangleCount = 1;
-			constexpr unsigned int vertexCountPerRectangle = 4;
-			const auto indexCount = rectangleCount * vertexCountPerRectangle;
 			// It's possible to start rendering primitives in the middle of the stream
 			const unsigned int indexOfFirstIndexToUse = 0;
 			const unsigned int offsetToAddToEachIndex = 0;
-			direct3dImmediateContext->DrawIndexed(static_cast<unsigned int>(indexCount), indexOfFirstIndexToUse, offsetToAddToEachIndex);
+			direct3dImmediateContext->DrawIndexed(static_cast<unsigned int>(s_indexCount), indexOfFirstIndexToUse, offsetToAddToEachIndex);
 		}
 	}
 }

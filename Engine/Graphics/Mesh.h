@@ -69,7 +69,9 @@ namespace eae6320
 			GLuint s_vertexArrayId = 0;
 #endif
 
+			unsigned int s_indexCount;
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
+
 		};
 	}
 }

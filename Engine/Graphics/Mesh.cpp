@@ -34,6 +34,7 @@ namespace eae6320
 			const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
 			constexpr unsigned int vertexPerTriangle = 3;
 			EAE6320_ASSERTF(indexArraySize % vertexPerTriangle == 0, "Invalid array size for indices, it has to be a multiple of 3");
+			mesh->s_indexCount = indexArraySize;
 
 			// Allocate a new Mesh
 			{
