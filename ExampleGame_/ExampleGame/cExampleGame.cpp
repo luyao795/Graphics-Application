@@ -416,7 +416,7 @@ OnExit:
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
 	// Submit color data
-	eae6320::Graphics::SubmitColorToBeRendered(COLOR_DEFAULT.Magenta());
+	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Sprite pair data
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);

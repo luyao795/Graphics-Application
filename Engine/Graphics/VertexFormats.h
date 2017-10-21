@@ -48,6 +48,7 @@ namespace eae6320
 				//======================
 				// COLOR0
 				// 4 uint8_ts == 4 bytes
+				// Offset = 8
 				float x, y;
 				uint8_t r, g, b, a;
 			};

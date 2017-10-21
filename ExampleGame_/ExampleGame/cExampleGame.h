@@ -8,15 +8,18 @@
 // Include Files
 //==============
 
-#include <Engine/Graphics/Color.h>
+#include <Engine/Graphics/Colors.h>
 #include <Engine/Application/cbApplication.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include "Resource Files/Resource.h"
 #endif
 
-#define COLOR_DEFAULT eae6320::Graphics::Color()
+#define COLOR_NORMALIZED eae6320::Graphics::Color()
+#define COLOR_RAW eae6320::Graphics::RawColor()
+
 #define COLOR(R, G, B, A) eae6320::Graphics::Color(R, G, B, A)
+#define RAWCOLOR(R, G, B, A) eae6320::Graphics::RawColor(R, G, B, A)
 
 // Class Declaration
 //==================

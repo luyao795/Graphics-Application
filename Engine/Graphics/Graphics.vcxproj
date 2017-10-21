@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="cConstantBuffer.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Colors.h" />
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="ConstantBufferFormats.h" />
     <ClInclude Include="cRenderState.h" />
@@ -48,6 +49,7 @@
   <ItemGroup>
     <ClCompile Include="cConstantBuffer.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Colors.cpp" />
     <ClCompile Include="cRenderState.cpp" />
     <ClCompile Include="cSamplerState.cpp" />
     <ClCompile Include="cShader.cpp" />
