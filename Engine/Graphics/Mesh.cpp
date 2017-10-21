@@ -20,12 +20,20 @@ namespace eae6320
 
 		}
 
-		cResult Mesh::Load(float tr_X, float tr_Y, float sideH, float sideV, Mesh *& o_mesh)
+		cResult Mesh::Load(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[], Mesh *& o_mesh)
 		{
+			// Input array data should always be clockwise (CW)
+			// (We could make it either always clockwise or counterclockwise)
+
 			cResult result = Results::Success;
 			Mesh* mesh = nullptr;
 
 			mesh = new (std::nothrow) Mesh();
+
+			// The size of the index array should always be a multiple of 3
+			const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
+			constexpr unsigned int vertexPerTriangle = 3;
+			EAE6320_ASSERTF(indexArraySize % vertexPerTriangle == 0, "Invalid array size for indices, it has to be a multiple of 3");
 
 			// Allocate a new Mesh
 			{
@@ -38,7 +46,7 @@ namespace eae6320
 				}
 			}
 
-			if (!(result = mesh->InitializeMesh(tr_X, tr_Y, sideH, sideV)))
+			if (!(result = mesh->InitializeMesh(meshData, indexData)))
 			{
 				EAE6320_ASSERTF(false, "Initialization of new mesh failed");
 				goto OnExit;

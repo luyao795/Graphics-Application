@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y, float sideH, float sideV)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[])
 {
 	auto result = eae6320::Results::Success;
 

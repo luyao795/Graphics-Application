@@ -11,7 +11,7 @@ OpenGL specific code for Mesh
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y, float sideH, float sideV)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[])
 {
 	auto result = eae6320::Results::Success;
 
@@ -98,54 +98,23 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 	}
 	// Assign the data to the vertex buffer
 	{
-		constexpr unsigned int triangleCount = 2;
+		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
 		constexpr unsigned int vertexCountPerTriangle = 3;
-		const auto vertexCount = triangleCount * vertexCountPerTriangle;
-		eae6320::Graphics::VertexFormats::sMesh vertexData[vertexCount];
+		const unsigned int triangleCount = indexArraySize / vertexCountPerTriangle;
+		const unsigned int vertexCount = triangleCount * vertexCountPerTriangle;
+		// The size of the vertex data array should be the same as the size of the input index array
+		// as each index represents a vertex for rendering on screen
+		eae6320::Graphics::VertexFormats::sMesh vertexData[indexArraySize];
+		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
-			// OpenGL Rendering Order: Counterclockwise (CCW)
-			vertexData[0].x = tr_X - sideH;
-			vertexData[0].y = tr_Y - sideV;
-			vertexData[0].r = 255;
-			vertexData[0].g = 255;
-			vertexData[0].b = 0;
-			vertexData[0].a = 255;
-
-			vertexData[1].x = tr_X;
-			vertexData[1].y = tr_Y - sideV;
-			vertexData[1].r = 255;
-			vertexData[1].g = 255;
-			vertexData[1].b = 0;
-			vertexData[1].a = 255;
-
-			vertexData[2].x = tr_X;
-			vertexData[2].y = tr_Y;
-			vertexData[2].r = 255;
-			vertexData[2].g = 0;
-			vertexData[2].b = 255;
-			vertexData[2].a = 255;
-
-			vertexData[3].x = tr_X - sideH;
-			vertexData[3].y = tr_Y - sideV;
-			vertexData[3].r = 255;
-			vertexData[3].g = 255;
-			vertexData[3].b = 0;
-			vertexData[3].a = 255;
-
-			vertexData[4].x = tr_X;
-			vertexData[4].y = tr_Y;
-			vertexData[4].r = 255;
-			vertexData[4].g = 0;
-			vertexData[4].b = 255;
-			vertexData[4].a = 255;
-
-			vertexData[5].x = tr_X - sideH;
-			vertexData[5].y = tr_Y;
-			vertexData[5].r = 0;
-			vertexData[5].g = 255;
-			vertexData[5].b = 0;
-			vertexData[5].a = 255;
+			// Since the input is clockwise (CW), thus example input
+			// like ABC should be assigned here with the order CBA
+			vertexData[i] = meshData[indexData[i + 2]];
+			vertexData[i + 1] = meshData[indexData[i + 1]];
+			vertexData[i + 2] = meshData[indexData[i]];
 		}
+		// OpenGL Rendering Order: Counterclockwise (CCW)
+		
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
 		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(vertexData),
@@ -168,29 +137,29 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(float tr_X, float tr_Y,
 		const auto indexCount = rectangleCount * vertexCountPerRectangle;
 		eae6320::Graphics::VertexFormats::sMesh meshData[indexCount];
 		{
-			meshData[0].x = tr_X - sideH;
-			meshData[0].y = tr_Y - sideV;
+			meshData[0].x = 0;// tr_X - sideH;
+			meshData[0].y = 0;// tr_Y - sideV;
 			meshData[0].r = 255;
 			meshData[0].g = 255;
 			meshData[0].b = 0;
 			meshData[0].a = 255;
 
-			meshData[1].x = tr_X;
-			meshData[1].y = tr_Y;
+			meshData[1].x = 0;// tr_X;
+			meshData[1].y = 0;// tr_Y;
 			meshData[1].r = 255;
 			meshData[1].g = 0;
 			meshData[1].b = 255;
 			meshData[1].a = 255;
 
-			meshData[2].x = tr_X;
-			meshData[2].y = tr_Y - sideV;
+			meshData[2].x = 0;// tr_X;
+			meshData[2].y = 0;// tr_Y - sideV;
 			meshData[2].r = 255;
 			meshData[2].g = 255;
 			meshData[2].b = 0;
 			meshData[2].a = 255;
 
-			meshData[3].x = tr_X - sideH;
-			meshData[3].y = tr_Y;
+			meshData[3].x = 0;// tr_X - sideH;
+			meshData[3].y = 0;// tr_Y;
 			meshData[3].r = 0;
 			meshData[3].g = 255;
 			meshData[3].b = 0;

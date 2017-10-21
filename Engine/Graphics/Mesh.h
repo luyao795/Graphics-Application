@@ -10,6 +10,7 @@ These are code snippets that represent meshes that are separated from Graphics s
 
 #include <Engine/Assets/ReferenceCountedAssets.h>
 #include <Engine/Results/Results.h>
+#include <Engine/Graphics/VertexFormats.h>
 
 #if defined ( EAE6320_PLATFORM_D3D )
 #include <Engine/Graphics/Direct3D/Includes.h>
@@ -25,7 +26,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Mesh *& o_mesh);
+			static cResult Load(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[], Mesh *& o_mesh);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
@@ -41,7 +42,7 @@ namespace eae6320
 
 			// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
 			// sideV is length for vertical side
-			cResult InitializeMesh(float tr_X, float tr_Y, float sideH, float sideV);
+			cResult InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[]);
 
 			cResult CleanUpMesh();
 
@@ -69,8 +70,6 @@ namespace eae6320
 #endif
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
-
-
 		};
 	}
 }
