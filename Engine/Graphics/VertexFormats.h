@@ -9,6 +9,8 @@
 // Include Files
 //==============
 
+#include <cstdint>
+
 #include "Configuration.h"
 
 // Vertex Formats
