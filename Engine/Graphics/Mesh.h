@@ -70,6 +70,7 @@ namespace eae6320
 #endif
 
 			unsigned int s_indexCount;
+
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 		};

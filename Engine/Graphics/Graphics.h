@@ -11,8 +11,8 @@
 #include "Configuration.h"
 
 #include <cstdint>
-#include <Engine/Graphics/cTexture.h>
 #include <Engine/Results/Results.h>
+#include <Engine/Math/sVector.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
@@ -28,16 +28,18 @@ namespace eae6320
 		class Color;
 		class Effect;
 		class Sprite;
+		class cTexture;
+		class Mesh;
 
-		// Struct for storing data to be submitted
-		struct DataSetForRendering
+		// Struct for render data that contain sprites
+		struct DataSetForRenderingSprite
 		{
-			DataSetForRendering()
+			DataSetForRenderingSprite()
 			{
 
 			}
 
-			DataSetForRendering(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Sprite* i_sprite, eae6320::Graphics::cTexture* i_texture)
+			DataSetForRenderingSprite(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Sprite* i_sprite, eae6320::Graphics::cTexture* i_texture)
 			{
 				effect = i_effect;
 				sprite = i_sprite;
@@ -47,6 +49,26 @@ namespace eae6320
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Sprite* sprite;
 			eae6320::Graphics::cTexture* texture;
+		};
+
+		// Struct for render data that contain meshes
+		struct DataSetForRenderingMesh
+		{
+			DataSetForRenderingMesh()
+			{
+
+			}
+
+			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Math::sVector i_position)
+			{
+				effect = i_effect;
+				mesh = i_mesh;
+				position = i_position;
+			}
+
+			eae6320::Graphics::Effect* effect;
+			eae6320::Graphics::Mesh* mesh;
+			eae6320::Math::sVector position;
 		};
 
 		// Submission
@@ -62,7 +84,9 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRendering renderData);
+		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
+
+		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything

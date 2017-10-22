@@ -13,6 +13,7 @@
 #include "Effect.h"
 #include "Sprite.h"
 #include "cTexture.h"
+#include "Mesh.h"
 #include "GraphicsHandler.h"
 #include "Graphics.h"
 
@@ -36,8 +37,10 @@ namespace
 	struct sDataRequiredToRenderAFrame
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
+		eae6320::Graphics::ConstantBufferFormats::sPerDrawCall constantData_perDrawCall;
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
-		std::vector<eae6320::Graphics::DataSetForRendering> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRenderingSprite> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -71,13 +74,21 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRendering renderData)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(renderData);
 	renderData.effect->IncrementReferenceCount();
 	renderData.sprite->IncrementReferenceCount();
 	renderData.texture->IncrementReferenceCount();
+}
+
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.push_back(renderData);
+	renderData.effect->IncrementReferenceCount();
+	renderData.mesh->IncrementReferenceCount();
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -133,6 +144,13 @@ void eae6320::Graphics::RenderFrame()
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
+	}
+
+	// Update the per-draw call constant buffer
+	{
+		// Copy the data from the system memory that the application owns to GPU memory
+		auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
+		s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
 	}
 
 	// Bind shading data, bind texture and draw geometry
