@@ -24,6 +24,7 @@ namespace
 {
 	// Constant buffer object
 	eae6320::Graphics::cConstantBuffer s_constantBuffer_perFrame(eae6320::Graphics::ConstantBufferTypes::PerFrame);
+	eae6320::Graphics::cConstantBuffer s_constantBuffer_perDrawCall(eae6320::Graphics::ConstantBufferTypes::PerDrawCall);
 	// In our class we will only have a single sampler state
 	eae6320::Graphics::cSamplerState s_samplerState;
 
@@ -198,6 +199,19 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
+		if (result = s_constantBuffer_perDrawCall.Initialize())
+		{
+			// There is only a single per-draw call constant buffer that is re-used
+			// and so it can be bound at initialization time and never unbound
+			s_constantBuffer_perDrawCall.Bind(
+				// In our class both vertex and fragment shaders use per-frame constant data
+				ShaderTypes::Vertex | ShaderTypes::Fragment);
+		}
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 		if (result = s_samplerState.Initialize())
 		{
 			// There is only a single sampler state that is re-used
@@ -261,6 +275,18 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();
+		if (!localResult)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = localResult;
+			}
+		}
+	}
+
+	{
+		const auto localResult = s_constantBuffer_perDrawCall.CleanUp();
 		if (!localResult)
 		{
 			EAE6320_ASSERT(false);

@@ -73,6 +73,5 @@
 
 	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
 	{
-		// This is a placeholder to prevent an empty constant buffer declaration
-		vec4 DUMMY;
+		vec4 g_position;
 	};
