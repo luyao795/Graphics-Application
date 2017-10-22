@@ -40,8 +40,7 @@ namespace eae6320
 			Mesh();
 			~Mesh();
 
-			// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
-			// sideV is length for vertical side
+			// meshData is the array for all vertices, indexData is the array for index information for rendering the mesh
 			cResult InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[]);
 
 			cResult CleanUpMesh();

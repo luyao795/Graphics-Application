@@ -163,6 +163,15 @@ void eae6320::Graphics::RenderFrame()
 		}
 	}
 
+	// Bind shading data and draw mesh
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
+		}
+	}
+
 	// Once everything has been drawn the data that was submitted for this frame
 	// should be cleaned up and cleared.
 	// so that the struct can be re-used (i.e. so that data for a new frame can be submitted to it)
@@ -176,6 +185,20 @@ void eae6320::Graphics::RenderFrame()
 			}
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+	}
+
+	// Once everything has been drawn the data that was submitted for this frame
+	// should be cleaned up and cleared.
+	// so that the struct can be re-used (i.e. so that data for a new frame can be submitted to it)
+	{
+		{
+			for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+			{
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			}
+		}
+		s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 	}
 
 	SwapRender();
@@ -260,7 +283,11 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the views
 	{
-		result = InitializeRenderingView(i_initializationParameters);
+		if (!(result = InitializeRenderingView(i_initializationParameters)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 	}
 
 OnExit:
@@ -273,6 +300,8 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	auto result = Results::Success;
 
 	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
 	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
 	{
@@ -288,6 +317,19 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		}
 	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh = nullptr;
+		}
+	}
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
 	CleanUpGraphics();
 
