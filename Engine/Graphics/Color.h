@@ -257,6 +257,11 @@ namespace eae6320
 				return RawColor(255.0f, 0.0f, 255.0f, 255.0f);
 			}
 
+			RawColor Gray() const
+			{
+				return RawColor(127.5f, 127.5f, 127.5f, 255.0f);
+			}
+
 			bool isInRange(const float component) const
 			{
 				return ((component >= 0.0f) && (component <= 255.0f));

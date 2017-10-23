@@ -146,12 +146,8 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
-	// Update the per-draw call constant buffer
-	{
-		// Copy the data from the system memory that the application owns to GPU memory
-		auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
-		s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
-	}
+	// Copy the data from the system memory that the application owns to GPU memory and the buffer will be updated later
+	auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
 
 	// Bind shading data, bind texture and draw geometry
 	{
@@ -167,6 +163,11 @@ void eae6320::Graphics::RenderFrame()
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
 		{
+			// Update the per-draw call constant buffer
+			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.x;
+			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.y;
+			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
+
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
 		}
@@ -299,10 +300,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 {
 	auto result = Results::Success;
 
+	// This thread will always be empty when this function gets called
 	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
-
 	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
+	// This thread will contain items thus we need to clean it manually
 	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
 	{
 		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)

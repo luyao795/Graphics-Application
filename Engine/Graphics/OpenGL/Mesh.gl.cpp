@@ -11,7 +11,7 @@ OpenGL specific code for Mesh
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[])
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -98,11 +98,19 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Assign the data to the vertex buffer
 	{
-		const auto vertexCount = sizeof(meshData) / sizeof(meshData[0]);
+		const auto vertexCount = meshData.size();
+
+		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
+		{
+			for (size_t i = 0; i < vertexCount; i++)
+			{
+				localMeshData[i] = meshData[i];
+			}
+		}
 
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
-		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(meshData),
+		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(localMeshData),
 			// In our class we won't ever read from the buffer
 			GL_STATIC_DRAW);
 		const auto errorCode = glGetError();
@@ -114,11 +122,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 				reinterpret_cast<const char*>(gluErrorString(errorCode)));
 			goto OnExit;
 		}
+
+		delete[] localMeshData;
 	}
 	// Assign the data to the index buffer
 	{
-		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
-		uint16_t glIndexData[indexArraySize];
+		const unsigned int indexArraySize = indexData.size();
+		uint16_t* glIndexData = new uint16_t[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// OpenGL Rendering Order: Counterclockwise (CCW)

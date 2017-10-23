@@ -12,6 +12,8 @@ These are code snippets that represent meshes that are separated from Graphics s
 #include <Engine/Results/Results.h>
 #include <Engine/Graphics/VertexFormats.h>
 
+#include <vector>
+
 #if defined ( EAE6320_PLATFORM_D3D )
 #include <Engine/Graphics/Direct3D/Includes.h>
 #elif defined ( EAE6320_PLATFORM_GL )
@@ -26,7 +28,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[], Mesh *& o_mesh);
+			static cResult Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData, Mesh *& o_mesh);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
@@ -41,7 +43,7 @@ namespace eae6320
 			~Mesh();
 
 			// meshData is the array for all vertices, indexData is the array for index information for rendering the mesh
-			cResult InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[]);
+			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData);
 
 			cResult CleanUpMesh();
 
@@ -68,7 +70,7 @@ namespace eae6320
 			GLuint s_vertexArrayId = 0;
 #endif
 
-			unsigned int s_indexCount;
+			size_t s_indexCount;
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 

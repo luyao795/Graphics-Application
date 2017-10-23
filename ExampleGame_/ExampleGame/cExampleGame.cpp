@@ -7,7 +7,9 @@
 #include <Engine/Graphics/cTexture.h>
 #include <Engine/Graphics/Effect.h>
 #include <Engine/Graphics/Sprite.h>
+#include <Engine/Graphics/Mesh.h>
 #include <Engine/Graphics/Graphics.h>
+
 
 // Inherited Implementation
 //=========================
@@ -23,6 +25,8 @@ namespace
 	eae6320::Graphics::Effect* s_effect = nullptr;
 	// This effect contains white static property.
 	eae6320::Graphics::Effect* s_effect_static = nullptr;
+	// This effect contains mesh renderint data.
+	eae6320::Graphics::Effect* s_effect_mesh = nullptr;
 
 	// Geometry Data
 	//--------------
@@ -40,13 +44,19 @@ namespace
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
 
-	// Combined Rendering Data
+	// Mesh Data
+	eae6320::Graphics::Mesh* s_polygonMesh = nullptr;
+
+	// Combined Rendering Data with Sprite & Texture
 	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
 	eae6320::Graphics::DataSetForRenderingSprite s_render2 = eae6320::Graphics::DataSetForRenderingSprite();
 	eae6320::Graphics::DataSetForRenderingSprite s_render_static = eae6320::Graphics::DataSetForRenderingSprite();
 	eae6320::Graphics::DataSetForRenderingSprite s_render_static2 = eae6320::Graphics::DataSetForRenderingSprite();
 	eae6320::Graphics::DataSetForRenderingSprite s_render_static3 = eae6320::Graphics::DataSetForRenderingSprite();
 	eae6320::Graphics::DataSetForRenderingSprite s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite();
+
+	// Combined Rendering Data with Mesh
+	eae6320::Graphics::DataSetForRenderingMesh s_render_mesh = eae6320::Graphics::DataSetForRenderingMesh();
 
 	// External counter used for Rendering based on Time
 	float previousTimeElapsedCounter = 0.0f;
@@ -126,6 +136,74 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 		goto OnExit;
 	}
 
+	{
+		// Initialize the mesh data (temporary)
+		std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData(6);
+		std::vector<uint16_t> indexData(12);
+		{
+			meshData[0].x = 0.5f;
+			meshData[0].y = 0.5f;
+			meshData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
+			meshData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
+			meshData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
+			meshData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.A());
+
+			meshData[1].x = 0.5f;
+			meshData[1].y = -0.5f;
+			meshData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
+			meshData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
+			meshData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
+			meshData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
+
+			meshData[2].x = 0.0f;
+			meshData[2].y = -0.75f;
+			meshData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
+			meshData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
+			meshData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
+			meshData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+
+			meshData[3].x = -0.5f;
+			meshData[3].y = -0.5f;
+			meshData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.R());
+			meshData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.G());
+			meshData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.B());
+			meshData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.A());
+
+			meshData[4].x = -0.5f;
+			meshData[4].y = 0.5f;
+			meshData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
+			meshData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
+			meshData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
+			meshData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.A());
+
+			meshData[5].x = 0.0f;
+			meshData[5].y = 0.75f;
+			meshData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
+			meshData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
+			meshData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
+			meshData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
+		}
+		{
+			indexData[0] = 0;
+			indexData[1] = 4;
+			indexData[2] = 5;
+
+			indexData[3] = 0;
+			indexData[4] = 1;
+			indexData[5] = 3;
+
+			indexData[6] = 0;
+			indexData[7] = 3;
+			indexData[8] = 4;
+
+			indexData[9] = 1;
+			indexData[10] = 2;
+			indexData[11] = 3;
+		}
+
+		result = eae6320::Graphics::Mesh::Load(meshData, indexData, s_polygonMesh);
+	}
+
 	// Initialize the rendering data
 	InitializeRenderData();
 
@@ -145,6 +223,12 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 	}
 
 	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", defaultRenderState, s_effect_static)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", defaultRenderState, s_effect_mesh)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
@@ -235,6 +319,8 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static2 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static2, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 	s_render_static3 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static3, eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture));
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
+
+	s_render_mesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_polygonMesh, eae6320::Math::sVector(0.0f, 0.0f, 0.0f));
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -262,6 +348,19 @@ eae6320::cResult eae6320::cExampleGame::CleanUp()
 		goto OnExit;
 	}
 
+	// Clean up the mesh data (temporary)
+	if (s_polygonMesh)
+	{
+		result = s_polygonMesh->CleanUp();
+		if (result)
+			s_polygonMesh = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
 OnExit:
 	return result;
 }
@@ -287,6 +386,18 @@ eae6320::cResult eae6320::cExampleGame::CleanUpEffect()
 		result = s_effect_static->CleanUp();
 		if (result)
 			s_effect_static = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+	if (s_effect_mesh)
+	{
+		result = s_effect_mesh->CleanUp();
+		if (result)
+			s_effect_mesh = nullptr;
 		else
 		{
 			EAE6320_ASSERT(false);
@@ -419,10 +530,12 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Sprite pair data
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render2);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
-	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render2);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
+	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
+
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(s_render_mesh);
 }

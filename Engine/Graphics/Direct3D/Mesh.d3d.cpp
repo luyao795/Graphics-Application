@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh meshData[], uint16_t indexData[])
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -24,7 +24,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		// Load the compiled binary vertex shader for the input layout
 		eae6320::Platform::sDataFromFile vertexShaderDataFromFile;
 		std::string errorMessage;
-		if (result = eae6320::Platform::LoadBinaryFile("data/Shaders/Vertex/vertexInputLayout_sprite.binshd", vertexShaderDataFromFile, &errorMessage))
+		if (result = eae6320::Platform::LoadBinaryFile("data/Shaders/Vertex/vertexInputLayout_mesh.binshd", vertexShaderDataFromFile, &errorMessage))
 		{
 			// Create the vertex layout
 
@@ -93,7 +93,15 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 	}
 	// Vertex Buffer
 	{
-		const auto vertexCount = sizeof(meshData) / sizeof(meshData[0]);
+		const auto vertexCount = meshData.size();
+
+		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
+		{
+			for (size_t i = 0; i < vertexCount; i++)
+			{
+				localMeshData[i] = meshData[i];
+			}
+		}
 
 		D3D11_BUFFER_DESC VertexBufferDescription{};
 		{
@@ -108,7 +116,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 		}
 		D3D11_SUBRESOURCE_DATA InitialVertexData{};
 		{
-			InitialVertexData.pSysMem = meshData;
+			InitialVertexData.pSysMem = localMeshData;
 			// (The other data members are ignored for non-texture buffers)
 		}
 
@@ -120,12 +128,14 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 			eae6320::Logging::OutputError("Direct3D failed to create a mesh vertex buffer (HRESULT %#010x)", d3dResultForVertexBuffer);
 			goto OnExit;
 		}
+
+		delete[] localMeshData;
 	}
 
 	// Index Buffer
 	{
-		const unsigned int indexArraySize = sizeof(indexData) / sizeof(indexData[0]);
-		uint16_t d3dIndexData[indexArraySize];
+		const auto indexArraySize = indexData.size();
+		uint16_t* d3dIndexData = new uint16_t[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
@@ -161,6 +171,8 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::Vert
 			eae6320::Logging::OutputError("Direct3D failed to create a mesh index buffer (HRESULT %#010x)", d3dResultForIndexBuffer);
 			goto OnExit;
 		}
+
+		delete[] d3dIndexData;
 	}
 
 OnExit:
