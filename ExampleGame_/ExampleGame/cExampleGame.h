@@ -87,6 +87,7 @@ namespace eae6320
 		eae6320::cResult InitializeEffect();
 		eae6320::cResult InitializeSprite();
 		eae6320::cResult InitializeTexture();
+		eae6320::cResult InitializeMesh();
 		void InitializeRenderData();
 
 		virtual cResult CleanUp() override;
@@ -94,6 +95,7 @@ namespace eae6320
 		eae6320::cResult CleanUpEffect();
 		eae6320::cResult CleanUpSprite();
 		eae6320::cResult CleanUpTexture();
+		eae6320::cResult CleanUpMesh();
 
 		virtual void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) override;
 

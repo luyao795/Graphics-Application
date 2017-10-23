@@ -136,72 +136,11 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 		goto OnExit;
 	}
 
+	// Initialize the mesh data
+	if (!(result = InitializeMesh()))
 	{
-		// Initialize the mesh data (temporary)
-		std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData(6);
-		std::vector<uint16_t> indexData(12);
-		{
-			meshData[0].x = 0.25f;
-			meshData[0].y = 0.25f;
-			meshData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
-			meshData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
-			meshData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
-			meshData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.A());
-
-			meshData[1].x = 0.25f;
-			meshData[1].y = -0.25f;
-			meshData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
-			meshData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
-			meshData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
-			meshData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
-
-			meshData[2].x = 0.0f;
-			meshData[2].y = -0.5f;
-			meshData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
-			meshData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
-			meshData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
-			meshData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
-
-			meshData[3].x = -0.25f;
-			meshData[3].y = -0.25f;
-			meshData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.R());
-			meshData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.G());
-			meshData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.B());
-			meshData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.A());
-
-			meshData[4].x = -0.25f;
-			meshData[4].y = 0.25f;
-			meshData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
-			meshData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
-			meshData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
-			meshData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.A());
-
-			meshData[5].x = 0.0f;
-			meshData[5].y = 0.5f;
-			meshData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
-			meshData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
-			meshData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
-			meshData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
-		}
-		{
-			indexData[0] = 0;
-			indexData[1] = 4;
-			indexData[2] = 5;
-
-			indexData[3] = 0;
-			indexData[4] = 1;
-			indexData[5] = 3;
-
-			indexData[6] = 0;
-			indexData[7] = 3;
-			indexData[8] = 4;
-
-			indexData[9] = 1;
-			indexData[10] = 2;
-			indexData[11] = 3;
-		}
-
-		result = eae6320::Graphics::Mesh::Load(meshData, indexData, s_polygonMesh);
+		EAE6320_ASSERT(false);
+		goto OnExit;
 	}
 
 	// Initialize the rendering data
@@ -311,8 +250,87 @@ OnExit:
 	return result;
 }
 
+eae6320::cResult eae6320::cExampleGame::InitializeMesh()
+{
+	cResult result = Results::Success;
+
+	// Initialize the vertex and index data for mesh
+	std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData(6);
+	std::vector<uint16_t> indexData(12);
+	{
+		meshData[0].x = 0.25f;
+		meshData[0].y = 0.25f;
+		meshData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
+		meshData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
+		meshData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
+		meshData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.A());
+
+		meshData[1].x = 0.25f;
+		meshData[1].y = -0.25f;
+		meshData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
+		meshData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
+		meshData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
+		meshData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
+
+		meshData[2].x = 0.0f;
+		meshData[2].y = -0.5f;
+		meshData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
+		meshData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
+		meshData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
+		meshData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+
+		meshData[3].x = -0.25f;
+		meshData[3].y = -0.25f;
+		meshData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.R());
+		meshData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.G());
+		meshData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.B());
+		meshData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.A());
+
+		meshData[4].x = -0.25f;
+		meshData[4].y = 0.25f;
+		meshData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
+		meshData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
+		meshData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
+		meshData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.A());
+
+		meshData[5].x = 0.0f;
+		meshData[5].y = 0.5f;
+		meshData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
+		meshData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
+		meshData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
+		meshData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
+	}
+	{
+		indexData[0] = 0;
+		indexData[1] = 4;
+		indexData[2] = 5;
+
+		indexData[3] = 0;
+		indexData[4] = 1;
+		indexData[5] = 3;
+
+		indexData[6] = 0;
+		indexData[7] = 3;
+		indexData[8] = 4;
+
+		indexData[9] = 1;
+		indexData[10] = 2;
+		indexData[11] = 3;
+	}
+
+	if (!(result = eae6320::Graphics::Mesh::Load(meshData, indexData, s_polygonMesh)))
+	{
+		EAE6320_ASSERT(false);
+		goto OnExit;
+	}
+
+OnExit:
+	return result;
+}
+
 void eae6320::cExampleGame::InitializeRenderData()
 {
+	// Initialize render data struct with Sprite and Texture
 	s_render = eae6320::Graphics::DataSetForRenderingSprite(s_effect, s_sprite, eae6320::Graphics::cTexture::s_manager.Get(pikachuTexture));
 	s_render2 = eae6320::Graphics::DataSetForRenderingSprite(s_effect, s_sprite2, eae6320::Graphics::cTexture::s_manager.Get(pikachuTexture));
 	s_render_static = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static, eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture));
@@ -320,6 +338,7 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static3 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static3, eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture));
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 
+	// Initialize render data struct with Mesh
 	s_render_mesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_polygonMesh, eae6320::Math::sVector(0.0f, 0.0f, 0.0f));
 }
 
@@ -348,17 +367,11 @@ eae6320::cResult eae6320::cExampleGame::CleanUp()
 		goto OnExit;
 	}
 
-	// Clean up the mesh data (temporary)
-	if (s_polygonMesh)
+	// Clean up the mesh data
+	if (!(result = CleanUpMesh()))
 	{
-		result = s_polygonMesh->CleanUp();
-		if (result)
-			s_polygonMesh = nullptr;
-		else
-		{
-			EAE6320_ASSERT(false);
-			goto OnExit;
-		}
+		EAE6320_ASSERT(false);
+		goto OnExit;
 	}
 
 OnExit:
@@ -524,6 +537,26 @@ OnExit:
 	return result;
 }
 
+eae6320::cResult eae6320::cExampleGame::CleanUpMesh()
+{
+	cResult result = Results::Success;
+
+	if (s_polygonMesh)
+	{
+		result = s_polygonMesh->CleanUp();
+		if (result)
+			s_polygonMesh = nullptr;
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
+	}
+
+OnExit:
+	return result;
+}
+
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
 	// Submit color data
@@ -537,5 +570,6 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 
+	// Submit Effect Mesh pair data
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(s_render_mesh);
 }
