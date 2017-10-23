@@ -274,17 +274,17 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		meshData[2].x = 0.0f;
 		meshData[2].y = -0.5f;
-		meshData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
-		meshData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
-		meshData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
-		meshData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+		meshData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		meshData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		meshData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		meshData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
 
 		meshData[3].x = -0.25f;
 		meshData[3].y = -0.25f;
-		meshData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.R());
-		meshData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.G());
-		meshData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.B());
-		meshData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawMagenta.A());
+		meshData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
+		meshData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
+		meshData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
+		meshData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
 
 		meshData[4].x = -0.25f;
 		meshData[4].y = 0.25f;
