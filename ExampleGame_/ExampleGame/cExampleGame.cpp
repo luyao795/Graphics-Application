@@ -9,6 +9,7 @@
 #include <Engine/Graphics/Sprite.h>
 #include <Engine/Graphics/Mesh.h>
 #include <Engine/Graphics/Graphics.h>
+#include <Engine/Math/Functions.h>
 
 
 // Inherited Implementation
@@ -48,9 +49,11 @@ namespace
 	eae6320::Graphics::Mesh* s_movableMesh = nullptr;
 	eae6320::Math::sVector movableInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector movableInitVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Math::sVector movableInitAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Graphics::Mesh* s_staticMesh = nullptr;
 	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, 0.8f, 0.0f);
 	eae6320::Math::sVector staticVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Math::sVector staticAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 
 	// Combined Rendering Data with Sprite & Texture
 	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
@@ -64,10 +67,19 @@ namespace
 	eae6320::Graphics::DataSetForRenderingMesh s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh();
 	eae6320::Graphics::DataSetForRenderingMesh s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh();
 
-	// External counter used for Rendering based on Time
+	// External counter used for Rendering based on time
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
+
+	// External multiplier used for control with acceleration
+	const float accelerationMultiplier = 0.05f;
+	const float deaccelerationMultiplier = -5.0f;
+	const float epsilonForVelocityOffset = 0.01f;
+	const float epsilonForAccelerationOffset = 0.0001f;
+
+	// Constant data for comparison
+	const static eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -115,27 +127,59 @@ void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_s
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 {
-	const float speedMultiplier = 0.1f;
-	float speedVertical = 0.0f;
-	float speedHorizontal = 0.0f;
+	float accelerationBaseFactorVertical = 0.0f;
+	float accelerationBaseFactorHorizontal = 0.0f;
+
+	float accelerationVertical = 0.0f;
+	float accelerationHorizontal = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		speedHorizontal += -1.0f * speedMultiplier;
+		if(s_render_movableMesh.velocity.x > 0)
+			accelerationBaseFactorHorizontal = -3.0f;
+		else
+			accelerationBaseFactorHorizontal = -1.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
-		speedHorizontal += speedMultiplier;
+		if (s_render_movableMesh.velocity.x < 0)
+			accelerationBaseFactorHorizontal = 3.0f;
+		else
+			accelerationBaseFactorHorizontal = 1.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
-		speedVertical += speedMultiplier;
+		if (s_render_movableMesh.velocity.y < 0)
+			accelerationBaseFactorVertical = 3.0f;
+		else
+			accelerationBaseFactorVertical = 1.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
-		speedVertical += -1.0f * speedMultiplier;
-
-	s_render_movableMesh.velocity = eae6320::Math::sVector(speedHorizontal, speedVertical, 0.0f);
+		if (s_render_movableMesh.velocity.y > 0)
+			accelerationBaseFactorVertical = -3.0f;
+		else
+			accelerationBaseFactorVertical = -1.0f;
+	
+	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
+	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
+	s_render_movableMesh.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
+	// If the acceleration is zero
+	if (s_render_movableMesh.acceleration == Zero)
+		// And the velocity is not zero
+		if (s_render_movableMesh.velocity != Zero)
+		{
+			// If the velocity amount is tiny enough to be ignored, ignore the amount and make the mesh static
+			s_render_movableMesh.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.x;
+			s_render_movableMesh.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.y;
+			// Otherwise, decrease the speed by applying a deacceleration on it
+			float deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.x / abs(s_render_movableMesh.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
+			float deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.y / abs(s_render_movableMesh.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
+			s_render_movableMesh.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
+		}
+	// v = a * t
+	s_render_movableMesh.velocity += s_render_movableMesh.acceleration * i_elapsedSecondCount_sinceLastUpdate;
+	// s = v * t = a * (t ^ 2)
 	s_render_movableMesh.position += s_render_movableMesh.velocity * i_elapsedSecondCount_sinceLastUpdate;
 }
 
@@ -418,8 +462,8 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 
 	// Initialize render data struct with Mesh
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableInitLocation, movableInitVelocity);
-	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticLocation, staticVelocity);
+	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableInitLocation, movableInitVelocity, movableInitAcceleration);
+	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticLocation, staticVelocity, staticAcceleration);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()

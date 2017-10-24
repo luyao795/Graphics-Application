@@ -59,18 +59,20 @@ namespace eae6320
 
 			}
 
-			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Math::sVector i_position, eae6320::Math::sVector i_velocity)
+			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Math::sVector i_position, eae6320::Math::sVector i_velocity, eae6320::Math::sVector i_acceleration)
 			{
 				effect = i_effect;
 				mesh = i_mesh;
 				position = i_position;
 				velocity = i_velocity;
+				acceleration = i_acceleration;
 			}
 
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Mesh* mesh;
 			eae6320::Math::sVector position;
 			eae6320::Math::sVector velocity;
+			eae6320::Math::sVector acceleration;
 		};
 
 		// Submission
