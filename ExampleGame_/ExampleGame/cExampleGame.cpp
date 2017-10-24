@@ -164,19 +164,31 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
-	// If the acceleration is zero
-	if (s_render_movableMesh.acceleration == Zero)
-		// And the velocity is not zero
-		if (s_render_movableMesh.velocity != Zero)
+	float deaccelerationX = s_render_movableMesh.acceleration.x;
+	float deaccelerationY = s_render_movableMesh.acceleration.y;
+
+	// If the velocity is not zero
+	if (s_render_movableMesh.velocity != Zero)
+	{
+		// And the acceleration x component is zero
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.x, 0.0f, epsilonForAccelerationOffset))
 		{
-			// If the velocity amount is tiny enough to be ignored, ignore the amount and make the mesh static
+			// If the velocity x component amount is tiny enough to be ignored, ignore the amount and make the mesh static
 			s_render_movableMesh.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.x;
-			s_render_movableMesh.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.y;
-			// Otherwise, decrease the speed by applying a deacceleration on it
-			float deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.x / abs(s_render_movableMesh.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
-			float deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.y / abs(s_render_movableMesh.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
-			s_render_movableMesh.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
+			// Otherwise, decrease the velocity by applying a deacceleration on x component
+			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.x / abs(s_render_movableMesh.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
 		}
+		// And the acceleration y component is zero
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.y, 0.0f, epsilonForAccelerationOffset))
+		{
+			// If the velocity y component amount is tiny enough to be ignored, ignore the amount and make the mesh static
+			s_render_movableMesh.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.y;
+			// Otherwise, decrease the velocity by applying a deacceleration on y component
+			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.y / abs(s_render_movableMesh.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
+		}
+	}
+	// Calculate the actual acceleration
+	s_render_movableMesh.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
 	// v = a * t
 	s_render_movableMesh.velocity += s_render_movableMesh.acceleration * i_elapsedSecondCount_sinceLastUpdate;
 	// s = v * t = a * (t ^ 2)
