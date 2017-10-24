@@ -107,6 +107,33 @@ void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_s
 	}
 }
 
+void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
+{
+	//const float speed = 0.2f;
+	//eae6320::Math::sVector velocity = eae6320::Math::sVector();
+	//if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
+	//{
+	//	velocity += eae6320::Math::sVector(-1.0f * speed, 0.0f, 0.0f);
+	//}
+	//if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
+	//{
+	//	velocity += eae6320::Math::sVector(speed, 0.0f, 0.0f);
+	//}
+	//if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
+	//{
+	//	velocity += eae6320::Math::sVector(0.0f, speed, 0.0f);
+	//}
+	//if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
+	//{
+	//	velocity += eae6320::Math::sVector(0.0f, -1.0f * speed, 0.0f);
+	//}
+	//s_render_mesh.position += velocity;
+}
+
+void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
+{
+}
+
 // Initialization / Clean Up
 //--------------------------
 

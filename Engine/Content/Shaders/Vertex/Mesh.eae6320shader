@@ -55,7 +55,7 @@
 	// Calculate the position of this vertex on screen
 	{
 		// This shader sets the "out" position directly from the "in" position:
-		o_position = vec4( i_position.x, i_position.y, 0.0, 1.0 );
+		o_position = vec4( i_position.x + g_position.x, i_position.y + g_position.y, 0.0, 1.0 );
 		// This shader sets the "out" texcoord directly from the "in" texcoord:
 		o_meshcolor = i_meshcolor;
 	}
