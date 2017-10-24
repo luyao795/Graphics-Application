@@ -592,10 +592,10 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render2);
-	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static);
-	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
-	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
-	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
+	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 
 	// Submit Effect Mesh pair data
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(s_render_mesh);
