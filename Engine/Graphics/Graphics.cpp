@@ -9,10 +9,11 @@
 #include "cSamplerState.h"
 #include "sContext.h"
 
-#include "Color.h"
+#include "Colors.h"
 #include "Effect.h"
 #include "Sprite.h"
 #include "cTexture.h"
+#include "Mesh.h"
 #include "GraphicsHandler.h"
 #include "Graphics.h"
 
@@ -24,6 +25,7 @@ namespace
 {
 	// Constant buffer object
 	eae6320::Graphics::cConstantBuffer s_constantBuffer_perFrame(eae6320::Graphics::ConstantBufferTypes::PerFrame);
+	eae6320::Graphics::cConstantBuffer s_constantBuffer_perDrawCall(eae6320::Graphics::ConstantBufferTypes::PerDrawCall);
 	// In our class we will only have a single sampler state
 	eae6320::Graphics::cSamplerState s_samplerState;
 
@@ -35,8 +37,10 @@ namespace
 	struct sDataRequiredToRenderAFrame
 	{
 		eae6320::Graphics::ConstantBufferFormats::sPerFrame constantData_perFrame;
+		eae6320::Graphics::ConstantBufferFormats::sPerDrawCall constantData_perDrawCall;
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
-		std::vector<eae6320::Graphics::DataSetForRendering> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRenderingSprite> cachedEffectSpritePairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairForRenderingInNextFrame;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -70,13 +74,21 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRendering renderData)
+void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.push_back(renderData);
 	renderData.effect->IncrementReferenceCount();
 	renderData.sprite->IncrementReferenceCount();
 	renderData.texture->IncrementReferenceCount();
+}
+
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.push_back(renderData);
+	renderData.effect->IncrementReferenceCount();
+	renderData.mesh->IncrementReferenceCount();
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -134,6 +146,9 @@ void eae6320::Graphics::RenderFrame()
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
+	// Copy the data from the system memory that the application owns to GPU memory and the buffer will be updated later
+	auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
+
 	// Bind shading data, bind texture and draw geometry
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
@@ -141,6 +156,20 @@ void eae6320::Graphics::RenderFrame()
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
+		}
+	}
+
+	// Bind shading data and draw mesh
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			// Update the per-draw call constant buffer
+			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.x;
+			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.y;
+			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
+
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
 		}
 	}
 
@@ -157,6 +186,20 @@ void eae6320::Graphics::RenderFrame()
 			}
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+	}
+
+	// Once everything has been drawn the data that was submitted for this frame
+	// should be cleaned up and cleared.
+	// so that the struct can be re-used (i.e. so that data for a new frame can be submitted to it)
+	{
+		{
+			for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+			{
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			}
+		}
+		s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 	}
 
 	SwapRender();
@@ -198,6 +241,19 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 			EAE6320_ASSERT(false);
 			goto OnExit;
 		}
+		if (result = s_constantBuffer_perDrawCall.Initialize())
+		{
+			// There is only a single per-draw call constant buffer that is re-used
+			// and so it can be bound at initialization time and never unbound
+			s_constantBuffer_perDrawCall.Bind(
+				// In our class both vertex and fragment shaders use per-frame constant data
+				ShaderTypes::Vertex | ShaderTypes::Fragment);
+		}
+		else
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 		if (result = s_samplerState.Initialize())
 		{
 			// There is only a single sampler state that is re-used
@@ -228,7 +284,11 @@ eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& 
 
 	// Initialize the views
 	{
-		result = InitializeRenderingView(i_initializationParameters);
+		if (!(result = InitializeRenderingView(i_initializationParameters)))
+		{
+			EAE6320_ASSERT(false);
+			goto OnExit;
+		}
 	}
 
 OnExit:
@@ -240,8 +300,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 {
 	auto result = Results::Success;
 
+	// This thread will always be empty when this function gets called
 	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
+	// This thread will contain items thus we need to clean it manually
 	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
 	{
 		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
@@ -257,10 +320,35 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
 
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh = nullptr;
+		}
+	}
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
+
 	CleanUpGraphics();
 
 	{
 		const auto localResult = s_constantBuffer_perFrame.CleanUp();
+		if (!localResult)
+		{
+			EAE6320_ASSERT(false);
+			if (result)
+			{
+				result = localResult;
+			}
+		}
+	}
+
+	{
+		const auto localResult = s_constantBuffer_perDrawCall.CleanUp();
 		if (!localResult)
 		{
 			EAE6320_ASSERT(false);

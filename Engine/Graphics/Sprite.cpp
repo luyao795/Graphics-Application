@@ -5,7 +5,7 @@
 
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
-#include <new>
+#include <new> // This library is needed for std::nothrow
 
 namespace eae6320
 {
@@ -33,15 +33,15 @@ namespace eae6320
 				if (!sprite)
 				{
 					result = Results::OutOfMemory;
-					EAE6320_ASSERTF(false, "Couldn't allocate memory for the sprite.");
-					Logging::OutputError("Failed to allocate memory for the sprite.");
+					EAE6320_ASSERTF(false, "Couldn't allocate memory for the sprite");
+					Logging::OutputError("Failed to allocate memory for the sprite");
 					goto OnExit;
 				}
 			}
 
 			if (!(result = sprite->InitializeGeometry(tr_X, tr_Y, sideH, sideV)))
 			{
-				EAE6320_ASSERTF(false, "Initialization of new sprite failed.");
+				EAE6320_ASSERTF(false, "Initialization of new sprite failed");
 				goto OnExit;
 			}
 
@@ -71,8 +71,8 @@ namespace eae6320
 				this->DecrementReferenceCount();
 			else
 			{
-				EAE6320_ASSERTF(false, "Failed to clean up geometry.");
-				Logging::OutputError("Failed to clean up geometry.");
+				EAE6320_ASSERTF(false, "Failed to clean up geometry");
+				Logging::OutputError("Failed to clean up geometry");
 			}
 			return result;
 		}

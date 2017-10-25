@@ -7,7 +7,7 @@
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 #include <Engine/Platform/Platform.h>
-#include <new>
+#include <new> // This library is needed for std::nothrow
 
 // Static Data Initialization
 //===========================

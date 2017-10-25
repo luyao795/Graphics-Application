@@ -75,7 +75,7 @@ eae6320::cResult eae6320::Graphics::Sprite::InitializeGeometry(float tr_X, float
 
 			const auto d3dResult = direct3dDevice->CreateInputLayout(layoutDescription, vertexElementCount,
 				vertexShaderDataFromFile.data, vertexShaderDataFromFile.size, &s_vertexInputLayout);
-			if (FAILED(result))
+			if (FAILED(d3dResult))
 			{
 				result = eae6320::Results::Failure;
 				EAE6320_ASSERTF(false, "Geometry vertex input layout creation failed (HRESULT %#010x)", d3dResult);

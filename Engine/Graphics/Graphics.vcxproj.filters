@@ -36,6 +36,8 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="cTexture.h" />
     <ClInclude Include="TextureFormats.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Colors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D\cConstantBuffer.d3d.cpp">
@@ -102,6 +104,14 @@
       <Filter>OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="cTexture.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Direct3D\Mesh.d3d.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\Mesh.gl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Colors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cRenderState.inl" />
