@@ -136,25 +136,25 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	float accelerationHorizontal = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		if(s_render_movableMesh.velocity.x > 0)
+		if(s_render_movableMesh.velocity.x > 0.0f)
 			accelerationBaseFactorHorizontal += -1.0f * frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += -1.0f * normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
-		if (s_render_movableMesh.velocity.x < 0)
+		if (s_render_movableMesh.velocity.x < 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
-		if (s_render_movableMesh.velocity.y < 0)
+		if (s_render_movableMesh.velocity.y < 0.0f)
 			accelerationBaseFactorVertical += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
-		if (s_render_movableMesh.velocity.y > 0)
+		if (s_render_movableMesh.velocity.y > 0.0f)
 			accelerationBaseFactorVertical += -1.0f * frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += -1.0f * normalAccelerationIncrement;
