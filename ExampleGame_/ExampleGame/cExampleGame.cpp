@@ -74,7 +74,9 @@ namespace
 
 	// External multiplier used for control with acceleration
 	const float accelerationMultiplier = 0.05f;
-	const float deaccelerationMultiplier = -5.0f;
+	const float normalAccelerationIncrement = 1.0f;
+	const float frictionAccelerationIncrement = 5.0f;
+	const float deaccelerationMultiplier = -3.0f;
 	const float epsilonForVelocityOffset = 0.01f;
 	const float epsilonForAccelerationOffset = 0.0001f;
 
@@ -135,27 +137,27 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
 		if(s_render_movableMesh.velocity.x > 0)
-			accelerationBaseFactorHorizontal = -3.0f;
+			accelerationBaseFactorHorizontal += -1.0f * frictionAccelerationIncrement;
 		else
-			accelerationBaseFactorHorizontal = -1.0f;
+			accelerationBaseFactorHorizontal += -1.0f * normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
 		if (s_render_movableMesh.velocity.x < 0)
-			accelerationBaseFactorHorizontal = 3.0f;
+			accelerationBaseFactorHorizontal += frictionAccelerationIncrement;
 		else
-			accelerationBaseFactorHorizontal = 1.0f;
+			accelerationBaseFactorHorizontal += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
 		if (s_render_movableMesh.velocity.y < 0)
-			accelerationBaseFactorVertical = 3.0f;
+			accelerationBaseFactorVertical += frictionAccelerationIncrement;
 		else
-			accelerationBaseFactorVertical = 1.0f;
+			accelerationBaseFactorVertical += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
 		if (s_render_movableMesh.velocity.y > 0)
-			accelerationBaseFactorVertical = -3.0f;
+			accelerationBaseFactorVertical += -1.0f * frictionAccelerationIncrement;
 		else
-			accelerationBaseFactorVertical = -1.0f;
+			accelerationBaseFactorVertical += -1.0f * normalAccelerationIncrement;
 	
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
