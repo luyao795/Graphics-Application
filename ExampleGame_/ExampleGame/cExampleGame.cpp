@@ -73,15 +73,15 @@ namespace
 	bool flagForSwappingTexturesBasedOnTime = false;
 
 	// External multiplier used for control with acceleration
-	const float accelerationMultiplier = 0.05f;
-	const float normalAccelerationIncrement = 1.0f;
-	const float frictionAccelerationIncrement = 5.0f;
-	const float deaccelerationMultiplier = -3.0f;
-	const float epsilonForVelocityOffset = 0.01f;
-	const float epsilonForAccelerationOffset = 0.0001f;
+	constexpr float accelerationMultiplier = 0.05f;
+	constexpr float normalAccelerationIncrement = 1.0f;
+	constexpr float frictionAccelerationIncrement = 5.0f;
+	constexpr float deaccelerationMultiplier = -3.0f;
+	constexpr float epsilonForVelocityOffset = 0.01f;
+	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
 	// Constant data for comparison
-	const static eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
