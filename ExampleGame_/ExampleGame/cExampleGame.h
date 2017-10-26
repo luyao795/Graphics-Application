@@ -9,6 +9,7 @@
 //==============
 
 #include <Engine/Graphics/Colors.h>
+#include <Engine/Graphics/Graphics.h>
 #include <Engine/Application/cbApplication.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
@@ -101,6 +102,9 @@ namespace eae6320
 		eae6320::cResult CleanUpMesh();
 
 		virtual void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) override;
+
+		void IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
+		void DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 	};
 }

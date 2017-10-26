@@ -8,7 +8,6 @@
 #include <Engine/Graphics/Effect.h>
 #include <Engine/Graphics/Sprite.h>
 #include <Engine/Graphics/Mesh.h>
-#include <Engine/Graphics/Graphics.h>
 #include <Engine/Math/Functions.h>
 
 
@@ -720,7 +719,22 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 
-	// Submit Effect Mesh pair data
+	// Submit Effect Mesh pair data with prediction if needed
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(s_render_staticMesh);
+
+	IncrementPredictionAmountOntoMovement(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate);
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(s_render_movableMesh);
+	DecrementPredictionAmountOntoMovement(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate);
+}
+
+void eae6320::cExampleGame::IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
+{
+	i_movableMeshToPredict.velocity += i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
+	i_movableMeshToPredict.position += i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
+}
+
+void eae6320::cExampleGame::DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
+{
+	i_movableMeshToPredict.position -= i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
+	i_movableMeshToPredict.velocity -= i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
 }
