@@ -166,6 +166,12 @@ void eae6320::Graphics::RenderFrame()
 		ClearView(cachedColor);
 	}
 
+	// Update depth buffer for next frame
+	{
+		constexpr float defaultDepth = 1.0f;
+		ClearDepth(defaultDepth);
+	}
+
 	// Update the per-frame constant buffer
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
