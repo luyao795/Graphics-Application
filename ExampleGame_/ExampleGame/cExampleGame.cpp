@@ -45,6 +45,9 @@ namespace
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
 
+	// External constant data for movable mesh size
+	constexpr float movableMeshSize = 1.0f;
+
 	// Mesh Data
 	eae6320::Graphics::Mesh* s_movableMesh = nullptr;
 	eae6320::Math::sVector movableInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
@@ -53,7 +56,7 @@ namespace
 	eae6320::Physics::sRigidBodyState movableRigidBody = eae6320::Physics::sRigidBodyState();
 
 	eae6320::Graphics::Mesh* s_staticMesh = nullptr;
-	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, 0.8f, 0.0f);
+	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, -1.0f * movableMeshSize, 0.0f);
 	eae6320::Math::sVector staticVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector staticAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Physics::sRigidBodyState staticRigidBody = eae6320::Physics::sRigidBodyState();
@@ -87,7 +90,7 @@ namespace
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
 	// External constant for defining camera distance
-	constexpr float cameraDistance = 10.0f;
+	constexpr float cameraDistance = 7.5f;
 
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
@@ -413,7 +416,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[4].x = -1.0f;
 		movableVertexData[4].y = -1.0f;
-		movableVertexData[4].z = 0.0f;
+		movableVertexData[4].z = -1.0f;
 		movableVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
 		movableVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
 		movableVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
@@ -421,7 +424,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[5].x = -1.0f;
 		movableVertexData[5].y = 1.0f;
-		movableVertexData[5].z = 0.0f;
+		movableVertexData[5].z = -1.0f;
 		movableVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
 		movableVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
 		movableVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
@@ -429,7 +432,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[6].x = 1.0f;
 		movableVertexData[6].y = 1.0f;
-		movableVertexData[6].z = 0.0f;
+		movableVertexData[6].z = -1.0f;
 		movableVertexData[6].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
 		movableVertexData[6].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
 		movableVertexData[6].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
@@ -437,7 +440,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[7].x = 1.0f;
 		movableVertexData[7].y = -1.0f;
-		movableVertexData[7].z = 0.0f;
+		movableVertexData[7].z = -1.0f;
 		movableVertexData[7].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
 		movableVertexData[7].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
 		movableVertexData[7].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
@@ -499,42 +502,75 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 		movableIndexData[35] = 7;
 	}
 
-	std::vector<eae6320::Graphics::VertexFormats::sMesh> staticVertexData(4);
-	std::vector<uint16_t> staticIndexData(6);
+	std::vector<eae6320::Graphics::VertexFormats::sMesh> staticVertexData(8);
+	std::vector<uint16_t> staticIndexData(36);
 	{
-		staticVertexData[0].x = 0.1f;
-		staticVertexData[0].y = 0.0f;
-		staticVertexData[0].z = 0.0f;
-		staticVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
-		staticVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
-		staticVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
-		staticVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
+		staticVertexData[0].x = -2.0f;
+		staticVertexData[0].y = -0.125f;
+		staticVertexData[0].z = 2.0f;
+		staticVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
+		staticVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
+		staticVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
+		staticVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.A());
 
-		staticVertexData[1].x = 0.0f;
-		staticVertexData[1].y = -0.1f;
-		staticVertexData[1].z = 0.0f;
-		staticVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
-		staticVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
-		staticVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
-		staticVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+		staticVertexData[1].x = -2.0f;
+		staticVertexData[1].y = 0.125f;
+		staticVertexData[1].z = 2.0f;
+		staticVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
 
-		staticVertexData[2].x = -0.1f;
-		staticVertexData[2].y = 0.0f;
-		staticVertexData[2].z = 0.0f;
-		staticVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
-		staticVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
-		staticVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
-		staticVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+		staticVertexData[2].x = 2.0f;
+		staticVertexData[2].y = 0.125f;
+		staticVertexData[2].z = 2.0f;
+		staticVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
+		staticVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
+		staticVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
+		staticVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.A());
 
-		staticVertexData[3].x = 0.0f;
-		staticVertexData[3].y = 0.1f;
-		staticVertexData[3].z = 0.0f;
-		staticVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
-		staticVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
-		staticVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
-		staticVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
+		staticVertexData[3].x = 2.0f;
+		staticVertexData[3].y = -0.125f;
+		staticVertexData[3].z = 2.0f;
+		staticVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[4].x = -2.0f;
+		staticVertexData[4].y = -0.125f;
+		staticVertexData[4].z = -2.0f;
+		staticVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[5].x = -2.0f;
+		staticVertexData[5].y = 0.125f;
+		staticVertexData[5].z = -2.0f;
+		staticVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
+		staticVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
+		staticVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
+		staticVertexData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.A());
+
+		staticVertexData[6].x = 2.0f;
+		staticVertexData[6].y = 0.125f;
+		staticVertexData[6].z = -2.0f;
+		staticVertexData[6].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[6].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[6].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[6].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[7].x = 2.0f;
+		staticVertexData[7].y = -0.125f;
+		staticVertexData[7].z = -2.0f;
+		staticVertexData[7].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
+		staticVertexData[7].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
+		staticVertexData[7].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
+		staticVertexData[7].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.A());
 	}
 	{
+		// Front side
 		staticIndexData[0] = 0;
 		staticIndexData[1] = 1;
 		staticIndexData[2] = 2;
@@ -542,6 +578,51 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 		staticIndexData[3] = 0;
 		staticIndexData[4] = 2;
 		staticIndexData[5] = 3;
+
+		// Right side
+		staticIndexData[6] = 3;
+		staticIndexData[7] = 2;
+		staticIndexData[8] = 6;
+
+		staticIndexData[9] = 3;
+		staticIndexData[10] = 6;
+		staticIndexData[11] = 7;
+
+		// Left side
+		staticIndexData[12] = 5;
+		staticIndexData[13] = 1;
+		staticIndexData[14] = 0;
+
+		staticIndexData[15] = 5;
+		staticIndexData[16] = 0;
+		staticIndexData[17] = 4;
+
+		// Bottom side
+		staticIndexData[18] = 0;
+		staticIndexData[19] = 3;
+		staticIndexData[20] = 4;
+
+		staticIndexData[21] = 3;
+		staticIndexData[22] = 7;
+		staticIndexData[23] = 4;
+
+		// Top side
+		staticIndexData[24] = 2;
+		staticIndexData[25] = 5;
+		staticIndexData[26] = 6;
+
+		staticIndexData[27] = 5;
+		staticIndexData[28] = 2;
+		staticIndexData[29] = 1;
+
+		// Back side
+		staticIndexData[30] = 6;
+		staticIndexData[31] = 5;
+		staticIndexData[32] = 4;
+
+		staticIndexData[33] = 6;
+		staticIndexData[34] = 4;
+		staticIndexData[35] = 7;
 	}
 
 	if (!(result = eae6320::Graphics::Mesh::Load(movableVertexData, movableIndexData, s_movableMesh)))
@@ -814,7 +895,7 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Mesh pair data with prediction if needed
-	//eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
 
 	// Submit Effect Sprite pair data
