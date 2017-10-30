@@ -59,6 +59,12 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
+
+	// External constants for defining the camera properties
+	constexpr float aspectRatio = 1.0f;
+	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
+	constexpr float nearPlaneDistance = 0.1f;
+	constexpr float farPlaneDistance = 100.0f;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -164,7 +170,7 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
-		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(ConvertDegreeToRadian(45.0f), 1.0f, 0.1f, 100.0f);
+		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 

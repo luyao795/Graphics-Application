@@ -86,6 +86,9 @@ namespace
 	constexpr float epsilonForVelocityOffset = 0.01f;
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
+	// External constant for defining camera distance
+	constexpr float cameraDistance = 3.0f;
+
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 }
@@ -231,7 +234,7 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
 
-	viewCamera.rigidBody.position.z = 3.0f;
+	viewCamera.rigidBody.position.z = cameraDistance;
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
