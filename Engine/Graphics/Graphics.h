@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <Engine/Results/Results.h>
 #include <Engine/Math/sVector.h>
+#include <Engine/Physics/sRigidBodyState.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
@@ -73,6 +74,7 @@ namespace eae6320
 			eae6320::Math::sVector position;
 			eae6320::Math::sVector velocity;
 			eae6320::Math::sVector acceleration;
+			//eae6320::Physics::sRigidBodyState rigidBody;
 		};
 
 		// Submission
