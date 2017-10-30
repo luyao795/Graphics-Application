@@ -286,7 +286,7 @@ OnExit:
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 {
 	cResult result = Results::Success;
-	const uint8_t defaultRenderState = 0;
+	constexpr uint8_t defaultRenderState = 0;
 
 	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
 	{
