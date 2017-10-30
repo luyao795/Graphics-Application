@@ -165,9 +165,7 @@ void eae6320::Graphics::RenderFrame()
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
 		{
 			// Update the per-draw call constant buffer
-			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.x;
-			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.y;
-			constantData_perDrawCall.g_position.z = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.z;
+			constantData_perDrawCall.g_transform_localToWorld = eae6320::Math::cMatrix_transformation(s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.orientation, s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position);
 			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
 
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();

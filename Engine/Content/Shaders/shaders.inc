@@ -73,5 +73,5 @@
 
 	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
 	{
-		vec4 g_position;
+		float4x4 g_transform_localToWorld;
 	};
