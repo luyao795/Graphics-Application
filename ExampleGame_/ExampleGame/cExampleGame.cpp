@@ -753,7 +753,7 @@ OnExit:
 
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
-	// Submit color data
+	// Submit Color data
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Mesh pair data with prediction if needed
