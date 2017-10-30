@@ -733,6 +733,10 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	// Submit color data
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
+	// Submit Effect Mesh pair data with prediction if needed
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
+
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render2);
@@ -740,8 +744,4 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
-
-	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
 }

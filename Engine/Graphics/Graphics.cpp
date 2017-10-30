@@ -160,16 +160,6 @@ void eae6320::Graphics::RenderFrame()
 	// Copy the data from the system memory that the application owns to GPU memory and the buffer will be updated later
 	auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
 
-	// Bind shading data, bind texture and draw geometry
-	{
-		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
-		{
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
-		}
-	}
-
 	// Bind shading data and draw mesh
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
@@ -182,6 +172,16 @@ void eae6320::Graphics::RenderFrame()
 
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
+		}
+	}
+
+	// Bind shading data, bind texture and draw geometry
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
 		}
 	}
 
