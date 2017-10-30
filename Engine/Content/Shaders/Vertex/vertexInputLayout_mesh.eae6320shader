@@ -16,7 +16,7 @@
 	// but must match the C calls to glVertexAttribPointer()
 
 	// These values come from one of the VertexFormats::sGeometry that the vertex buffer was filled with in C code
-	layout( location = 0 ) in vec2 i_position;
+	layout( location = 0 ) in vec3 i_position;
 	layout( location = 1 ) in vec4 i_meshcolor;
 
 	// Output
@@ -37,7 +37,7 @@
 	// The "semantics" (the keywords in all caps after the colon) are arbitrary,
 	// but must match the C call to CreateInputLayout()
 
-	in const float2 i_position : POSITION,
+	in const float3 i_position : POSITION,
 	in const float4 i_meshcolor : COLOR0,
 
 	// Output
@@ -55,6 +55,6 @@
 {
 	// The shader program is only used to generate a vertex input layout object;
 	// the actual shading code is never used
-	o_position = vec4( i_position, 0.0, 1.0 );
+	o_position = vec4( i_position, 1.0 );
 	o_meshcolor = i_meshcolor;
 }

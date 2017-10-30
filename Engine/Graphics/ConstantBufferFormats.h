@@ -26,6 +26,9 @@ namespace eae6320
 		{
 			struct sPerFrame
 			{
+				eae6320::Math::cMatrix_transformation g_transform_worldToCamera;
+				eae6320::Math::cMatrix_transformation g_transform_cameraToProjected;
+
 				float g_elapsedSecondCount_systemTime = 0.0f;
 				float g_elapsedSecondCount_simulationTime = 0.0f;
 				float padding[2];	// For float4 alignment

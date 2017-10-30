@@ -70,6 +70,9 @@ namespace
 	eae6320::Graphics::DataSetForRenderingMesh s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh();
 	eae6320::Graphics::DataSetForRenderingMesh s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh();
 
+	// Camera Data
+	eae6320::Graphics::Camera viewCamera;
+
 	// External counter used for Rendering based on time
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
@@ -209,6 +212,8 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 {
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
+
+	viewCamera.rigidBody.position.z = 10.0f;
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
@@ -744,4 +749,7 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static2);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
+
+	// Submit Camera data
+	eae6320::Graphics::SubmitCameraForView(viewCamera);
 }

@@ -41,6 +41,7 @@ namespace
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingSprite> cachedEffectSpritePairForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairForRenderingInNextFrame;
+		eae6320::Graphics::Camera cameraForView;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -72,6 +73,14 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
+}
+
+void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
+	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
+	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
 }
 
 void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData)
@@ -154,6 +163,7 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
+		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(ConvertDegreeToRadian(45.0f), 1.0f, 0.1f, 100.0f);
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
@@ -213,6 +223,12 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	SwapRender();
+}
+
+float eae6320::Graphics::ConvertDegreeToRadian(float i_degree)
+{
+	constexpr float PI = 3.14159265358f;
+	return (i_degree * PI) / 180.0f;
 }
 
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)

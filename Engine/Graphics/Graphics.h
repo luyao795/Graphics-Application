@@ -72,6 +72,12 @@ namespace eae6320
 			eae6320::Physics::sRigidBodyState rigidBody;
 		};
 
+		// Struct for camera for observation
+		struct Camera
+		{
+			eae6320::Physics::sRigidBodyState rigidBody;
+		};
+
 		// Submission
 		//-----------
 
@@ -84,6 +90,8 @@ namespace eae6320
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
+
+		void SubmitCameraForView(eae6320::Graphics::Camera i_camera);
 
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
@@ -134,6 +142,10 @@ namespace eae6320
 		cResult SignalThatAllDataForAFrameHasBeenSubmitted();
 
 		void RenderFrame();
+
+		// Helper functions
+		//-----------------
+		float ConvertDegreeToRadian(float i_degree);
 	}
 }
 

@@ -60,6 +60,9 @@
 
 	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
 	{
+		float4x4 g_transform_worldToCamera;
+		float4x4 g_transform_cameraToProjected;
+  
 		float g_elapsedSecondCount_systemTime;
 		float g_elapsedSecondCount_simulationTime;
 		// For vec4 alignment
