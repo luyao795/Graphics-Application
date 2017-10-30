@@ -350,6 +350,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 	{
 		movableVertexData[0].x = 0.25f;
 		movableVertexData[0].y = 0.25f;
+		movableVertexData[0].z = 0.0f;
 		movableVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
 		movableVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
 		movableVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
@@ -357,6 +358,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[1].x = 0.25f;
 		movableVertexData[1].y = -0.25f;
+		movableVertexData[1].z = 0.0f;
 		movableVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
 		movableVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
 		movableVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
@@ -364,6 +366,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[2].x = 0.0f;
 		movableVertexData[2].y = -0.5f;
+		movableVertexData[2].z = 0.0f;
 		movableVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
 		movableVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
 		movableVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
@@ -371,6 +374,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[3].x = -0.25f;
 		movableVertexData[3].y = -0.25f;
+		movableVertexData[3].z = 0.0f;
 		movableVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
 		movableVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
 		movableVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
@@ -378,6 +382,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[4].x = -0.25f;
 		movableVertexData[4].y = 0.25f;
+		movableVertexData[4].z = 0.0f;
 		movableVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
 		movableVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
 		movableVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
@@ -385,6 +390,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		movableVertexData[5].x = 0.0f;
 		movableVertexData[5].y = 0.5f;
+		movableVertexData[5].z = 0.0f;
 		movableVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
 		movableVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
 		movableVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
@@ -413,6 +419,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 	{
 		staticVertexData[0].x = 0.1f;
 		staticVertexData[0].y = 0.0f;
+		staticVertexData[0].z = 0.0f;
 		staticVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
 		staticVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
 		staticVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
@@ -420,6 +427,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		staticVertexData[1].x = 0.0f;
 		staticVertexData[1].y = -0.1f;
+		staticVertexData[1].z = 0.0f;
 		staticVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
 		staticVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
 		staticVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
@@ -427,6 +435,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		staticVertexData[2].x = -0.1f;
 		staticVertexData[2].y = 0.0f;
+		staticVertexData[2].z = 0.0f;
 		staticVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
 		staticVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
 		staticVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
@@ -434,6 +443,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 
 		staticVertexData[3].x = 0.0f;
 		staticVertexData[3].y = 0.1f;
+		staticVertexData[3].z = 0.0f;
 		staticVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
 		staticVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
 		staticVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
