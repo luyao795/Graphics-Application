@@ -101,7 +101,6 @@ namespace eae6320
 		eae6320::cResult CleanUpMesh();
 
 		virtual void SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate) override;
-
 	};
 }
 

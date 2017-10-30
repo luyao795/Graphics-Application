@@ -91,6 +91,29 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.mesh->IncrementReferenceCount();
 }
 
+void eae6320::Graphics::IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
+{
+	i_movableMeshToPredict.velocity += i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
+	i_movableMeshToPredict.position += i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
+}
+
+void eae6320::Graphics::DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
+{
+	i_movableMeshToPredict.position -= i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
+	i_movableMeshToPredict.velocity -= i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
+}
+
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
+{
+	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
+		IncrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(i_meshToBeRendered);
+
+	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
+		DecrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+}
+
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
 {
 	return Concurrency::WaitForEvent(s_whenDataForANewFrameCanBeSubmittedFromApplicationThread, i_timeToWait_inMilliseconds);

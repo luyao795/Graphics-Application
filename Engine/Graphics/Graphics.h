@@ -92,6 +92,12 @@ namespace eae6320
 
 		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
 
+		void IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
+
+		void DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
+
+		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
+
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
 		// (or, said another way, it is not safe to submit data for a new frame
