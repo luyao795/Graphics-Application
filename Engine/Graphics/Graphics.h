@@ -60,21 +60,16 @@ namespace eae6320
 
 			}
 
-			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Math::sVector i_position, eae6320::Math::sVector i_velocity, eae6320::Math::sVector i_acceleration)
+			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Physics::sRigidBodyState i_rigidBody)
 			{
 				effect = i_effect;
 				mesh = i_mesh;
-				position = i_position;
-				velocity = i_velocity;
-				acceleration = i_acceleration;
+				rigidBody = i_rigidBody;
 			}
 
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Mesh* mesh;
-			eae6320::Math::sVector position;
-			eae6320::Math::sVector velocity;
-			eae6320::Math::sVector acceleration;
-			//eae6320::Physics::sRigidBodyState rigidBody;
+			eae6320::Physics::sRigidBodyState rigidBody;
 		};
 
 		// Submission
@@ -93,10 +88,6 @@ namespace eae6320
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
 		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
-
-		void IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
-
-		void DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
 

@@ -50,10 +50,13 @@ namespace
 	eae6320::Math::sVector movableInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector movableInitVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector movableInitAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Physics::sRigidBodyState movableRigidBody = eae6320::Physics::sRigidBodyState();
+
 	eae6320::Graphics::Mesh* s_staticMesh = nullptr;
 	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, 0.8f, 0.0f);
 	eae6320::Math::sVector staticVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector staticAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Physics::sRigidBodyState staticRigidBody = eae6320::Physics::sRigidBodyState();
 
 	// Combined Rendering Data with Sprite & Texture
 	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
@@ -136,65 +139,67 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	float accelerationHorizontal = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		if(s_render_movableMesh.velocity.x > 0.0f)
+		if(s_render_movableMesh.rigidBody.velocity.x > 0.0f)
 			accelerationBaseFactorHorizontal += -1.0f * frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += -1.0f * normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
-		if (s_render_movableMesh.velocity.x < 0.0f)
+		if (s_render_movableMesh.rigidBody.velocity.x < 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
-		if (s_render_movableMesh.velocity.y < 0.0f)
+		if (s_render_movableMesh.rigidBody.velocity.y < 0.0f)
 			accelerationBaseFactorVertical += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
-		if (s_render_movableMesh.velocity.y > 0.0f)
+		if (s_render_movableMesh.rigidBody.velocity.y > 0.0f)
 			accelerationBaseFactorVertical += -1.0f * frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += -1.0f * normalAccelerationIncrement;
 	
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
-	s_render_movableMesh.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
-	float deaccelerationX = s_render_movableMesh.acceleration.x;
-	float deaccelerationY = s_render_movableMesh.acceleration.y;
+	float deaccelerationX = s_render_movableMesh.rigidBody.acceleration.x;
+	float deaccelerationY = s_render_movableMesh.rigidBody.acceleration.y;
 
 	// If the velocity is not zero
-	if (s_render_movableMesh.velocity != Zero)
+	if (s_render_movableMesh.rigidBody.velocity != Zero)
 	{
 		// And the acceleration x component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.x, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.x, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity x component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.x;
+			s_render_movableMesh.rigidBody.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x;
 			// Otherwise, decrease the velocity by applying a deacceleration on x component
-			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.x / abs(s_render_movableMesh.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x / abs(s_render_movableMesh.rigidBody.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 		// And the acceleration y component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.y, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.y, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity y component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.y;
+			s_render_movableMesh.rigidBody.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y;
 			// Otherwise, decrease the velocity by applying a deacceleration on y component
-			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.y / abs(s_render_movableMesh.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y / abs(s_render_movableMesh.rigidBody.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 	}
 	// Calculate the actual acceleration
-	s_render_movableMesh.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
-	// v = a * t
-	s_render_movableMesh.velocity += s_render_movableMesh.acceleration * i_elapsedSecondCount_sinceLastUpdate;
-	// s = v * t = a * (t ^ 2)
-	s_render_movableMesh.position += s_render_movableMesh.velocity * i_elapsedSecondCount_sinceLastUpdate;
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
+
+	s_render_movableMesh.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+	//// v = a * t
+	//s_render_movableMesh.rigidBody.velocity += s_render_movableMesh.rigidBody.acceleration * i_elapsedSecondCount_sinceLastUpdate;
+	//// s = v * t = a * (t ^ 2)
+	//s_render_movableMesh.rigidBody.position += s_render_movableMesh.rigidBody.velocity * i_elapsedSecondCount_sinceLastUpdate;
 }
 
 // Initialization / Clean Up
@@ -486,8 +491,14 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 
 	// Initialize render data struct with Mesh
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableInitLocation, movableInitVelocity, movableInitAcceleration);
-	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticLocation, staticVelocity, staticAcceleration);
+	movableRigidBody.position = movableInitLocation;
+	movableRigidBody.velocity = movableInitVelocity;
+	movableRigidBody.acceleration = movableInitAcceleration;
+	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableRigidBody);
+	staticRigidBody.position = staticLocation;
+	staticRigidBody.velocity = staticVelocity;
+	staticRigidBody.acceleration = staticAcceleration;
+	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()

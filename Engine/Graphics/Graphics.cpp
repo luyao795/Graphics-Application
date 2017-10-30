@@ -91,27 +91,15 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.mesh->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
-{
-	i_movableMeshToPredict.velocity += i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
-	i_movableMeshToPredict.position += i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
-}
-
-void eae6320::Graphics::DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
-{
-	i_movableMeshToPredict.position -= i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
-	i_movableMeshToPredict.velocity -= i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
-}
-
 void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
 {
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
-		IncrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+		i_meshToBeRendered.rigidBody.IncrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(i_meshToBeRendered);
 
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
-		DecrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+		i_meshToBeRendered.rigidBody.DecrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -187,8 +175,9 @@ void eae6320::Graphics::RenderFrame()
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
 		{
 			// Update the per-draw call constant buffer
-			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.x;
-			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.y;
+			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.x;
+			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.y;
+			constantData_perDrawCall.g_position.z = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position.z;
 			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
 
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();

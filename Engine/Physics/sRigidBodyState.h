@@ -36,7 +36,8 @@ namespace eae6320
 			//==========
 
 			void Update( const float i_secondCountToIntegrate );
-			Math::sVector PredictFuturePosition( const float i_secondCountToExtrapolate ) const;
+			Math::sVector IncrementPredictionOntoMovement( const float i_secondCountToExtrapolate );
+			Math::sVector DecrementPredictionOntoMovement( const float i_secondCountToExtrapolate );
 			Math::cQuaternion PredictFutureOrientation( const float i_secondCountToExtrapolate ) const;
 		};
 	}
