@@ -75,10 +75,11 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera)
+void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
+	i_camera.rigidBody.IncrementPredictionOntoMovement(i_secondCountToExtrapolate);
 	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
 	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
 }

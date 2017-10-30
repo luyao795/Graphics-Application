@@ -91,7 +91,7 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
-		void SubmitCameraForView(eae6320::Graphics::Camera i_camera);
+		void SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate);
 
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 

@@ -135,6 +135,7 @@ void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_s
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 {
+	// Update for mesh
 	float accelerationBaseFactorVertical = 0.0f;
 	float accelerationBaseFactorHorizontal = 0.0f;
 
@@ -168,6 +169,25 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
 	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
+
+	// Update for camera
+	const float speedMultiplierForCamera = 0.1f;
+	float speedVerticalCamera = 0.0f;
+	float speedHorizontalCamera = 0.0f;
+
+	if (UserInput::IsKeyPressed('A'))
+		speedHorizontalCamera += -1.0f * speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('D'))
+		speedHorizontalCamera += speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('W'))
+		speedVerticalCamera += speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('S'))
+		speedVerticalCamera += -1.0f * speedMultiplierForCamera;
+
+	viewCamera.rigidBody.velocity = eae6320::Math::sVector(speedHorizontalCamera, speedVerticalCamera, 0.0f);
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
@@ -197,12 +217,10 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 	}
 	// Calculate the actual acceleration
 	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
-
+	// Update transform information about the mesh
 	s_render_movableMesh.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
-	//// v = a * t
-	//s_render_movableMesh.rigidBody.velocity += s_render_movableMesh.rigidBody.acceleration * i_elapsedSecondCount_sinceLastUpdate;
-	//// s = v * t = a * (t ^ 2)
-	//s_render_movableMesh.rigidBody.position += s_render_movableMesh.rigidBody.velocity * i_elapsedSecondCount_sinceLastUpdate;
+	// Update transform information about the camera
+	viewCamera.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 }
 
 // Initialization / Clean Up
@@ -213,7 +231,7 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
 
-	viewCamera.rigidBody.position.z = 10.0f;
+	viewCamera.rigidBody.position.z = 3.0f;
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
@@ -751,5 +769,5 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 
 	// Submit Camera data
-	eae6320::Graphics::SubmitCameraForView(viewCamera);
+	eae6320::Graphics::SubmitCameraForView(viewCamera, i_elapsedSecondCount_sinceLastSimulationUpdate);
 }
