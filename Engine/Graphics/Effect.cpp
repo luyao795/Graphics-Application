@@ -39,9 +39,11 @@ namespace eae6320
 				}
 			}
 
-			eae6320::Graphics::RenderStates::EnableAlphaTransparency(const_cast<uint8_t&>(i_RenderState));
+			if (!eae6320::Graphics::RenderStates::IsAlphaTransparencyEnabled(i_RenderState))
+				eae6320::Graphics::RenderStates::EnableAlphaTransparency(const_cast<uint8_t&>(i_RenderState));
 
-			eae6320::Graphics::RenderStates::EnableDepthBuffering(const_cast<uint8_t&>(i_RenderState));
+			if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(i_RenderState))
+				eae6320::Graphics::RenderStates::EnableDepthBuffering(const_cast<uint8_t&>(i_RenderState));
 
 			if (!(result = effect->InitializeShadingData(vertexShaderFileName, fragmentShaderFileName, i_RenderState)))
 			{
