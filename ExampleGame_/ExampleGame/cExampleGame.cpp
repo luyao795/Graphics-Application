@@ -82,7 +82,7 @@ namespace
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
 
-	// External multiplier used for control with acceleration
+	// External multiplier constants used for control with acceleration
 	constexpr float accelerationMultiplier = 0.1f;
 	constexpr float normalAccelerationIncrement = 1.0f;
 	constexpr float frictionAccelerationIncrement = 5.0f;
@@ -90,8 +90,10 @@ namespace
 	constexpr float epsilonForVelocityOffset = 0.01f;
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
-	// External constant for defining camera distance
-	constexpr float cameraDistance = 7.5f;
+	// External constants for defining camera distance
+	constexpr float cameraDistanceX = 0.00f;
+	constexpr float cameraDistanceY = 0.50f;
+	constexpr float cameraDistanceZ = 10.0f;
 
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
@@ -297,7 +299,9 @@ OnExit:
 
 void eae6320::cExampleGame::InitializeCameraDistance()
 {
-	viewCamera.rigidBody.position.z = cameraDistance;
+	viewCamera.rigidBody.position.x = cameraDistanceX;
+	viewCamera.rigidBody.position.y = cameraDistanceY;
+	viewCamera.rigidBody.position.z = cameraDistanceZ;
 }
 
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()
