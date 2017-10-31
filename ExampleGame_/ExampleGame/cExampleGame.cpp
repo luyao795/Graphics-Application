@@ -96,6 +96,9 @@ namespace
 
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector X = eae6320::Math::sVector(1.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector Y = eae6320::Math::sVector(0.0f, 1.0f, 0.0f);
+	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -179,10 +182,13 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
 
 	// Update for camera
-	const float speedMultiplierForCamera = 0.25f;
+	constexpr float speedMultiplierForCamera = 0.25f;
 	float speedVerticalCamera = 0.0f;
 	float speedHorizontalCamera = 0.0f;
 	float speedDepthCamera = 0.0f;
+
+	static float rotationAngle = 0.0f;
+	constexpr float rotationAmount = 0.25f;
 
 	if (UserInput::IsKeyPressed('A'))
 		speedHorizontalCamera += speedMultiplierForCamera * (-1.0f);
@@ -196,13 +202,20 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	if (UserInput::IsKeyPressed('S'))
 		speedVerticalCamera += speedMultiplierForCamera * (-1.0f);
 
-	if (UserInput::IsKeyPressed('Q'))
+	if (UserInput::IsKeyPressed('Z'))
 		speedDepthCamera += speedMultiplierForCamera * (-1.0f);
 
-	if (UserInput::IsKeyPressed('E'))
+	if (UserInput::IsKeyPressed('X'))
 		speedDepthCamera += speedMultiplierForCamera;
 
+	if (UserInput::IsKeyPressed('Q'))
+		rotationAngle += rotationAmount * (-1.0f);
+
+	if (UserInput::IsKeyPressed('E'))
+		rotationAngle += rotationAmount;
+
 	viewCamera.rigidBody.velocity = eae6320::Math::sVector(speedHorizontalCamera, speedVerticalCamera, speedDepthCamera);
+	viewCamera.rigidBody.orientation = eae6320::Math::cQuaternion(eae6320::Graphics::ConvertDegreeToRadian(rotationAngle), Y);
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
@@ -246,7 +259,7 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
 
-	viewCamera.rigidBody.position.z = cameraDistance;
+	InitializeCameraDistance();
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
@@ -281,6 +294,11 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 
 OnExit:
 	return result;
+}
+
+void eae6320::cExampleGame::InitializeCameraDistance()
+{
+	viewCamera.rigidBody.position.z = cameraDistance;
 }
 
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()
