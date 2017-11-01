@@ -150,9 +150,11 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	// Update for mesh
 	float accelerationBaseFactorVertical = 0.0f;
 	float accelerationBaseFactorHorizontal = 0.0f;
+	float accelerationBaseFactorDepth = 0.0f;
 
 	float accelerationVertical = 0.0f;
 	float accelerationHorizontal = 0.0f;
+	float accelerationDepth = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
 		if(s_render_movableMesh.rigidBody.velocity.x > 0.0f)
@@ -177,10 +179,24 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 			accelerationBaseFactorVertical += frictionAccelerationIncrement * (-1.0f);
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement * (-1.0f);
+
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::PageUp))
+		if (s_render_movableMesh.rigidBody.velocity.z > 0.0f)
+			accelerationBaseFactorDepth += frictionAccelerationIncrement * (-1.0f);
+		else
+			accelerationBaseFactorDepth += normalAccelerationIncrement * (-1.0f);
+
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::PageDown))
+		if (s_render_movableMesh.rigidBody.velocity.z < 0.0f)
+			accelerationBaseFactorDepth += frictionAccelerationIncrement;
+		else
+			accelerationBaseFactorDepth += normalAccelerationIncrement;
 	
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
-	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
+	accelerationDepth = accelerationBaseFactorDepth * accelerationMultiplier;
+
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, accelerationDepth);
 
 	// Update for camera
 	constexpr float speedMultiplierForCamera = 0.25f;
@@ -223,6 +239,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 {
 	float deaccelerationX = s_render_movableMesh.rigidBody.acceleration.x;
 	float deaccelerationY = s_render_movableMesh.rigidBody.acceleration.y;
+	float deaccelerationZ = s_render_movableMesh.rigidBody.acceleration.z;
 
 	// If the velocity is not zero
 	if (s_render_movableMesh.rigidBody.velocity != Zero)
@@ -243,9 +260,17 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 			// Otherwise, decrease the velocity by applying a deacceleration on y component
 			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y / abs(s_render_movableMesh.rigidBody.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
 		}
+		// And the acceleration z component is zero
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.z, 0.0f, epsilonForAccelerationOffset))
+		{
+			// If the velocity z component amount is tiny enough to be ignored, ignore the amount and make the mesh static
+			s_render_movableMesh.rigidBody.velocity.z = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.z, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.z;
+			// Otherwise, decrease the velocity by applying a deacceleration on z component
+			deaccelerationZ = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.z, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.z / abs(s_render_movableMesh.rigidBody.velocity.z) * accelerationMultiplier * deaccelerationMultiplier;
+		}
 	}
 	// Calculate the actual acceleration
-	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, deaccelerationZ);
 	// Update transform information about the mesh
 	s_render_movableMesh.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 	// Update transform information about the camera
