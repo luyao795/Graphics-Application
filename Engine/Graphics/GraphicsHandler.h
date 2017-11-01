@@ -31,6 +31,9 @@ namespace eae6320
 		// Platform specific code in RenderFrame function for clearing view
 		void ClearView(Color i_clearColor);
 
+		// Platform specific code in RenderFrame function for clearing depth buffer
+		void ClearDepth(float i_depth);
+
 		// Platform specific code in RenderFrame function for swapping render buffer
 		void SwapRender();
 

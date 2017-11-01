@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <Engine/Results/Results.h>
 #include <Engine/Math/sVector.h>
+#include <Engine/Physics/sRigidBodyState.h>
 
 #if defined( EAE6320_PLATFORM_WINDOWS )
 	#include <Engine/Windows/Includes.h>
@@ -59,20 +60,22 @@ namespace eae6320
 
 			}
 
-			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Math::sVector i_position, eae6320::Math::sVector i_velocity, eae6320::Math::sVector i_acceleration)
+			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Physics::sRigidBodyState i_rigidBody)
 			{
 				effect = i_effect;
 				mesh = i_mesh;
-				position = i_position;
-				velocity = i_velocity;
-				acceleration = i_acceleration;
+				rigidBody = i_rigidBody;
 			}
 
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Mesh* mesh;
-			eae6320::Math::sVector position;
-			eae6320::Math::sVector velocity;
-			eae6320::Math::sVector acceleration;
+			eae6320::Physics::sRigidBodyState rigidBody;
+		};
+
+		// Struct for camera for observation
+		struct Camera
+		{
+			eae6320::Physics::sRigidBodyState rigidBody;
 		};
 
 		// Submission
@@ -88,13 +91,11 @@ namespace eae6320
 
 		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
 
+		void SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate);
+
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
 		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
-
-		void IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
-
-		void DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
 
@@ -141,6 +142,10 @@ namespace eae6320
 		cResult SignalThatAllDataForAFrameHasBeenSubmitted();
 
 		void RenderFrame();
+
+		// Helper functions
+		//-----------------
+		float ConvertDegreeToRadian(float i_degree);
 	}
 }
 

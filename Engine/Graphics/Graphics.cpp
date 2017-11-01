@@ -41,6 +41,7 @@ namespace
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingSprite> cachedEffectSpritePairForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairForRenderingInNextFrame;
+		eae6320::Graphics::Camera cameraForView;
 	};
 	// In our class there will be two copies of the data required to render a frame:
 	//	* One of them will be getting populated by the data currently being submitted by the application loop thread
@@ -58,6 +59,12 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
+
+	// External constants for defining the camera properties
+	constexpr float aspectRatio = 1.0f;
+	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
+	constexpr float nearPlaneDistance = 0.1f;
+	constexpr float farPlaneDistance = 100.0f;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -72,6 +79,17 @@ void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color c
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
+}
+
+void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
+	i_camera.rigidBody.orientation = i_camera.rigidBody.PredictFutureOrientation(i_secondCountToExtrapolate);
+	i_camera.rigidBody.IncrementPredictionOntoMovement(i_secondCountToExtrapolate);
+	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
+	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
+	i_camera.rigidBody.DecrementPredictionOntoMovement(i_secondCountToExtrapolate);
 }
 
 void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData)
@@ -91,27 +109,15 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.mesh->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::IncrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
-{
-	i_movableMeshToPredict.velocity += i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
-	i_movableMeshToPredict.position += i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
-}
-
-void eae6320::Graphics::DecrementPredictionAmountOntoMovement(eae6320::Graphics::DataSetForRenderingMesh & i_movableMeshToPredict, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
-{
-	i_movableMeshToPredict.position -= i_movableMeshToPredict.velocity * i_elapsedSecondCount_sinceLastSimulationUpdate;
-	i_movableMeshToPredict.velocity -= i_movableMeshToPredict.acceleration * i_elapsedSecondCount_sinceLastSimulationUpdate;
-}
-
 void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
 {
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
-		IncrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+		i_meshToBeRendered.rigidBody.IncrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(i_meshToBeRendered);
 
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
-		DecrementPredictionAmountOntoMovement(i_meshToBeRendered, i_elapsedSecondCount_sinceLastSimulationUpdate);
+		i_meshToBeRendered.rigidBody.DecrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
 }
 
 eae6320::cResult eae6320::Graphics::WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds)
@@ -162,15 +168,35 @@ void eae6320::Graphics::RenderFrame()
 		ClearView(cachedColor);
 	}
 
+	// Update depth buffer for next frame
+	{
+		constexpr float defaultDepth = 1.0f;
+		ClearDepth(defaultDepth);
+	}
+
 	// Update the per-frame constant buffer
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
+		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
 	// Copy the data from the system memory that the application owns to GPU memory and the buffer will be updated later
 	auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
+
+	// Bind shading data and draw mesh
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			// Update the per-draw call constant buffer
+			constantData_perDrawCall.g_transform_localToWorld = eae6320::Math::cMatrix_transformation(s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.orientation, s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].rigidBody.position);
+			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
+
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
+		}
+	}
 
 	// Bind shading data, bind texture and draw geometry
 	{
@@ -179,20 +205,6 @@ void eae6320::Graphics::RenderFrame()
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
-		}
-	}
-
-	// Bind shading data and draw mesh
-	{
-		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
-		{
-			// Update the per-draw call constant buffer
-			constantData_perDrawCall.g_position.x = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.x;
-			constantData_perDrawCall.g_position.y = s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].position.y;
-			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
-
-			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
-			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
 		}
 	}
 
@@ -226,6 +238,12 @@ void eae6320::Graphics::RenderFrame()
 	}
 
 	SwapRender();
+}
+
+float eae6320::Graphics::ConvertDegreeToRadian(float i_degree)
+{
+	constexpr float PI = 3.14159265358f;
+	return (i_degree * PI) / 180.0f;
 }
 
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)

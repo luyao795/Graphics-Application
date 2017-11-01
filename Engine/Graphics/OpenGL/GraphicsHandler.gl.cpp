@@ -29,6 +29,21 @@ void eae6320::Graphics::ClearView(Color i_clearColor)
 	}
 }
 
+void eae6320::Graphics::ClearDepth(float i_depth)
+{
+	{
+		glDepthMask(GL_TRUE);
+		EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
+		glClearDepth(i_depth);
+		EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
+	}
+	{
+		constexpr GLbitfield clearDepth = GL_DEPTH_BUFFER_BIT;
+		glClear(clearDepth);
+		EAE6320_ASSERT(glGetError() == GL_NO_ERROR);
+	}
+}
+
 void eae6320::Graphics::SwapRender()
 {
 	// Everything has been drawn to the "back buffer", which is just an image in memory.

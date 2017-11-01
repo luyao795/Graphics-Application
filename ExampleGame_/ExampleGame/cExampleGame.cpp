@@ -11,7 +11,6 @@
 #include <Engine/Graphics/Graphics.h>
 #include <Engine/Math/Functions.h>
 
-
 // Inherited Implementation
 //=========================
 
@@ -45,15 +44,23 @@ namespace
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
 
+	// External constant data for movable mesh size
+	constexpr float movableMeshSideLength = 1.0f;
+	constexpr float staticMeshLongSideLength = 2.0f;
+	constexpr float staticMeshShortSideLength = 0.125f;
+
 	// Mesh Data
 	eae6320::Graphics::Mesh* s_movableMesh = nullptr;
 	eae6320::Math::sVector movableInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector movableInitVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector movableInitAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Physics::sRigidBodyState movableRigidBody = eae6320::Physics::sRigidBodyState();
+
 	eae6320::Graphics::Mesh* s_staticMesh = nullptr;
-	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, 0.8f, 0.0f);
+	eae6320::Math::sVector staticLocation = eae6320::Math::sVector(0.0f, movableMeshSideLength * (-1.0f), 0.0f);
 	eae6320::Math::sVector staticVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector staticAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	eae6320::Physics::sRigidBodyState staticRigidBody = eae6320::Physics::sRigidBodyState();
 
 	// Combined Rendering Data with Sprite & Texture
 	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
@@ -67,21 +74,32 @@ namespace
 	eae6320::Graphics::DataSetForRenderingMesh s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh();
 	eae6320::Graphics::DataSetForRenderingMesh s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh();
 
+	// Camera Data
+	eae6320::Graphics::Camera viewCamera;
+
 	// External counter used for Rendering based on time
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
 
-	// External multiplier used for control with acceleration
-	constexpr float accelerationMultiplier = 0.05f;
+	// External multiplier constants used for control with acceleration
+	constexpr float accelerationMultiplier = 0.1f;
 	constexpr float normalAccelerationIncrement = 1.0f;
 	constexpr float frictionAccelerationIncrement = 5.0f;
 	constexpr float deaccelerationMultiplier = -3.0f;
 	constexpr float epsilonForVelocityOffset = 0.01f;
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
+	// External constants for defining camera distance
+	constexpr float cameraDistanceX = 0.00f;
+	constexpr float cameraDistanceY = 0.50f;
+	constexpr float cameraDistanceZ = 10.0f;
+
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector X = eae6320::Math::sVector(1.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector Y = eae6320::Math::sVector(0.0f, 1.0f, 0.0f);
+	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -129,6 +147,7 @@ void eae6320::cExampleGame::UpdateBasedOnTime(const float i_elapsedSecondCount_s
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 {
+	// Update for mesh
 	float accelerationBaseFactorVertical = 0.0f;
 	float accelerationBaseFactorHorizontal = 0.0f;
 
@@ -136,65 +155,101 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	float accelerationHorizontal = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		if(s_render_movableMesh.velocity.x > 0.0f)
-			accelerationBaseFactorHorizontal += -1.0f * frictionAccelerationIncrement;
+		if(s_render_movableMesh.rigidBody.velocity.x > 0.0f)
+			accelerationBaseFactorHorizontal += frictionAccelerationIncrement * (-1.0f);
 		else
-			accelerationBaseFactorHorizontal += -1.0f * normalAccelerationIncrement;
+			accelerationBaseFactorHorizontal += normalAccelerationIncrement * (-1.0f);
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
-		if (s_render_movableMesh.velocity.x < 0.0f)
+		if (s_render_movableMesh.rigidBody.velocity.x < 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
-		if (s_render_movableMesh.velocity.y < 0.0f)
+		if (s_render_movableMesh.rigidBody.velocity.y < 0.0f)
 			accelerationBaseFactorVertical += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
-		if (s_render_movableMesh.velocity.y > 0.0f)
-			accelerationBaseFactorVertical += -1.0f * frictionAccelerationIncrement;
+		if (s_render_movableMesh.rigidBody.velocity.y > 0.0f)
+			accelerationBaseFactorVertical += frictionAccelerationIncrement * (-1.0f);
 		else
-			accelerationBaseFactorVertical += -1.0f * normalAccelerationIncrement;
+			accelerationBaseFactorVertical += normalAccelerationIncrement * (-1.0f);
 	
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
-	s_render_movableMesh.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, 0.0f);
+
+	// Update for camera
+	constexpr float speedMultiplierForCamera = 0.25f;
+	float speedVerticalCamera = 0.0f;
+	float speedHorizontalCamera = 0.0f;
+	float speedDepthCamera = 0.0f;
+
+	static float rotationAngle = 0.0f;
+	constexpr float rotationAmount = 0.25f;
+
+	if (UserInput::IsKeyPressed('A'))
+		speedHorizontalCamera += speedMultiplierForCamera * (-1.0f);
+
+	if (UserInput::IsKeyPressed('D'))
+		speedHorizontalCamera += speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('W'))
+		speedVerticalCamera += speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('S'))
+		speedVerticalCamera += speedMultiplierForCamera * (-1.0f);
+
+	if (UserInput::IsKeyPressed('Z'))
+		speedDepthCamera += speedMultiplierForCamera * (-1.0f);
+
+	if (UserInput::IsKeyPressed('X'))
+		speedDepthCamera += speedMultiplierForCamera;
+
+	if (UserInput::IsKeyPressed('Q'))
+		rotationAngle += rotationAmount * (-1.0f);
+
+	if (UserInput::IsKeyPressed('E'))
+		rotationAngle += rotationAmount;
+
+	viewCamera.rigidBody.velocity = eae6320::Math::sVector(speedHorizontalCamera, speedVerticalCamera, speedDepthCamera);
+	viewCamera.rigidBody.orientation = eae6320::Math::cQuaternion(eae6320::Graphics::ConvertDegreeToRadian(rotationAngle), Y);
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
-	float deaccelerationX = s_render_movableMesh.acceleration.x;
-	float deaccelerationY = s_render_movableMesh.acceleration.y;
+	float deaccelerationX = s_render_movableMesh.rigidBody.acceleration.x;
+	float deaccelerationY = s_render_movableMesh.rigidBody.acceleration.y;
 
 	// If the velocity is not zero
-	if (s_render_movableMesh.velocity != Zero)
+	if (s_render_movableMesh.rigidBody.velocity != Zero)
 	{
 		// And the acceleration x component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.x, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.x, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity x component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.x;
+			s_render_movableMesh.rigidBody.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x;
 			// Otherwise, decrease the velocity by applying a deacceleration on x component
-			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.x / abs(s_render_movableMesh.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x / abs(s_render_movableMesh.rigidBody.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 		// And the acceleration y component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.acceleration.y, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.y, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity y component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.velocity.y;
+			s_render_movableMesh.rigidBody.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y;
 			// Otherwise, decrease the velocity by applying a deacceleration on y component
-			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.velocity.y / abs(s_render_movableMesh.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y / abs(s_render_movableMesh.rigidBody.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 	}
 	// Calculate the actual acceleration
-	s_render_movableMesh.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
-	// v = a * t
-	s_render_movableMesh.velocity += s_render_movableMesh.acceleration * i_elapsedSecondCount_sinceLastUpdate;
-	// s = v * t = a * (t ^ 2)
-	s_render_movableMesh.position += s_render_movableMesh.velocity * i_elapsedSecondCount_sinceLastUpdate;
+	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, 0.0f);
+	// Update transform information about the mesh
+	s_render_movableMesh.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+	// Update transform information about the camera
+	viewCamera.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 }
 
 // Initialization / Clean Up
@@ -204,6 +259,8 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 {
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
+
+	InitializeCameraDistance();
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
@@ -240,10 +297,17 @@ OnExit:
 	return result;
 }
 
+void eae6320::cExampleGame::InitializeCameraDistance()
+{
+	viewCamera.rigidBody.position.x = cameraDistanceX;
+	viewCamera.rigidBody.position.y = cameraDistanceY;
+	viewCamera.rigidBody.position.z = cameraDistanceZ;
+}
+
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 {
 	cResult result = Results::Success;
-	const uint8_t defaultRenderState = 0;
+	constexpr uint8_t defaultRenderState = 0;
 
 	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
 	{
@@ -345,101 +409,198 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 	cResult result = Results::Success;
 
 	// Initialize the vertex and index data for mesh
-	std::vector<eae6320::Graphics::VertexFormats::sMesh> movableVertexData(6);
-	std::vector<uint16_t> movableIndexData(12);
+	std::vector<eae6320::Graphics::VertexFormats::sMesh> movableVertexData(8);
+	std::vector<uint16_t> movableIndexData(36);
 	{
-		movableVertexData[0].x = 0.25f;
-		movableVertexData[0].y = 0.25f;
-		movableVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
-		movableVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
-		movableVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
-		movableVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.A());
+		movableVertexData[0].x = movableMeshSideLength * (-1.0f);
+		movableVertexData[0].y = movableMeshSideLength * (-1.0f);
+		movableVertexData[0].z = movableMeshSideLength;
+		movableVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
+		movableVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
+		movableVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
+		movableVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.A());
 
-		movableVertexData[1].x = 0.25f;
-		movableVertexData[1].y = -0.25f;
-		movableVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
-		movableVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
-		movableVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
-		movableVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
+		movableVertexData[1].x = movableMeshSideLength * (-1.0f);
+		movableVertexData[1].y = movableMeshSideLength;
+		movableVertexData[1].z = movableMeshSideLength;
+		movableVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		movableVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		movableVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		movableVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
 
-		movableVertexData[2].x = 0.0f;
-		movableVertexData[2].y = -0.5f;
-		movableVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
-		movableVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
-		movableVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
-		movableVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+		movableVertexData[2].x = movableMeshSideLength;
+		movableVertexData[2].y = movableMeshSideLength;
+		movableVertexData[2].z = movableMeshSideLength;
+		movableVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
+		movableVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
+		movableVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
+		movableVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
 
-		movableVertexData[3].x = -0.25f;
-		movableVertexData[3].y = -0.25f;
-		movableVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
-		movableVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
-		movableVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
-		movableVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+		movableVertexData[3].x = movableMeshSideLength;
+		movableVertexData[3].y = movableMeshSideLength * (-1.0f);
+		movableVertexData[3].z = movableMeshSideLength;
+		movableVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
+		movableVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
+		movableVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
+		movableVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
 
-		movableVertexData[4].x = -0.25f;
-		movableVertexData[4].y = 0.25f;
-		movableVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.R());
-		movableVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.G());
-		movableVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.B());
-		movableVertexData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawRed.A());
+		movableVertexData[4].x = movableMeshSideLength * (-1.0f);
+		movableVertexData[4].y = movableMeshSideLength * (-1.0f);
+		movableVertexData[4].z = movableMeshSideLength * (-1.0f);
+		movableVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
+		movableVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
+		movableVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
+		movableVertexData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.A());
 
-		movableVertexData[5].x = 0.0f;
-		movableVertexData[5].y = 0.5f;
-		movableVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
-		movableVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
-		movableVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
-		movableVertexData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
+		movableVertexData[5].x = movableMeshSideLength * (-1.0f);
+		movableVertexData[5].y = movableMeshSideLength;
+		movableVertexData[5].z = movableMeshSideLength * (-1.0f);
+		movableVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.R());
+		movableVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.G());
+		movableVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.B());
+		movableVertexData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawCyan.A());
+
+		movableVertexData[6].x = movableMeshSideLength;
+		movableVertexData[6].y = movableMeshSideLength;
+		movableVertexData[6].z = movableMeshSideLength * (-1.0f);
+		movableVertexData[6].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
+		movableVertexData[6].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
+		movableVertexData[6].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
+		movableVertexData[6].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.A());
+
+		movableVertexData[7].x = movableMeshSideLength;
+		movableVertexData[7].y = movableMeshSideLength * (-1.0f);
+		movableVertexData[7].z = movableMeshSideLength * (-1.0f);
+		movableVertexData[7].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
+		movableVertexData[7].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
+		movableVertexData[7].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
+		movableVertexData[7].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
 	}
 	{
+		// Front side
 		movableIndexData[0] = 0;
-		movableIndexData[1] = 4;
-		movableIndexData[2] = 5;
+		movableIndexData[1] = 1;
+		movableIndexData[2] = 2;
 
 		movableIndexData[3] = 0;
-		movableIndexData[4] = 1;
+		movableIndexData[4] = 2;
 		movableIndexData[5] = 3;
 
-		movableIndexData[6] = 0;
-		movableIndexData[7] = 3;
-		movableIndexData[8] = 4;
+		// Right side
+		movableIndexData[6] = 3;
+		movableIndexData[7] = 2;
+		movableIndexData[8] = 6;
 
-		movableIndexData[9] = 1;
-		movableIndexData[10] = 2;
-		movableIndexData[11] = 3;
+		movableIndexData[9] = 3;
+		movableIndexData[10] = 6;
+		movableIndexData[11] = 7;
+
+		// Left side
+		movableIndexData[12] = 5;
+		movableIndexData[13] = 1;
+		movableIndexData[14] = 0;
+
+		movableIndexData[15] = 5;
+		movableIndexData[16] = 0;
+		movableIndexData[17] = 4;
+
+		// Bottom side
+		movableIndexData[18] = 0;
+		movableIndexData[19] = 3;
+		movableIndexData[20] = 4;
+
+		movableIndexData[21] = 3;
+		movableIndexData[22] = 7;
+		movableIndexData[23] = 4;
+
+		// Top side
+		movableIndexData[24] = 2;
+		movableIndexData[25] = 5;
+		movableIndexData[26] = 6;
+
+		movableIndexData[27] = 5;
+		movableIndexData[28] = 2;
+		movableIndexData[29] = 1;
+
+		// Back side
+		movableIndexData[30] = 6;
+		movableIndexData[31] = 5;
+		movableIndexData[32] = 4;
+
+		movableIndexData[33] = 6;
+		movableIndexData[34] = 4;
+		movableIndexData[35] = 7;
 	}
 
-	std::vector<eae6320::Graphics::VertexFormats::sMesh> staticVertexData(4);
-	std::vector<uint16_t> staticIndexData(6);
+	std::vector<eae6320::Graphics::VertexFormats::sMesh> staticVertexData(8);
+	std::vector<uint16_t> staticIndexData(36);
 	{
-		staticVertexData[0].x = 0.1f;
-		staticVertexData[0].y = 0.0f;
-		staticVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.R());
-		staticVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.G());
-		staticVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.B());
-		staticVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawYellow.A());
+		staticVertexData[0].x = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[0].y = staticMeshShortSideLength * (-1.0f);
+		staticVertexData[0].z = staticMeshLongSideLength;
+		staticVertexData[0].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
+		staticVertexData[0].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
+		staticVertexData[0].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
+		staticVertexData[0].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.A());
 
-		staticVertexData[1].x = 0.0f;
-		staticVertexData[1].y = -0.1f;
-		staticVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.R());
-		staticVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.G());
-		staticVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.B());
-		staticVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlue.A());
+		staticVertexData[1].x = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[1].y = staticMeshShortSideLength;
+		staticVertexData[1].z = staticMeshLongSideLength;
+		staticVertexData[1].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[1].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[1].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[1].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
 
-		staticVertexData[2].x = -0.1f;
-		staticVertexData[2].y = 0.0f;
-		staticVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
-		staticVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
-		staticVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
-		staticVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+		staticVertexData[2].x = staticMeshLongSideLength;
+		staticVertexData[2].y = staticMeshShortSideLength;
+		staticVertexData[2].z = staticMeshLongSideLength;
+		staticVertexData[2].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
+		staticVertexData[2].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
+		staticVertexData[2].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
+		staticVertexData[2].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.A());
 
-		staticVertexData[3].x = 0.0f;
-		staticVertexData[3].y = 0.1f;
-		staticVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.R());
-		staticVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.G());
-		staticVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.B());
-		staticVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGreen.A());
+		staticVertexData[3].x = staticMeshLongSideLength;
+		staticVertexData[3].y = staticMeshShortSideLength * (-1.0f);
+		staticVertexData[3].z = staticMeshLongSideLength;
+		staticVertexData[3].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[3].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[3].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[3].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[4].x = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[4].y = staticMeshShortSideLength * (-1.0f);
+		staticVertexData[4].z = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[4].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[4].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[4].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[4].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[5].x = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[5].y = staticMeshShortSideLength;
+		staticVertexData[5].z = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[5].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.R());
+		staticVertexData[5].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.G());
+		staticVertexData[5].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.B());
+		staticVertexData[5].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawBlack.A());
+
+		staticVertexData[6].x = staticMeshLongSideLength;
+		staticVertexData[6].y = staticMeshShortSideLength;
+		staticVertexData[6].z = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[6].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.R());
+		staticVertexData[6].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.G());
+		staticVertexData[6].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.B());
+		staticVertexData[6].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawGray.A());
+
+		staticVertexData[7].x = staticMeshLongSideLength;
+		staticVertexData[7].y = staticMeshShortSideLength * (-1.0f);
+		staticVertexData[7].z = staticMeshLongSideLength * (-1.0f);
+		staticVertexData[7].r = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.R());
+		staticVertexData[7].g = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.G());
+		staticVertexData[7].b = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.B());
+		staticVertexData[7].a = static_cast<uint8_t>(eae6320::Graphics::Colors::RawWhite.A());
 	}
 	{
+		// Front side
 		staticIndexData[0] = 0;
 		staticIndexData[1] = 1;
 		staticIndexData[2] = 2;
@@ -447,6 +608,51 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 		staticIndexData[3] = 0;
 		staticIndexData[4] = 2;
 		staticIndexData[5] = 3;
+
+		// Right side
+		staticIndexData[6] = 3;
+		staticIndexData[7] = 2;
+		staticIndexData[8] = 6;
+
+		staticIndexData[9] = 3;
+		staticIndexData[10] = 6;
+		staticIndexData[11] = 7;
+
+		// Left side
+		staticIndexData[12] = 5;
+		staticIndexData[13] = 1;
+		staticIndexData[14] = 0;
+
+		staticIndexData[15] = 5;
+		staticIndexData[16] = 0;
+		staticIndexData[17] = 4;
+
+		// Bottom side
+		staticIndexData[18] = 0;
+		staticIndexData[19] = 3;
+		staticIndexData[20] = 4;
+
+		staticIndexData[21] = 3;
+		staticIndexData[22] = 7;
+		staticIndexData[23] = 4;
+
+		// Top side
+		staticIndexData[24] = 2;
+		staticIndexData[25] = 5;
+		staticIndexData[26] = 6;
+
+		staticIndexData[27] = 5;
+		staticIndexData[28] = 2;
+		staticIndexData[29] = 1;
+
+		// Back side
+		staticIndexData[30] = 6;
+		staticIndexData[31] = 5;
+		staticIndexData[32] = 4;
+
+		staticIndexData[33] = 6;
+		staticIndexData[34] = 4;
+		staticIndexData[35] = 7;
 	}
 
 	if (!(result = eae6320::Graphics::Mesh::Load(movableVertexData, movableIndexData, s_movableMesh)))
@@ -476,8 +682,14 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 
 	// Initialize render data struct with Mesh
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableInitLocation, movableInitVelocity, movableInitAcceleration);
-	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticLocation, staticVelocity, staticAcceleration);
+	movableRigidBody.position = movableInitLocation;
+	movableRigidBody.velocity = movableInitVelocity;
+	movableRigidBody.acceleration = movableInitAcceleration;
+	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_movableMesh, movableRigidBody);
+	staticRigidBody.position = staticLocation;
+	staticRigidBody.velocity = staticVelocity;
+	staticRigidBody.acceleration = staticAcceleration;
+	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, s_staticMesh, staticRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -709,8 +921,12 @@ OnExit:
 
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
-	// Submit color data
+	// Submit Color data
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
+
+	// Submit Effect Mesh pair data with prediction if needed
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
 
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
@@ -720,7 +936,6 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static3);
 	eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render_static4);
 
-	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
+	// Submit Camera data
+	eae6320::Graphics::SubmitCameraForView(viewCamera, i_elapsedSecondCount_sinceLastSimulationUpdate);
 }

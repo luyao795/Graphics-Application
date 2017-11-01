@@ -45,6 +45,7 @@
 	#define DeclareTextureBuffer( i_name, i_id ) Texture2D i_name : register( t##i_id )
 	#define DeclareSamplerState( i_name, i_id ) SamplerState i_name : register( s##i_id )
 	#define CreateSampledColor( i_texture, i_texcoord, i_samplerState ) i_texture.Sample( i_samplerState, i_texcoord )
+	#define MultiplyMatrixAndVector( i_matrix, i_vector ) mul( i_matrix, i_vector )
 
 #elif defined( EAE6320_PLATFORM_GL )
 
@@ -52,6 +53,7 @@
 	#define DeclareTextureBuffer( i_name, i_id ) layout( binding = i_id ) uniform sampler2D i_name
 	#define DeclareSamplerState( i_name, i_id )
 	#define CreateSampledColor( i_texture, i_texcoord, i_samplerState ) texture2D( i_texture, i_texcoord )
+	#define MultiplyMatrixAndVector( i_matrix, i_vector ) i_matrix * i_vector
 
 #endif
 
@@ -60,6 +62,9 @@
 
 	DeclareConstantBuffer(g_constantBuffer_perFrame, 0)
 	{
+		float4x4 g_transform_worldToCamera;
+		float4x4 g_transform_cameraToProjected;
+  
 		float g_elapsedSecondCount_systemTime;
 		float g_elapsedSecondCount_simulationTime;
 		// For vec4 alignment
@@ -73,5 +78,5 @@
 
 	DeclareConstantBuffer(g_constantBuffer_perDrawCall, 2)
 	{
-		vec4 g_position;
+		float4x4 g_transform_localToWorld;
 	};
