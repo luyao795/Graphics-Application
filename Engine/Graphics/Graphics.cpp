@@ -87,6 +87,7 @@ void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, 
 	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
 	i_camera.rigidBody.orientation = i_camera.rigidBody.PredictFutureOrientation(i_secondCountToExtrapolate);
 	i_camera.rigidBody.IncrementPredictionOntoMovement(i_secondCountToExtrapolate);
+	constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
 	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
 	i_camera.rigidBody.DecrementPredictionOntoMovement(i_secondCountToExtrapolate);
@@ -178,7 +179,6 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
-		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
