@@ -135,8 +135,6 @@ namespace eae6320
 
 		cResult CleanUp();
 
-		void SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime);
-
 		cResult WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds);
 
 		cResult SignalThatAllDataForAFrameHasBeenSubmitted();

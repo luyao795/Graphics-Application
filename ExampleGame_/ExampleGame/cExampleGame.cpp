@@ -921,6 +921,9 @@ OnExit:
 
 void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_sinceLastSimulationUpdate)
 {
+	// Submit time data to constant buffer
+	eae6320::Graphics::SubmitElapsedTime(i_elapsedSecondCount_systemTime, i_elapsedSecondCount_sinceLastSimulationUpdate);
+
 	// Submit Color data
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
