@@ -76,6 +76,10 @@ namespace eae6320
 		struct Camera
 		{
 			eae6320::Physics::sRigidBodyState rigidBody;
+			float aspectRatio;
+			float fieldOfView;
+			float nearPlaneDistance;
+			float farPlaneDistance;
 		};
 
 		// Submission

@@ -102,6 +102,12 @@ namespace
 	constexpr float cameraDistanceY = 0.50f;
 	constexpr float cameraDistanceZ = 10.0f;
 
+	// External constants for defining the camera properties
+	constexpr float aspectRatio = 1.0f;
+	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
+	constexpr float nearPlaneDistance = 0.1f;
+	constexpr float farPlaneDistance = 100.0f;
+
 	// Constant data for comparison
 	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	static const eae6320::Math::sVector X = eae6320::Math::sVector(1.0f, 0.0f, 0.0f);
@@ -290,7 +296,7 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
 
-	InitializeCameraDistance();
+	InitializeCamera();
 
 	// Initialize the shading data
 	if (!(result = InitializeEffect()))
@@ -327,11 +333,16 @@ OnExit:
 	return result;
 }
 
-void eae6320::cExampleGame::InitializeCameraDistance()
+void eae6320::cExampleGame::InitializeCamera()
 {
 	viewCamera.rigidBody.position.x = cameraDistanceX;
 	viewCamera.rigidBody.position.y = cameraDistanceY;
 	viewCamera.rigidBody.position.z = cameraDistanceZ;
+
+	viewCamera.aspectRatio = aspectRatio;
+	viewCamera.fieldOfView = cameraFieldOfView;
+	viewCamera.nearPlaneDistance = nearPlaneDistance;
+	viewCamera.farPlaneDistance = farPlaneDistance;
 }
 
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()

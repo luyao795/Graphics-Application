@@ -59,12 +59,6 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
-
-	// External constants for defining the camera properties
-	constexpr float aspectRatio = 1.0f;
-	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
-	constexpr float nearPlaneDistance = 0.1f;
-	constexpr float farPlaneDistance = 100.0f;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -87,7 +81,7 @@ void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, 
 	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
 	i_camera.rigidBody.IncrementPredictionOntoRotation(i_secondCountToExtrapolate);
 	i_camera.rigidBody.IncrementPredictionOntoMovement(i_secondCountToExtrapolate);
-	constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
+	constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(i_camera.fieldOfView, i_camera.aspectRatio, i_camera.nearPlaneDistance, i_camera.farPlaneDistance);
 	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
 	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
 	i_camera.rigidBody.DecrementPredictionOntoMovement(i_secondCountToExtrapolate);
