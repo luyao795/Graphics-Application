@@ -77,6 +77,9 @@ namespace
 	// Camera Data
 	eae6320::Graphics::Camera viewCamera;
 
+	// External constant for default render state
+	constexpr uint8_t defaultRenderState = 0;
+
 	// External counter used for Rendering based on time
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
@@ -334,21 +337,34 @@ void eae6320::cExampleGame::InitializeCameraDistance()
 eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 {
 	cResult result = Results::Success;
-	constexpr uint8_t defaultRenderState = 0;
 
-	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", defaultRenderState, s_effect)))
+	// Initialize render state for sprites to be the same as default render state
+	uint8_t s_RenderStateForSpriteWithAlphaTransparency = defaultRenderState;
+
+	// If alpha transparency is not enabled, enable it
+	if (!eae6320::Graphics::RenderStates::IsAlphaTransparencyEnabled(s_RenderStateForSpriteWithAlphaTransparency))
+		eae6320::Graphics::RenderStates::EnableAlphaTransparency(s_RenderStateForSpriteWithAlphaTransparency);
+
+	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Sprite.binshd", s_RenderStateForSpriteWithAlphaTransparency, s_effect)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
 
-	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", defaultRenderState, s_effect_static)))
+	if (!(result = eae6320::Graphics::Effect::Load("Sprite.binshd", "Static.binshd", s_RenderStateForSpriteWithAlphaTransparency, s_effect_static)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", defaultRenderState, s_effect_mesh)))
+	// Initialize render state for meshes to be the same as default render state
+	uint8_t s_RenderStateForMeshWithDepthBuffering = defaultRenderState;
+
+	// If depth buffering is not enabled, enable it
+	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBuffering))
+		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBuffering);
+
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
