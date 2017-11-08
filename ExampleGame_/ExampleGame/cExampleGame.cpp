@@ -82,13 +82,17 @@ namespace
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
 
-	// External multiplier constants used for control with acceleration
-	constexpr float accelerationMultiplier = 0.1f;
+	// External multiplier constants used for control with acceleration on mesh
+	constexpr float accelerationMultiplier = 0.25f;
 	constexpr float normalAccelerationIncrement = 1.0f;
 	constexpr float frictionAccelerationIncrement = 5.0f;
 	constexpr float deaccelerationMultiplier = -3.0f;
 	constexpr float epsilonForVelocityOffset = 0.01f;
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
+
+	// External multiplier constants used for control on camera
+	constexpr float speedMultiplierForCamera = 0.5f;
+	constexpr float rotationAmountForCamera = 0.25f;
 
 	// External constants for defining camera distance
 	constexpr float cameraDistanceX = 0.00f;
@@ -199,13 +203,11 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, accelerationDepth);
 
 	// Update for camera
-	constexpr float speedMultiplierForCamera = 0.25f;
 	float speedVerticalCamera = 0.0f;
 	float speedHorizontalCamera = 0.0f;
 	float speedDepthCamera = 0.0f;
 
 	static float rotationAngle = 0.0f;
-	constexpr float rotationAmount = 0.25f;
 
 	if (UserInput::IsKeyPressed('A'))
 		speedHorizontalCamera += speedMultiplierForCamera * (-1.0f);
@@ -226,10 +228,10 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 		speedDepthCamera += speedMultiplierForCamera;
 
 	if (UserInput::IsKeyPressed('Q'))
-		rotationAngle += rotationAmount * (-1.0f);
+		rotationAngle += rotationAmountForCamera * (-1.0f);
 
 	if (UserInput::IsKeyPressed('E'))
-		rotationAngle += rotationAmount;
+		rotationAngle += rotationAmountForCamera;
 
 	viewCamera.rigidBody.velocity = eae6320::Math::sVector(speedHorizontalCamera, speedVerticalCamera, speedDepthCamera);
 	viewCamera.rigidBody.orientation = eae6320::Math::cQuaternion(eae6320::Graphics::ConvertDegreeToRadian(rotationAngle), Y);
