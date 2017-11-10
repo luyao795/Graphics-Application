@@ -1,5 +1,5 @@
 /*
-This class builds hardware-ready meshes from source data
+	This class builds hardware-ready meshes from source data
 */
 
 #ifndef EAE6320_CMESHBUILDER_H
