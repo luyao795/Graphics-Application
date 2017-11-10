@@ -4,11 +4,6 @@
 
 return
 {
-	-- A cube contains 8 vertices
-	vertexCount = 8,
-	-- A cube contains 6 sides which equals to 12 triangles
-	-- And thus there should be 36 indices to render all 12 triangles
-	indexCount = 36,
 	-- This is the set of unique vertex data
 	vertexData = 
 	{
@@ -23,8 +18,7 @@ return
 			g = 0,
 			b = 0,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 1
 		{
 			-- position info
@@ -36,8 +30,7 @@ return
 			g = 0.5,
 			b = 0.5,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 2
 		{
 			-- position info
@@ -49,8 +42,7 @@ return
 			g = 0,
 			b = 1,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 3
 		{
 			-- position info
@@ -62,8 +54,7 @@ return
 			g = 1,
 			b = 0,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 4
 		{
 			-- position info
@@ -75,8 +66,7 @@ return
 			g = 0,
 			b = 0,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 5
 		{
 			-- position info
@@ -88,8 +78,7 @@ return
 			g = 1,
 			b = 1,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 6
 		{
 			-- position info
@@ -101,8 +90,7 @@ return
 			g = 1,
 			b = 1,
 			a = 1,
-		},
-		
+		},		
 		-- Vertex 7
 		{
 			-- position info
