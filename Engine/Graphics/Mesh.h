@@ -83,6 +83,10 @@ namespace eae6320
 
 			size_t s_indexCount;
 
+			std::vector<eae6320::Graphics::VertexFormats::sMesh> s_meshData;
+
+			std::vector<uint16_t> s_indexData;
+
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 		};
