@@ -83,7 +83,7 @@ namespace eae6320
 
 			size_t s_indexCount;
 
-			std::vector<eae6320::Graphics::VertexFormats::sMesh> s_meshData;
+			std::vector<eae6320::Graphics::VertexFormats::sMesh> s_vertexData;
 
 			std::vector<uint16_t> s_indexData;
 

@@ -510,7 +510,7 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			currentVertex.a = static_cast<uint8_t>(value * 255);
 			lua_pop(&io_luaState, 1);
 		}
-		s_meshData.push_back(currentVertex);
+		s_vertexData.push_back(currentVertex);
 	}
 	return result;
 }
