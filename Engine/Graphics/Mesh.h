@@ -11,6 +11,7 @@ These are code snippets that represent meshes that are separated from Graphics s
 #include <Engine/Assets/ReferenceCountedAssets.h>
 #include <Engine/Results/Results.h>
 #include <Engine/Graphics/VertexFormats.h>
+#include <External/Lua/Includes.h>
 
 #include <vector>
 

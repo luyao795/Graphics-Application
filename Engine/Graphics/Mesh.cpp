@@ -6,7 +6,6 @@
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 #include <new> // This library is needed for std::nothrow
-#include <External/Lua/Includes.h>
 #include <iostream>
 
 namespace eae6320
