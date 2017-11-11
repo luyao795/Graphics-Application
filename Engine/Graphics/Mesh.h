@@ -29,7 +29,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData, Mesh *& o_mesh);
+			static cResult Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData, Mesh *& o_mesh);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
@@ -43,8 +43,8 @@ namespace eae6320
 			Mesh();
 			~Mesh();
 
-			// meshData is the array for all vertices, indexData is the array for index information for rendering the mesh
-			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData);
+			// vertexData is the array for all vertices, indexData is the array for index information for rendering the mesh
+			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData);
 
 			cResult CleanUpMesh();
 

@@ -22,7 +22,7 @@ namespace eae6320
 
 		}
 
-		cResult Mesh::Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData, Mesh *& o_mesh)
+		cResult Mesh::Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData, Mesh *& o_mesh)
 		{
 			// Input array data should always be clockwise (CW)
 			// (We could make it either always clockwise or counterclockwise)
@@ -49,7 +49,7 @@ namespace eae6320
 				}
 			}
 
-			if (!(result = mesh->InitializeMesh(meshData, indexData)))
+			if (!(result = mesh->InitializeMesh(vertexData, indexData)))
 			{
 				EAE6320_ASSERTF(false, "Initialization of new mesh failed");
 				goto OnExit;
