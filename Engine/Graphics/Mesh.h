@@ -47,6 +47,16 @@ namespace eae6320
 
 			cResult CleanUpMesh();
 
+			cResult LoadTableValues(lua_State& io_luaState);
+
+			cResult LoadTableValues_vertices(lua_State& io_luaState);
+			cResult LoadTableValues_vertices_values(lua_State& io_luaState);
+
+			cResult LoadTableValues_indices(lua_State& io_luaState);
+			cResult LoadTableValues_indices_values(lua_State& io_luaState);
+
+			cResult LoadAsset(const char* const i_path);
+
 #if defined ( EAE6320_PLATFORM_D3D )
 			// Geometry Data
 			//--------------
