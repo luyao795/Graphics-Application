@@ -49,6 +49,23 @@ eae6320::cResult eae6320::Assets::cMeshBuilder::Build(const std::vector<std::str
 // Helper Function Definitions
 //============================
 
+eae6320::cResult LoadTableValues(lua_State & io_luaState)
+{
+	auto result = eae6320::Results::Success;
+
+	if (!(result = LoadTableValues_vertices(io_luaState)))
+	{
+		return result;
+	}
+
+	if (!(result = LoadTableValues_indices(io_luaState)))
+	{
+		return result;
+	}
+
+	return result;
+}
+
 eae6320::cResult LoadAsset(const char* const i_path)
 {
 	auto result = eae6320::Results::Success;
