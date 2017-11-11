@@ -22,7 +22,7 @@ namespace eae6320
 
 		}
 
-		cResult Mesh::Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData, Mesh *& o_mesh)
+		cResult Mesh::Load(const char * i_meshDataPath, Mesh *& o_mesh)
 		{
 			// Input array data should always be clockwise (CW)
 			// (We could make it either always clockwise or counterclockwise)
@@ -32,8 +32,18 @@ namespace eae6320
 
 			mesh = new (std::nothrow) Mesh();
 
+			char * filePath = "data/Meshes/";
+
+			std::strcat(filePath, i_meshDataPath);
+
+			if (!(result = mesh->LoadAsset(filePath)))
+			{
+				EAE6320_ASSERTF(false, "Failed to load mesh data from file");
+				goto OnExit;
+			}
+
 			// The size of the index array should always be a multiple of 3
-			const auto indexArraySize = indexData.size();
+			const auto indexArraySize = mesh->s_indexData.size();
 			constexpr unsigned int vertexPerTriangle = 3;
 			EAE6320_ASSERTF(indexArraySize % vertexPerTriangle == 0, "Invalid array size for indices, it has to be a multiple of 3");
 			mesh->s_indexCount = indexArraySize;
@@ -49,7 +59,7 @@ namespace eae6320
 				}
 			}
 
-			if (!(result = mesh->InitializeMesh(vertexData, indexData)))
+			if (!(result = mesh->InitializeMesh(mesh->s_vertexData, mesh->s_indexData)))
 			{
 				EAE6320_ASSERTF(false, "Initialization of new mesh failed");
 				goto OnExit;

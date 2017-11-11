@@ -29,7 +29,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData, Mesh *& o_mesh);
+			static cResult Load(const char * i_meshDataPath, Mesh *& o_mesh);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
