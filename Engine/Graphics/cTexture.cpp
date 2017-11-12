@@ -116,6 +116,17 @@ OnExit:
 	return result;
 }
 
+eae6320::cResult eae6320::Graphics::cTexture::CleanUp()
+{
+	cResult result = Results::Success;
+	if (!(result = CleanUpTexture()))
+	{
+		EAE6320_ASSERTF(false, "Failed to clean up texture");
+		Logging::OutputError("Failed to clean up texture");
+	}
+	return result;
+}
+
 // Implementation
 //===============
 

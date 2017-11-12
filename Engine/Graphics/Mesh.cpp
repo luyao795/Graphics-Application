@@ -13,8 +13,11 @@
 
 eae6320::Assets::cManager<eae6320::Graphics::Mesh> eae6320::Graphics::Mesh::s_manager;
 
-// Interface
-//==========
+// Implementation
+//===============
+
+// Initialization / Clean Up
+//--------------------------
 
 eae6320::Graphics::Mesh::Mesh()
 {
@@ -23,8 +26,11 @@ eae6320::Graphics::Mesh::Mesh()
 
 eae6320::Graphics::Mesh::~Mesh()
 {
-	
+	CleanUp();
 }
+
+// Interface
+//==========
 
 // Initialization / Clean Up
 //--------------------------
@@ -90,9 +96,7 @@ OnExit:
 eae6320::cResult eae6320::Graphics::Mesh::CleanUp()
 {
 	cResult result = Results::Success;
-	if (result = CleanUpMesh())
-		this->DecrementReferenceCount();
-	else
+	if (!(result = CleanUpMesh()))
 	{
 		EAE6320_ASSERTF(false, "Failed to clean up mesh");
 		Logging::OutputError("Failed to clean up mesh");

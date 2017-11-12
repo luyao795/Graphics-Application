@@ -31,17 +31,23 @@ namespace eae6320
 		{
 		public:
 
+			// Initialization / Clean Up
+			//--------------------------
+
 			static cResult Load(const char * i_meshDataPath, Mesh *& o_mesh);
+			cResult CleanUp();
 
-			// Reference counting
-			//===================
-
-			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
 
-			void DrawMesh();
+			// Reference Counting
+			//-------------------
 
-			cResult CleanUp();
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+
+			// Render
+			//-------
+
+			void DrawMesh();
 
 			// Access
 			//-------
@@ -54,16 +60,15 @@ namespace eae6320
 			Mesh();
 			~Mesh();
 
-			// Data initialization and cleanup
-			//================================
+			// Initialization / Clean Up
+			//--------------------------
 
 			// vertexData is the array for all vertices, indexData is the array for index information for rendering the mesh
 			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData);
-
 			cResult CleanUpMesh();
 
 			// Lua data operation
-			//===================
+			//-------------------
 
 			cResult LoadTableValues(lua_State& io_luaState);
 

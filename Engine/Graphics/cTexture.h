@@ -68,7 +68,8 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			static cResult Load( const char* const i_path, cTexture *& o_texture );
+			static cResult Load( const char * const i_path, cTexture *& o_texture );
+			cResult CleanUp();
 
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( cTexture )
 
@@ -101,7 +102,7 @@ namespace eae6320
 			//--------------------------
 
 			cResult Initialize( const char * const i_path, const void * const i_textureData, const size_t i_textureDataSize );
-			cResult CleanUp();
+			cResult CleanUpTexture();
 
 			cTexture( const TextureFormats::sTextureInfo & i_info );
 			~cTexture();
