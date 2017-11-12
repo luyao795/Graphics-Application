@@ -39,11 +39,7 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshDataPath, Mesh
 
 	mesh = new (std::nothrow) Mesh();
 
-	char * filePath = "data/Meshes/";
-
-	std::strcat(filePath, i_meshDataPath);
-
-	if (!(result = mesh->LoadAsset(filePath)))
+	if (!(result = mesh->LoadAsset(i_meshDataPath)))
 	{
 		EAE6320_ASSERTF(false, "Failed to load mesh data from file");
 		goto OnExit;
@@ -526,6 +522,7 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			lua_pop(&io_luaState, 1);
 		}
 		s_vertexData.push_back(currentVertex);
+		lua_pop(&io_luaState, 1);
 	}
 	return result;
 }
@@ -626,6 +623,7 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_indices_values(lua_Sta
 				lua_pop(&io_luaState, 1);
 			}
 		}
+		lua_pop(&io_luaState, 1);
 	}
 	return result;
 }

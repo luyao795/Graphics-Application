@@ -17,6 +17,8 @@
 	#include <Engine/Windows/Includes.h>
 #endif
 
+#define MAX_EFFECT_PATH_LENGTH 100
+
 namespace eae6320
 {
 	namespace Graphics
