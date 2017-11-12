@@ -23,7 +23,7 @@ eae6320::Graphics::Mesh::Mesh()
 
 eae6320::Graphics::Mesh::~Mesh()
 {
-
+	
 }
 
 // Initialization / Clean Up
