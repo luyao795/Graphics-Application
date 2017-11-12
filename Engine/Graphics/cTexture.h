@@ -68,7 +68,7 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			static cResult Load( const char* const i_path, cTexture*& o_texture );
+			static cResult Load( const char* const i_path, cTexture *& o_texture );
 
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( cTexture )
 
@@ -83,7 +83,7 @@ namespace eae6320
 		private:
 
 #if defined( EAE6320_PLATFORM_D3D )
-			ID3D11ShaderResourceView* m_textureView = nullptr;
+			ID3D11ShaderResourceView * m_textureView = nullptr;
 #elif defined( EAE6320_PLATFORM_GL )
 			GLuint m_textureId = 0;
 #endif
@@ -100,10 +100,10 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			cResult Initialize( const char* const i_path, const void* const i_textureData, const size_t i_textureDataSize );
+			cResult Initialize( const char * const i_path, const void * const i_textureData, const size_t i_textureDataSize );
 			cResult CleanUp();
 
-			cTexture( const TextureFormats::sTextureInfo& i_info );
+			cTexture( const TextureFormats::sTextureInfo & i_info );
 			~cTexture();
 		};
 	}

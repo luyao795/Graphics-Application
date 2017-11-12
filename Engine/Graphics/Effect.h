@@ -25,7 +25,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState, Effect*& o_effect);
+			static cResult Load(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
@@ -43,7 +43,7 @@ namespace eae6320
 			// the file name of the fragment shader. Both file names should include extension.
 			// Do NOT include file path in these parameters.
 			// i_RenderState is the render state the user wants to use, the default value is 0.
-			cResult InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState);
+			cResult InitializeShadingData(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState);
 
 			cResult CleanUpShadingData();
 

@@ -8,95 +8,100 @@
 #include <new> // This library is needed for std::nothrow
 #include <iostream>
 
-namespace eae6320
+// Static Data Initialization
+//===========================
+
+eae6320::Assets::cManager<eae6320::Graphics::Mesh> eae6320::Graphics::Mesh::s_manager;
+
+// Interface
+//==========
+
+eae6320::Graphics::Mesh::Mesh()
 {
-	namespace Graphics
+
+}
+
+eae6320::Graphics::Mesh::~Mesh()
+{
+
+}
+
+// Initialization / Clean Up
+//--------------------------
+
+eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshDataPath, Mesh *& o_mesh)
+{
+	// Input array data should always be clockwise (CW)
+	// (We could make it either always clockwise or counterclockwise)
+
+	cResult result = Results::Success;
+	Mesh * mesh = nullptr;
+
+	mesh = new (std::nothrow) Mesh();
+
+	char * filePath = "data/Meshes/";
+
+	std::strcat(filePath, i_meshDataPath);
+
+	if (!(result = mesh->LoadAsset(filePath)))
 	{
-		Mesh::Mesh()
+		EAE6320_ASSERTF(false, "Failed to load mesh data from file");
+		goto OnExit;
+	}
+
+	// The size of the index array should always be a multiple of 3
+	const auto indexArraySize = mesh->s_indexData.size();
+	constexpr unsigned int vertexPerTriangle = 3;
+	EAE6320_ASSERTF(indexArraySize % vertexPerTriangle == 0, "Invalid array size for indices, it has to be a multiple of 3");
+	mesh->s_indexCount = indexArraySize;
+
+	// Allocate a new Mesh
+	{
+		if (!mesh)
 		{
-
-		}
-
-		Mesh::~Mesh()
-		{
-
-		}
-
-		cResult Mesh::Load(const char * i_meshDataPath, Mesh *& o_mesh)
-		{
-			// Input array data should always be clockwise (CW)
-			// (We could make it either always clockwise or counterclockwise)
-
-			cResult result = Results::Success;
-			Mesh* mesh = nullptr;
-
-			mesh = new (std::nothrow) Mesh();
-
-			char * filePath = "data/Meshes/";
-
-			std::strcat(filePath, i_meshDataPath);
-
-			if (!(result = mesh->LoadAsset(filePath)))
-			{
-				EAE6320_ASSERTF(false, "Failed to load mesh data from file");
-				goto OnExit;
-			}
-
-			// The size of the index array should always be a multiple of 3
-			const auto indexArraySize = mesh->s_indexData.size();
-			constexpr unsigned int vertexPerTriangle = 3;
-			EAE6320_ASSERTF(indexArraySize % vertexPerTriangle == 0, "Invalid array size for indices, it has to be a multiple of 3");
-			mesh->s_indexCount = indexArraySize;
-
-			// Allocate a new Mesh
-			{
-				if (!mesh)
-				{
-					result = Results::OutOfMemory;
-					EAE6320_ASSERTF(false, "Couldn't allocate memory for the mesh");
-					Logging::OutputError("Failed to allocate memory for the mesh");
-					goto OnExit;
-				}
-			}
-
-			if (!(result = mesh->InitializeMesh(mesh->s_vertexData, mesh->s_indexData)))
-			{
-				EAE6320_ASSERTF(false, "Initialization of new mesh failed");
-				goto OnExit;
-			}
-
-		OnExit:
-
-			if (result)
-			{
-				EAE6320_ASSERT(mesh);
-				o_mesh = mesh;
-			}
-			else
-			{
-				if (mesh)
-				{
-					mesh->DecrementReferenceCount();
-					mesh = nullptr;
-				}
-				o_mesh = nullptr;
-			}
-			return result;
-		}
-
-		eae6320::cResult Mesh::CleanUp()
-		{
-			cResult result = Results::Success;
-			if (result = CleanUpMesh())
-				this->DecrementReferenceCount();
-			else
-			{
-				EAE6320_ASSERTF(false, "Failed to clean up mesh");
-				Logging::OutputError("Failed to clean up mesh");
-			}
-			return result;
+			result = Results::OutOfMemory;
+			EAE6320_ASSERTF(false, "Couldn't allocate memory for the mesh");
+			Logging::OutputError("Failed to allocate memory for the mesh");
+			goto OnExit;
 		}
 	}
+
+	if (!(result = mesh->InitializeMesh(mesh->s_vertexData, mesh->s_indexData)))
+	{
+		EAE6320_ASSERTF(false, "Initialization of new mesh failed");
+		goto OnExit;
+	}
+
+OnExit:
+
+	if (result)
+	{
+		EAE6320_ASSERT(mesh);
+		o_mesh = mesh;
+	}
+	else
+	{
+		if (mesh)
+		{
+			mesh->DecrementReferenceCount();
+			mesh = nullptr;
+		}
+		o_mesh = nullptr;
+	}
+	return result;
+}
+
+eae6320::cResult eae6320::Graphics::Mesh::CleanUp()
+{
+	cResult result = Results::Success;
+	if (result = CleanUpMesh())
+		this->DecrementReferenceCount();
+	else
+	{
+		EAE6320_ASSERTF(false, "Failed to clean up mesh");
+		Logging::OutputError("Failed to clean up mesh");
+	}
+	return result;
 }
 
 // Helper Function Definitions

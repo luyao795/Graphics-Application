@@ -33,12 +33,12 @@ uint16_t eae6320::Graphics::cTexture::GetHeight() const
 // Initialization / Clean Up
 //--------------------------
 
-eae6320::cResult eae6320::Graphics::cTexture::Load( const char* const i_path, cTexture*& o_texture )
+eae6320::cResult eae6320::Graphics::cTexture::Load( const char * const i_path, cTexture *& o_texture )
 {
 	auto result = Results::Success;
 
 	Platform::sDataFromFile dataFromFile;
-	cTexture* newTexture = nullptr;
+	cTexture * newTexture = nullptr;
 
 	// Load the binary data
 	{
@@ -60,12 +60,12 @@ eae6320::cResult eae6320::Graphics::cTexture::Load( const char* const i_path, cT
 		const auto newOffset = currentOffset + sizeof( TextureFormats::sTextureInfo );
 		if ( newOffset <= finalOffset )
 		{
-			const auto* const textureInfo = reinterpret_cast<TextureFormats::sTextureInfo*>( currentOffset );
+			const auto * const textureInfo = reinterpret_cast<TextureFormats::sTextureInfo *>( currentOffset );
 			EAE6320_ASSERT( ( textureInfo->width % 4u ) == 0u );
 			EAE6320_ASSERT( ( textureInfo->height % 4u ) == 0u );
 			currentOffset = newOffset;
 			// Allocate a new texture with the information
-			newTexture = new (std::nothrow) cTexture( *textureInfo );
+			newTexture = new (std::nothrow) cTexture( * textureInfo );
 			if ( !newTexture )
 			{
 				result = Results::OutOfMemory;
@@ -86,7 +86,7 @@ eae6320::cResult eae6320::Graphics::cTexture::Load( const char* const i_path, cT
 	}
 	// The rest of the data is pixel information that is used to create platform-specific textures
 	{
-		const auto* const textureData = reinterpret_cast<void*>( currentOffset );
+		const auto * const textureData = reinterpret_cast<void*>( currentOffset );
 		const auto textureDataSize = static_cast<size_t>( finalOffset - currentOffset );
 		if ( !( result = newTexture->Initialize( i_path, textureData, textureDataSize ) ) )
 		{
@@ -122,7 +122,7 @@ OnExit:
 // Initialization / Clean Up
 //--------------------------
 
-eae6320::Graphics::cTexture::cTexture( const TextureFormats::sTextureInfo& i_info )
+eae6320::Graphics::cTexture::cTexture( const TextureFormats::sTextureInfo & i_info )
 {
 	// Copy the information from the file
 	memcpy( &m_info, &i_info, sizeof( m_info ) );
