@@ -342,8 +342,8 @@ function BuildAssets()
 		local path_meshBuilder = OutputDir .. "MeshBuilder.exe"
 		do
 			local mesh_authored = EngineSourceContentDir .. "Meshes/CubeMesh.lua"
-			local mesh_built = GameInstallDir .. "data/Meshes/CubeMesh.lua"
-			CreateDirectoryIfItDoesntExist( texture_built )
+			local mesh_built = GameInstallDir .. "data/Meshes/CubeMesh.binmsh"
+			CreateDirectoryIfItDoesntExist( mesh_built )
 			local command = "\"" .. path_meshBuilder .. "\""
 				.. " \"" .. mesh_authored .. "\" \"" .. mesh_built .. "\""
 			local result, exitCode = ExecuteCommand( command )
@@ -368,8 +368,8 @@ function BuildAssets()
 		end
 		do
 			local mesh_authored = EngineSourceContentDir .. "Meshes/PlaneMesh.lua"
-			local mesh_built = GameInstallDir .. "data/Meshes/PlaneMesh.lua"
-			CreateDirectoryIfItDoesntExist( texture_built )
+			local mesh_built = GameInstallDir .. "data/Meshes/PlaneMesh.binmsh"
+			CreateDirectoryIfItDoesntExist( mesh_built )
 			local command = "\"" .. path_meshBuilder .. "\""
 				.. " \"" .. mesh_authored .. "\" \"" .. mesh_built .. "\""
 			local result, exitCode = ExecuteCommand( command )

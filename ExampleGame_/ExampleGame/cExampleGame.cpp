@@ -709,13 +709,13 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 		staticIndexData[35] = 7;
 	}
 
-	if (!(result = eae6320::Graphics::Mesh::Load("CubeMesh.mdat", s_movableMesh)))
+	if (!(result = eae6320::Graphics::Mesh::Load("CubeMesh.binmsh", s_movableMesh)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
 	}
 
-	if (!(result = eae6320::Graphics::Mesh::Load("PlaneMesh.mdat", s_staticMesh)))
+	if (!(result = eae6320::Graphics::Mesh::Load("PlaneMesh.binmsh", s_staticMesh)))
 	{
 		EAE6320_ASSERT(false);
 		goto OnExit;
