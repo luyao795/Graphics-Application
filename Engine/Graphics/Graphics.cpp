@@ -69,13 +69,13 @@ void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_syste
 	constantData_perFrame.g_elapsedSecondCount_simulationTime = i_elapsedSecondCount_simulationTime;
 }
 
-void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame)
+void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate)
+void eae6320::Graphics::SubmitCameraForView(Camera i_camera, const float i_secondCountToExtrapolate)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
@@ -105,7 +105,7 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.mesh->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
 {
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
 		i_meshToBeRendered.rigidBody.IncrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
@@ -235,7 +235,7 @@ void eae6320::Graphics::RenderFrame()
 	SwapRender();
 }
 
-float eae6320::Graphics::ConvertDegreeToRadian(float i_degree)
+float eae6320::Graphics::ConvertDegreeToRadian(const float i_degree)
 {
 	constexpr float PI = 3.14159265358f;
 	return (i_degree * PI) / 180.0f;
