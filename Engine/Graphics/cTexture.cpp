@@ -90,7 +90,7 @@ eae6320::cResult eae6320::Graphics::cTexture::Load(const char * const i_textureF
 	}
 	// The rest of the data is pixel information that is used to create platform-specific textures
 	{
-		const auto * const textureData = reinterpret_cast<void*>(currentOffset);
+		const auto * const textureData = reinterpret_cast<void *>(currentOffset);
 		const auto textureDataSize = static_cast<size_t>(finalOffset - currentOffset);
 		if (!(result = newTexture->Initialize(completeFilePath, textureData, textureDataSize)))
 		{
