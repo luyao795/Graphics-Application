@@ -50,10 +50,10 @@ namespace eae6320
 			//--------------
 
 			// A vertex buffer holds the data for each vertex
-			ID3D11Buffer* s_vertexBuffer = nullptr;
+			ID3D11Buffer * s_vertexBuffer = nullptr;
 			// D3D has an "input layout" object that associates the layout of the vertex format struct
 			// with the input from a vertex shader
-			ID3D11InputLayout* s_vertexInputLayout = nullptr;
+			ID3D11InputLayout * s_vertexInputLayout = nullptr;
 #elif defined ( EAE6320_PLATFORM_GL )
 			// Geometry Data
 			//--------------

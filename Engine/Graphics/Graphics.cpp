@@ -59,12 +59,6 @@ namespace
 	// and the application loop thread can start submitting data for the following frame
 	// (the application loop thread waits for the signal)
 	eae6320::Concurrency::cEvent s_whenDataForANewFrameCanBeSubmittedFromApplicationThread;
-
-	// External constants for defining the camera properties
-	constexpr float aspectRatio = 1.0f;
-	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
-	constexpr float nearPlaneDistance = 0.1f;
-	constexpr float farPlaneDistance = 100.0f;
 }
 
 void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime)
@@ -75,21 +69,23 @@ void eae6320::Graphics::SubmitElapsedTime(const float i_elapsedSecondCount_syste
 	constantData_perFrame.g_elapsedSecondCount_simulationTime = i_elapsedSecondCount_simulationTime;
 }
 
-void eae6320::Graphics::SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame)
+void eae6320::Graphics::SubmitColorToBeRendered(const Color colorForNextFrame)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedColorForRenderingInNextFrame = colorForNextFrame;
 }
 
-void eae6320::Graphics::SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate)
+void eae6320::Graphics::SubmitCameraForView(Camera i_camera, const float i_secondCountToExtrapolate)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	auto& constantData_perFrame = s_dataBeingSubmittedByApplicationThread->constantData_perFrame;
-	i_camera.rigidBody.orientation = i_camera.rigidBody.PredictFutureOrientation(i_secondCountToExtrapolate);
+	i_camera.rigidBody.IncrementPredictionOntoRotation(i_secondCountToExtrapolate);
 	i_camera.rigidBody.IncrementPredictionOntoMovement(i_secondCountToExtrapolate);
+	constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(i_camera.fieldOfView, i_camera.aspectRatio, i_camera.nearPlaneDistance, i_camera.farPlaneDistance);
 	constantData_perFrame.g_transform_worldToCamera = eae6320::Math::cMatrix_transformation::CreateWorldToCameraTransform(i_camera.rigidBody.orientation, i_camera.rigidBody.position);
 	s_dataBeingSubmittedByApplicationThread->cameraForView = i_camera;
 	i_camera.rigidBody.DecrementPredictionOntoMovement(i_secondCountToExtrapolate);
+	i_camera.rigidBody.DecrementPredictionOntoRotation(i_secondCountToExtrapolate);
 }
 
 void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData)
@@ -109,7 +105,7 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.mesh->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
 {
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
 		i_meshToBeRendered.rigidBody.IncrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
@@ -178,7 +174,6 @@ void eae6320::Graphics::RenderFrame()
 	{
 		// Copy the data from the system memory that the application owns to GPU memory
 		auto& constantData_perFrame = s_dataBeingRenderedByRenderThread->constantData_perFrame;
-		constantData_perFrame.g_transform_cameraToProjected = eae6320::Math::cMatrix_transformation::CreateCameraToProjectedTransform_perspective(cameraFieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 		s_constantBuffer_perFrame.Update(&constantData_perFrame);
 	}
 
@@ -240,7 +235,7 @@ void eae6320::Graphics::RenderFrame()
 	SwapRender();
 }
 
-float eae6320::Graphics::ConvertDegreeToRadian(float i_degree)
+float eae6320::Graphics::ConvertDegreeToRadian(const float i_degree)
 {
 	constexpr float PI = 3.14159265358f;
 	return (i_degree * PI) / 180.0f;
@@ -341,11 +336,34 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 {
 	auto result = Results::Success;
 
-	// This thread will always be empty when this function gets called
+	if (s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
+
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture = nullptr;
+		}
+	}
 	s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh = nullptr;
+		}
+	}
 	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
-	// This thread will contain items thus we need to clean it manually
 	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
 	{
 		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)

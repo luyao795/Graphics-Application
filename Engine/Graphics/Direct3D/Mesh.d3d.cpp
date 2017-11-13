@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> meshData, std::vector<uint16_t> indexData)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -93,13 +93,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Vertex Buffer
 	{
-		const auto vertexCount = meshData.size();
+		const auto vertexCount = vertexData.size();
 
 		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
 		{
 			for (size_t i = 0; i < vertexCount; i++)
 			{
-				localMeshData[i] = meshData[i];
+				localMeshData[i] = vertexData[i];
 			}
 		}
 

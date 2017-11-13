@@ -76,6 +76,10 @@ namespace eae6320
 		struct Camera
 		{
 			eae6320::Physics::sRigidBodyState rigidBody;
+			float aspectRatio;
+			float fieldOfView;
+			float nearPlaneDistance;
+			float farPlaneDistance;
 		};
 
 		// Submission
@@ -89,15 +93,15 @@ namespace eae6320
 		// for the frame currently being submitted
 		void SubmitElapsedTime( const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime );
 
-		void SubmitColorToBeRendered(const eae6320::Graphics::Color colorForNextFrame);
+		void SubmitColorToBeRendered(const Color colorForNextFrame);
 
-		void SubmitCameraForView(eae6320::Graphics::Camera i_camera, const float i_secondCountToExtrapolate);
+		void SubmitCameraForView(Camera i_camera, const float i_secondCountToExtrapolate);
 
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
 		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
 
-		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(eae6320::Graphics::DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
+		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
@@ -135,17 +139,13 @@ namespace eae6320
 
 		cResult CleanUp();
 
-		void SubmitElapsedTime(const float i_elapsedSecondCount_systemTime, const float i_elapsedSecondCount_simulationTime);
-
 		cResult WaitUntilDataForANewFrameCanBeSubmitted(const unsigned int i_timeToWait_inMilliseconds);
 
 		cResult SignalThatAllDataForAFrameHasBeenSubmitted();
 
-		void RenderFrame();
-
 		// Helper functions
 		//-----------------
-		float ConvertDegreeToRadian(float i_degree);
+		float ConvertDegreeToRadian(const float i_degree);
 	}
 }
 

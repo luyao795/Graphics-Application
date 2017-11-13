@@ -155,7 +155,7 @@ OnExit:
 	return result;
 }
 
-eae6320::cResult eae6320::Graphics::cTexture::CleanUp()
+eae6320::cResult eae6320::Graphics::cTexture::CleanUpTexture()
 {
 	auto result = Results::Success;
 

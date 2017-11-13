@@ -87,7 +87,7 @@ namespace eae6320
 
 		virtual cResult Initialize() override;
 
-		void InitializeCameraDistance();
+		void InitializeCamera();
 		eae6320::cResult InitializeEffect();
 		eae6320::cResult InitializeSprite();
 		eae6320::cResult InitializeTexture();

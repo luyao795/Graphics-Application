@@ -12,14 +12,14 @@
 
 #include <Engine/Results/Results.h>
 
-eae6320::cResult eae6320::Graphics::Effect::InitializeShadingData(char vertexShaderFileName[], char fragmentShaderFileName[], const uint8_t i_RenderState)
+eae6320::cResult eae6320::Graphics::Effect::InitializeShadingData(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState)
 {
 	auto result = eae6320::Results::Success;
 
-	char vertexPath[100] = "data/Shaders/Vertex/";
+	char vertexPath[MAX_EFFECT_PATH_LENGTH] = "data/Shaders/Vertex/";
 	std::strcat(vertexPath, vertexShaderFileName);
 
-	char fragmentPath[100] = "data/Shaders/Fragment/";
+	char fragmentPath[MAX_EFFECT_PATH_LENGTH] = "data/Shaders/Fragment/";
 	std::strcat(fragmentPath, fragmentShaderFileName);
 
 	if (!(result = eae6320::Graphics::cShader::s_manager.Load(vertexPath,

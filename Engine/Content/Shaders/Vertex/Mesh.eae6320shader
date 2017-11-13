@@ -36,7 +36,7 @@
 	// The "semantics" (the keywords in all caps after the colon) are arbitrary,
 	// but must match the C call to CreateInputLayout()
 
-	// These values come from one of the VertexFormats::sSprite that the vertex buffer was filled with in C code
+	// These values come from one of the VertexFormats::sMesh that the vertex buffer was filled with in C code
 	in const float3 i_position : POSITION,	
 	in const float4 i_meshcolor : COLOR0,
 
