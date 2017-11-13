@@ -198,6 +198,8 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 		eae6320::Graphics::VertexFormats::sMesh currentVertex;
 		auto key = "";
 		auto value = 0.0;
+		// Temporary holder for clamping the value
+		auto tempHold = 0.0;
 		if (lua_istable(&io_luaState, -1))
 		{
 			// Position: x
@@ -385,7 +387,9 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			}
 
 			value = lua_tonumber(&io_luaState, -1);
-			currentVertex.r = static_cast<uint8_t>(value * 255);
+			// Clamp the value to make sure it lies in between [0, 1]
+			tempHold = (value > 1.0) ? 1.0 : ((value < 0.0) ? 0.0 : value);
+			currentVertex.r = static_cast<uint8_t>(tempHold * 255);
 			lua_pop(&io_luaState, 1);
 
 			// Color: g
@@ -432,7 +436,9 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			}
 
 			value = lua_tonumber(&io_luaState, -1);
-			currentVertex.g = static_cast<uint8_t>(value * 255);
+			// Clamp the value to make sure it lies in between [0, 1]
+			tempHold = (value > 1.0) ? 1.0 : ((value < 0.0) ? 0.0 : value);
+			currentVertex.g = static_cast<uint8_t>(tempHold * 255);
 			lua_pop(&io_luaState, 1);
 
 			// Color: b
@@ -479,7 +485,9 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			}
 
 			value = lua_tonumber(&io_luaState, -1);
-			currentVertex.b = static_cast<uint8_t>(value * 255);
+			// Clamp the value to make sure it lies in between [0, 1]
+			tempHold = (value > 1.0) ? 1.0 : ((value < 0.0) ? 0.0 : value);
+			currentVertex.b = static_cast<uint8_t>(tempHold * 255);
 			lua_pop(&io_luaState, 1);
 
 			// Color: a
@@ -526,7 +534,9 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			}
 
 			value = lua_tonumber(&io_luaState, -1);
-			currentVertex.a = static_cast<uint8_t>(value * 255);
+			// Clamp the value to make sure it lies in between [0, 1]
+			tempHold = (value > 1.0) ? 1.0 : ((value < 0.0) ? 0.0 : value);
+			currentVertex.a = static_cast<uint8_t>(tempHold * 255);
 			lua_pop(&io_luaState, 1);
 		}
 		s_vertexData.push_back(currentVertex);
