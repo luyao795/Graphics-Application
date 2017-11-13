@@ -27,7 +27,7 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect);
+			static cResult Load(const char * i_vertexShaderFileName, const char * i_fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect);
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)

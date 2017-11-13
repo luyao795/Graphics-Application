@@ -433,22 +433,22 @@ eae6320::cResult eae6320::cExampleGame::InitializeTexture()
 {
 	cResult result = Results::Success;
 
-	const char * texturePath_pikachu = "data/Textures/Pikachu.bintxr";
-	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texturePath_pikachu, pikachuTexture)))
+	const char * texture_pikachu = "Pikachu.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_pikachu, pikachuTexture)))
 	{
 		EAE6320_ASSERTF(false, "Texture initialization failed");
 		goto OnExit;
 	}
 
-	const char * texturePath_pokeball = "data/Textures/Pokeball.bintxr";
-	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texturePath_pokeball, pokeballTexture)))
+	const char * texture_pokeball = "Pokeball.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_pokeball, pokeballTexture)))
 	{
 		EAE6320_ASSERTF(false, "Texture initialization failed");
 		goto OnExit;
 	}
 
-	const char * texturePath_electroball = "data/Textures/Electroball.bintxr";
-	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texturePath_electroball, electroballTexture)))
+	const char * texture_electroball = "Electroball.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_electroball, electroballTexture)))
 	{
 		EAE6320_ASSERTF(false, "Texture initialization failed");
 		goto OnExit;
@@ -462,15 +462,15 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 {
 	cResult result = Results::Success;
 
-	const char * cubeMeshPath = "data/Meshes/CubeMesh.binmsh";
-	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(cubeMeshPath, cubeMesh)))
+	const char * mesh_cube = "CubeMesh.binmsh";
+	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_cube, cubeMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
 		goto OnExit;
 	}
 
-	const char * planeMeshPath = "data/Meshes/PlaneMesh.binmsh";
-	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(planeMeshPath, planeMesh)))
+	const char * mesh_plane = "PlaneMesh.binmsh";
+	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_plane, planeMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
 		goto OnExit;

@@ -35,7 +35,7 @@ eae6320::Graphics::Mesh::~Mesh()
 // Initialization / Clean Up
 //--------------------------
 
-eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshDataPath, Mesh *& o_mesh)
+eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh *& o_mesh)
 {
 	// Input array data should always be clockwise (CW)
 	// (We could make it either always clockwise or counterclockwise)
@@ -43,9 +43,13 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshDataPath, Mesh
 	cResult result = Results::Success;
 	Mesh * mesh = nullptr;
 
+	// Automate the file path since compiled files will have to go into this folder
+	char completeFilePath[MAX_MESH_PATH_LENGTH] = "data/Meshes/";
+	strcat(completeFilePath, i_meshFileName);
+
 	mesh = new (std::nothrow) Mesh();
 
-	if (!(result = mesh->LoadAsset(i_meshDataPath)))
+	if (!(result = mesh->LoadAsset(completeFilePath)))
 	{
 		EAE6320_ASSERTF(false, "Failed to load mesh data from file");
 		goto OnExit;

@@ -22,14 +22,16 @@
 #include <Engine/Results/Results.h>
 
 #ifdef EAE6320_PLATFORM_GL
-	#include "OpenGL/Includes.h"
+#include "OpenGL/Includes.h"
 #endif
+
+#define MAX_TEXTURE_PATH_LENGTH 100
 
 // Forward Declarations
 //=====================
 
 #ifdef EAE6320_PLATFORM_D3D
-	struct ID3D11ShaderResourceView;
+struct ID3D11ShaderResourceView;
 #endif
 
 // Class Declaration
@@ -54,7 +56,7 @@ namespace eae6320
 			// The texture doesn't know what this is
 			// (a single texture could be used by many different effects)
 			// and so this is the caller's responsibility to pass in.
-			void Bind( const unsigned int i_id ) const;
+			void Bind(const unsigned int i_id) const;
 
 			// Access
 			//-------
@@ -68,10 +70,10 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			static cResult Load( const char * const i_path, cTexture *& o_texture );
+			static cResult Load(const char * const i_textureFileName, cTexture *& o_texture);
 			cResult CleanUp();
 
-			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS( cTexture )
+			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(cTexture)
 
 			// Reference Counting
 			//-------------------
@@ -101,10 +103,10 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			cResult Initialize( const char * const i_path, const void * const i_textureData, const size_t i_textureDataSize );
+			cResult Initialize(const char * const i_path, const void * const i_textureData, const size_t i_textureDataSize);
 			cResult CleanUpTexture();
 
-			cTexture( const TextureFormats::sTextureInfo & i_info );
+			cTexture(const TextureFormats::sTextureInfo & i_info);
 			~cTexture();
 		};
 	}

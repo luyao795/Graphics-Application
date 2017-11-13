@@ -17,7 +17,7 @@ eae6320::Graphics::Effect::~Effect()
 
 }
 
-eae6320::cResult eae6320::Graphics::Effect::Load(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect)
+eae6320::cResult eae6320::Graphics::Effect::Load(const char * i_vertexShaderFileName, const char * i_fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect)
 {
 	cResult result = Results::Success;
 	Effect * effect = nullptr;
@@ -35,7 +35,7 @@ eae6320::cResult eae6320::Graphics::Effect::Load(const char * vertexShaderFileNa
 		}
 	}
 
-	if (!(result = effect->InitializeShadingData(vertexShaderFileName, fragmentShaderFileName, i_RenderState)))
+	if (!(result = effect->InitializeShadingData(i_vertexShaderFileName, i_fragmentShaderFileName, i_RenderState)))
 	{
 		EAE6320_ASSERTF(false, "Initialization of new effect failed");
 		goto OnExit;

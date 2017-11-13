@@ -23,6 +23,8 @@ These are code snippets that represent meshes that are separated from Graphics s
 #include <Engine/Graphics/OpenGL/Includes.h>
 #endif
 
+#define MAX_MESH_PATH_LENGTH 100
+
 namespace eae6320
 {
 	namespace Graphics
@@ -34,7 +36,7 @@ namespace eae6320
 			// Initialization / Clean Up
 			//--------------------------
 
-			static cResult Load(const char * i_meshDataPath, Mesh *& o_mesh);
+			static cResult Load(const char * i_meshFileName, Mesh *& o_mesh);
 			cResult CleanUp();
 
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
