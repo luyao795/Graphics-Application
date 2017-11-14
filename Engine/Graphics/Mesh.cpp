@@ -37,7 +37,7 @@ eae6320::Graphics::Mesh::~Mesh()
 
 eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh *& o_mesh)
 {
-	// Input array data should always be clockwise (CW)
+	// Input array data should always be counterclockwise (CCW)
 	// (We could make it either always clockwise or counterclockwise)
 
 	cResult result = Results::Success;
