@@ -113,11 +113,11 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	{
 		const auto vertexCount = i_vertexData.size();
 
-		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
+		eae6320::Graphics::VertexFormats::sMesh* d3dVertexData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
 		{
 			for (size_t i = 0; i < vertexCount; i++)
 			{
-				localMeshData[i] = i_vertexData[i];
+				d3dVertexData[i] = i_vertexData[i];
 			}
 		}
 
@@ -134,7 +134,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 		}
 		D3D11_SUBRESOURCE_DATA InitialVertexData{};
 		{
-			InitialVertexData.pSysMem = localMeshData;
+			InitialVertexData.pSysMem = d3dVertexData;
 			// (The other data members are ignored for non-texture buffers)
 		}
 
@@ -147,7 +147,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			goto OnExit;
 		}
 
-		delete[] localMeshData;
+		delete[] d3dVertexData;
 	}
 
 	// Index Buffer

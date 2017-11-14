@@ -100,17 +100,17 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	{
 		const auto vertexCount = i_vertexData.size();
 
-		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
+		eae6320::Graphics::VertexFormats::sMesh* glVertexData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
 		{
 			for (size_t i = 0; i < vertexCount; i++)
 			{
-				localMeshData[i] = i_vertexData[i];
+				glVertexData[i] = i_vertexData[i];
 			}
 		}
 
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
-		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(localMeshData),
+		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferSize), reinterpret_cast<GLvoid*>(glVertexData),
 			// In our class we won't ever read from the buffer
 			GL_STATIC_DRAW);
 		const auto errorCode = glGetError();
@@ -123,7 +123,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			goto OnExit;
 		}
 
-		delete[] localMeshData;
+		delete[] glVertexData;
 	}
 	// Assign the data to the index buffer
 	{
