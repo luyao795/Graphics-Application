@@ -127,9 +127,10 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Assign the data to the index buffer
 	{
-		const unsigned int indexArraySize = i_indexData.size();
+		constexpr unsigned int verticesPerTriangle = 3;
+		const auto indexArraySize = i_indexData.size();
 		uint16_t* glIndexData = new uint16_t[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += 3)
+		for (size_t i = 0; i < indexArraySize; i += verticesPerTriangle)
 		{
 			// OpenGL Rendering Order: Counterclockwise (CCW)
 			// Since the input is counterclockwise (CCW), thus example input
