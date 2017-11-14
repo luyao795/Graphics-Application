@@ -118,6 +118,8 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			for (size_t i = 0; i < vertexCount; i++)
 			{
 				d3dVertexData[i] = i_vertexData[i];
+				// Vertical axis for UV in Direct3D is reverted from OpenGL
+				d3dVertexData[i].v = 1.0f - d3dVertexData[i].v;
 			}
 		}
 

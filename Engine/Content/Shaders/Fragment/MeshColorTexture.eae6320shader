@@ -1,0 +1,58 @@
+/*
+	This is an platform independent fragment shader used to render sprite
+*/
+
+#include <Shaders/shaders.inc>
+
+// Constant Buffers
+//=================
+	
+	DeclareTextureBuffer(g_color_texture, 0);
+	
+	DeclareSamplerState(g_color_samplerState, 0);
+
+// Entry Point
+//============
+
+#if defined (EAE6320_PLATFORM_GL)
+
+	// Input
+	//======
+	
+	layout( location = 0 ) in vec4 i_meshcolor;
+	layout( location = 1 ) in vec2 i_texcoord;
+
+	// Output
+	//=======
+
+	// Whatever color value is output from the fragment shader
+	// will determine the color of the corresponding pixel on the screen
+	out vec4 o_color;
+	
+	void main()
+
+#elif defined (EAE6320_PLATFORM_D3D)
+
+	void main(
+	
+	// Input
+	//======
+	in const float4 i_position : SV_POSITION,
+	in const float4 i_meshcolor : COLOR0,
+	in const float2 i_texcoord : TEXCOORD0,
+
+	// Output
+	//=======
+
+	// Whatever color value is output from the fragment shader
+	// will determine the color of the corresponding pixel on the screen
+	out float4 o_color : SV_TARGET
+
+	)
+	
+#endif
+
+	{	
+		vec4 sampledColor = CreateSampledColor( g_color_texture, i_texcoord, g_color_samplerState );
+		o_color = sampledColor * i_meshcolor;
+	}

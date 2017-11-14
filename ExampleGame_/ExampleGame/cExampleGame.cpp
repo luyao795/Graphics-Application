@@ -379,7 +379,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBuffering))
 		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBuffering);
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh_solid)))
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshColor.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh_solid)))
 	{
 		EAE6320_ASSERTF(false, "Effect initialization failed");
 		goto OnExit;
@@ -395,7 +395,7 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 	// Enable rendering for both sides
 	eae6320::Graphics::RenderStates::EnableDrawingBothTriangleSides(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering);
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering, s_effect_mesh_exposed)))
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture.binshd", s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering, s_effect_mesh_exposed)))
 	{
 		EAE6320_ASSERTF(false, "Effect initialization failed");
 		goto OnExit;
