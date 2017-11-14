@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -93,13 +93,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Vertex Buffer
 	{
-		const auto vertexCount = vertexData.size();
+		const auto vertexCount = i_vertexData.size();
 
 		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
 		{
 			for (size_t i = 0; i < vertexCount; i++)
 			{
-				localMeshData[i] = vertexData[i];
+				localMeshData[i] = i_vertexData[i];
 			}
 		}
 
@@ -134,16 +134,16 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 
 	// Index Buffer
 	{
-		const auto indexArraySize = indexData.size();
+		const auto indexArraySize = i_indexData.size();
 		uint16_t* d3dIndexData = new uint16_t[indexArraySize];
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
 			// Since the input is clockwise (CW), thus example input
 			// like ABC should be assigned here with the order ABC
-			d3dIndexData[i] = indexData[i];
-			d3dIndexData[i + 1] = indexData[i + 1];
-			d3dIndexData[i + 2] = indexData[i + 2];
+			d3dIndexData[i] = i_indexData[i];
+			d3dIndexData[i + 1] = i_indexData[i + 1];
+			d3dIndexData[i + 2] = i_indexData[i + 2];
 		}
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
