@@ -8,7 +8,7 @@ return
 			-- position info
 			x = -2.5,
 			y = -1,
-			z = -2.5,
+			z = 2.5,
 			-- color info
 			r = 0,
 			g = 0.946,
@@ -16,26 +16,26 @@ return
 			a = 1,
 			-- texcoord info
 			u = 0,
-			v = 1,
+			v = 0,
 			-- bitangent info
-			btx = -0,
-			bty = -2.22045e-16,
+			btx = 0,
+			bty = 2.22045e-16,
 			btz = -1,
 			-- normal info
 			nx = 0,
 			ny = 1,
-			nz = -2.22045e-16,
+			nz = 2.22045e-16,
 			-- tangent info
 			tx = 1,
 			ty = -0,
-			tz = -0,
+			tz = 0,
 		},
 		-- Vertex 1
 		{
 			-- position info
 			x = 2.5,
 			y = -1,
-			z = -2.5,
+			z = 2.5,
 			-- color info
 			r = 1,
 			g = 0.297,
@@ -43,26 +43,26 @@ return
 			a = 1,
 			-- texcoord info
 			u = 1,
-			v = 1,
+			v = 0,
 			-- bitangent info
-			btx = -0,
-			bty = -2.22045e-16,
+			btx = 0,
+			bty = 2.22045e-16,
 			btz = -1,
 			-- normal info
 			nx = 0,
 			ny = 1,
-			nz = -2.22045e-16,
+			nz = 2.22045e-16,
 			-- tangent info
 			tx = 1,
 			ty = -0,
-			tz = -0,
+			tz = 0,
 		},
 		-- Vertex 2
 		{
 			-- position info
 			x = -2.5,
 			y = -1,
-			z = 2.5,
+			z = -2.5,
 			-- color info
 			r = 1,
 			g = 0.9896,
@@ -70,26 +70,26 @@ return
 			a = 1,
 			-- texcoord info
 			u = 0,
-			v = 0,
+			v = 1,
 			-- bitangent info
-			btx = -0,
-			bty = -2.22045e-16,
+			btx = 0,
+			bty = 2.22045e-16,
 			btz = -1,
 			-- normal info
 			nx = 0,
 			ny = 1,
-			nz = -2.22045e-16,
+			nz = 2.22045e-16,
 			-- tangent info
 			tx = 1,
 			ty = -0,
-			tz = -0,
+			tz = 0,
 		},
 		-- Vertex 3
 		{
 			-- position info
 			x = 2.5,
 			y = -1,
-			z = 2.5,
+			z = -2.5,
 			-- color info
 			r = 0.447,
 			g = 0,
@@ -97,19 +97,19 @@ return
 			a = 1,
 			-- texcoord info
 			u = 1,
-			v = 0,
+			v = 1,
 			-- bitangent info
-			btx = -0,
-			bty = -2.22045e-16,
+			btx = 0,
+			bty = 2.22045e-16,
 			btz = -1,
 			-- normal info
 			nx = 0,
 			ny = 1,
-			nz = -2.22045e-16,
+			nz = 2.22045e-16,
 			-- tangent info
 			tx = 1,
 			ty = -0,
-			tz = -0,
+			tz = 0,
 		},
 	},
 	-- This is the set of index data being used to grab vertices
@@ -117,11 +117,11 @@ return
 	{
 		-- Triangle 0
 		{
-			0, 2, 1,
+			0, 1, 2,
 		},
 		-- Triangle 1
 		{
-			2, 3, 1,
+			2, 1, 3,
 		},
 	},
 }
