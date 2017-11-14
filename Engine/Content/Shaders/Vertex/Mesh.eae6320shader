@@ -18,11 +18,13 @@
 	// These values come from one of the VertexFormats::sGeometry that the vertex buffer was filled with in C code
 	layout( location = 0 ) in vec3 i_position;
 	layout( location = 1 ) in vec4 i_meshcolor;
+	layout( location = 2 ) in vec2 i_texcoord;
 
 	// Output
 	//=======
 	
 	layout( location = 0 ) out vec4 o_meshcolor;
+	layout( location = 1 ) out vec2 o_texcoord;
 
 	void main()
 	
@@ -39,6 +41,7 @@
 	// These values come from one of the VertexFormats::sMesh that the vertex buffer was filled with in C code
 	in const float3 i_position : POSITION,	
 	in const float4 i_meshcolor : COLOR0,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
@@ -46,7 +49,8 @@
 	// An SV_POSITION value must always be output from every vertex shader
 	// so that the GPU can figure out which fragments need to be shaded
 	out float4 o_position : SV_POSITION,
-	out float4 o_meshcolor : COLOR0
+	out float4 o_meshcolor : COLOR0,
+	out float2 o_texcoord : TEXCOORD0
 
 	)
 	
@@ -60,6 +64,8 @@
 		vec4 vertexPosition_Projected = MultiplyMatrixAndVector(g_transform_cameraToProjected, vertexPosition_Camera);
 		// This shader sets the "out" position directly from the "in" position:
 		o_position = vertexPosition_Projected;
-		// This shader sets the "out" texcoord directly from the "in" texcoord:
+		// This shader sets the "out" mesh color directly from the "in" mesh color:
 		o_meshcolor = i_meshcolor;
+		// This shader sets the "out" texcoord directly from the "in" texcoord:
+		o_texcoord = i_texcoord;
 	}

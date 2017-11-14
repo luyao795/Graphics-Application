@@ -516,7 +516,7 @@ void eae6320::cExampleGame::InitializeRenderData()
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
+	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
