@@ -1,0 +1,1 @@
+Thanks for trying this customizable graphics application!
