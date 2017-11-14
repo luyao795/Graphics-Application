@@ -778,8 +778,6 @@ namespace
 		//
 		//	* triangle index order	-> index_0, index_2, index_1
 
-		constexpr unsigned int verticesPerTriangle = 3;
-
 		std::ofstream fout( i_fileName.asChar() );
 		if ( fout.is_open() )
 		{
@@ -797,7 +795,7 @@ namespace
 				fout << "\t" "{" "\n";
 				for (size_t i = 0; i < i_vertexArray.size(); i++)
 				{
-					fout << "\t\t" "Vertex " << i << "\n";
+					fout << "\t\t" "-- Vertex " << i << "\n";
 					fout << "\t\t" "{" "\n";
 					fout << "\t\t\t" "-- position info" "\n";
 					fout << "\t\t\t" "x = " << i_vertexArray[i].vertex.x << "," "\n";
@@ -830,9 +828,9 @@ namespace
 				fout << "\t" "-- This is the set of index data being used to grab vertices" "\n";
 				fout << "\t" "indexData =" "\n";
 				fout << "\t" "{" "\n";
-				for (size_t i = 0; i < i_indexArray.size() / verticesPerTriangle; i++)
+				for (size_t i = 0; i < i_indexArray.size(); i += s_vertexCountPerTriangle)
 				{
-					fout << "\t\t" "Triangle " << i << "\n";
+					fout << "\t\t" "-- Triangle " << i << "\n";
 					fout << "\t\t" "{" "\n";
 					fout << "\t\t\t" << i_indexArray[i] << ", " << i_indexArray[i + 2] << ", " << i_indexArray[i + 1] << ",\n";
 					fout << "\t\t" "}," "\n";
