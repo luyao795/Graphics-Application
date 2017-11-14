@@ -538,6 +538,100 @@ eae6320::cResult eae6320::Graphics::Mesh::LoadTableValues_vertices_values(lua_St
 			tempHold = (value > 1.0) ? 1.0 : ((value < 0.0) ? 0.0 : value);
 			currentVertex.a = static_cast<uint8_t>(tempHold * 255);
 			lua_pop(&io_luaState, 1);
+
+			// Texcoord: u
+			//============
+			key = "u";
+			lua_pushstring(&io_luaState, key);
+			lua_gettable(&io_luaState, -2);
+
+			// First, then, we will make sure that a value (_any_ value) existed for the key:
+			if (lua_isnil(&io_luaState, -1))
+			{
+				result = eae6320::Results::InvalidFile;
+				std::cerr << "No value for \"" << key << "\" was found in the asset table" << std::endl;
+				// When using Lua in C/C++ it is important
+				// to always return the stack to its original state.
+				// Leaving objects on the stack is kind of like a Lua memory leak.
+				// Remember that our value is currently at -1 and the table is at -2;
+				// In order to restore it to the way it was when we entered this function
+				// we need to pop the value off the stack:
+				lua_pop(&io_luaState, 1);
+				// Now the only thing on the stack is the asset table at -1,
+				// and the calling function will deal with this
+				// (regardless of whether this function succeeds or fails).
+				return result;
+			}
+
+			// If we reach this code then we know that a value exists,
+			// but we don't know if it's the right type or not.
+			// One way we could find out in the current example is this:
+			//	if ( lua_isstring( &io_luaState, -1 ) )
+			// This would work (and is perfectly valid),
+			// but it actually returns true if the value is a number
+			// (because numbers are always convertible to strings).
+			// If we really want to be strict, we can do the following instead:
+			if (lua_type(&io_luaState, -1) != LUA_TNUMBER)
+			{
+				result = eae6320::Results::InvalidFile;
+				std::cerr << "The value for \"" << key << "\" must be a number "
+					"(instead of a " << luaL_typename(&io_luaState, -1) << ")" << std::endl;
+				// Pop the value
+				lua_pop(&io_luaState, 1);
+				// (The asset table is now at -1)
+				return result;
+			}
+
+			value = lua_tonumber(&io_luaState, -1);
+			currentVertex.u = static_cast<float>(value);
+			lua_pop(&io_luaState, 1);
+
+			// Texcoord: v
+			//============
+			key = "v";
+			lua_pushstring(&io_luaState, key);
+			lua_gettable(&io_luaState, -2);
+
+			// First, then, we will make sure that a value (_any_ value) existed for the key:
+			if (lua_isnil(&io_luaState, -1))
+			{
+				result = eae6320::Results::InvalidFile;
+				std::cerr << "No value for \"" << key << "\" was found in the asset table" << std::endl;
+				// When using Lua in C/C++ it is important
+				// to always return the stack to its original state.
+				// Leaving objects on the stack is kind of like a Lua memory leak.
+				// Remember that our value is currently at -1 and the table is at -2;
+				// In order to restore it to the way it was when we entered this function
+				// we need to pop the value off the stack:
+				lua_pop(&io_luaState, 1);
+				// Now the only thing on the stack is the asset table at -1,
+				// and the calling function will deal with this
+				// (regardless of whether this function succeeds or fails).
+				return result;
+			}
+
+			// If we reach this code then we know that a value exists,
+			// but we don't know if it's the right type or not.
+			// One way we could find out in the current example is this:
+			//	if ( lua_isstring( &io_luaState, -1 ) )
+			// This would work (and is perfectly valid),
+			// but it actually returns true if the value is a number
+			// (because numbers are always convertible to strings).
+			// If we really want to be strict, we can do the following instead:
+			if (lua_type(&io_luaState, -1) != LUA_TNUMBER)
+			{
+				result = eae6320::Results::InvalidFile;
+				std::cerr << "The value for \"" << key << "\" must be a number "
+					"(instead of a " << luaL_typename(&io_luaState, -1) << ")" << std::endl;
+				// Pop the value
+				lua_pop(&io_luaState, 1);
+				// (The asset table is now at -1)
+				return result;
+			}
+
+			value = lua_tonumber(&io_luaState, -1);
+			currentVertex.v = static_cast<float>(value);
+			lua_pop(&io_luaState, 1);
 		}
 		s_vertexData.push_back(currentVertex);
 		lua_pop(&io_luaState, 1);

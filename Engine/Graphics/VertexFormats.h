@@ -35,11 +35,11 @@ namespace eae6320
 				// POSITION
 				// 2 floats == 8 bytes
 				// Offset = 0
-				//====================
+				float x, y;
 				// TEXCOORD0
 				// 2 floats == 8 bytes
 				// Offset = 8
-				float x, y, u, v;
+				float u, v;
 			};
 
 			struct sMesh
@@ -47,12 +47,15 @@ namespace eae6320
 				// POSITION
 				// 3 floats == 12 bytes
 				// Offset = 0
-				//======================
+				float x, y, z;
 				// COLOR0
 				// 4 uint8_ts == 4 bytes
-				// Offset = 8
-				float x, y, z;
+				// Offset = 12
 				uint8_t r, g, b, a;
+				// TEXCOORD0
+				// 2 floats == 8 bytes
+				// Offset = 16
+				float u, v;
 			};
 		}
 	}

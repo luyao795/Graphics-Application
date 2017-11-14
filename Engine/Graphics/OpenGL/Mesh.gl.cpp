@@ -132,11 +132,11 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// OpenGL Rendering Order: Counterclockwise (CCW)
-			// Since the input is clockwise (CW), thus example input
-			// like ABC should be assigned here with the order CBA
-			glIndexData[i] = i_indexData[i + 2];
+			// Since the input is counterclockwise (CCW), thus example input
+			// like ABC should be assigned here with the order ABC
+			glIndexData[i] = i_indexData[i];
 			glIndexData[i + 1] = i_indexData[i + 1];
-			glIndexData[i + 2] = i_indexData[i];
+			glIndexData[i + 2] = i_indexData[i + 2];
 		}
 
 		const auto bufferSize = indexArraySize * sizeof(uint16_t);
@@ -221,6 +221,39 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 				result = eae6320::Results::Failure;
 				EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
 				eae6320::Logging::OutputError("OpenGL failed to set the COLOR vertex attribute at location %u: %s",
+					vertexElementLocation, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+				goto OnExit;
+			}
+		}
+
+		// Texcoord (2)
+		// 2 floats == 8 bytes
+		// Offset = 16
+		{
+			constexpr GLuint vertexElementLocation = 2;
+			constexpr GLint elementCount = 2;
+			constexpr GLboolean shouldBeNormalized = GL_FALSE;	// The given floats should be used as-is
+			glVertexAttribPointer(vertexElementLocation, elementCount, GL_FLOAT, shouldBeNormalized, stride,
+				reinterpret_cast<GLvoid*>(offsetof(eae6320::Graphics::VertexFormats::sMesh, u)));
+			const auto errorCode = glGetError();
+			if (errorCode == GL_NO_ERROR)
+			{
+				glEnableVertexAttribArray(vertexElementLocation);
+				const GLenum errorCode = glGetError();
+				if (errorCode != GL_NO_ERROR)
+				{
+					result = eae6320::Results::Failure;
+					EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					eae6320::Logging::OutputError("OpenGL failed to enable the TEXCOORD vertex attribute at location %u: %s",
+						vertexElementLocation, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+					goto OnExit;
+				}
+			}
+			else
+			{
+				result = eae6320::Results::Failure;
+				EAE6320_ASSERTF(false, reinterpret_cast<const char*>(gluErrorString(errorCode)));
+				eae6320::Logging::OutputError("OpenGL failed to set the TEXCOORD vertex attribute at location %u: %s",
 					vertexElementLocation, reinterpret_cast<const char*>(gluErrorString(errorCode)));
 				goto OnExit;
 			}

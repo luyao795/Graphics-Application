@@ -25,8 +25,10 @@ namespace
 	eae6320::Graphics::Effect* s_effect = nullptr;
 	// This effect contains white static property.
 	eae6320::Graphics::Effect* s_effect_static = nullptr;
-	// This effect contains mesh renderint data.
-	eae6320::Graphics::Effect* s_effect_mesh = nullptr;
+	// This effect contains mesh render data for solid shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_solid = nullptr;
+	// This effect contains mesh render data for exposed shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_exposed = nullptr;
 
 	// Geometry Data
 	//--------------
@@ -72,7 +74,7 @@ namespace
 
 	// Combined Rendering Data with Mesh
 	eae6320::Graphics::DataSetForRenderingMesh s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh();
-	eae6320::Graphics::DataSetForRenderingMesh s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh();
 
 	// Camera Data
 	eae6320::Graphics::Camera viewCamera;
@@ -368,14 +370,30 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 		goto OnExit;
 	}
 
-	// Initialize render state for meshes to be the same as default render state
+	// Initialize render state for solid meshes to be the same as default render state
 	uint8_t s_RenderStateForMeshWithDepthBuffering = defaultRenderState;
 
 	// If depth buffering is not enabled, enable it
 	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBuffering))
 		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBuffering);
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh)))
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh_solid)))
+	{
+		EAE6320_ASSERTF(false, "Effect initialization failed");
+		goto OnExit;
+	}
+
+	// Initialize render state for exposed meshes to be the same as default render state
+	uint8_t s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering = defaultRenderState;
+
+	// If depth buffering is not enabled, enable it
+	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering))
+		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering);
+
+	// Enable rendering for both sides
+	eae6320::Graphics::RenderStates::EnableDrawingBothTriangleSides(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering);
+
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering, s_effect_mesh_exposed)))
 	{
 		EAE6320_ASSERTF(false, "Effect initialization failed");
 		goto OnExit;
@@ -462,14 +480,14 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 {
 	cResult result = Results::Success;
 
-	const char * mesh_cube = "CubeMesh.binmsh";
+	const char * mesh_cube = "Cube.binmsh";
 	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_cube, cubeMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
 		goto OnExit;
 	}
 
-	const char * mesh_plane = "PlaneMesh.binmsh";
+	const char * mesh_plane = "Plane.binmsh";
 	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_plane, planeMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
@@ -494,11 +512,11 @@ void eae6320::cExampleGame::InitializeRenderData()
 	cubeRigidBody.position = cubeInitLocation;
 	cubeRigidBody.velocity = cubeInitVelocity;
 	cubeRigidBody.acceleration = cubeInitAcceleration;
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, eae6320::Graphics::Mesh::s_manager.Get(cubeMesh), cubeRigidBody);
+	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(cubeMesh), cubeRigidBody);
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
+	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -565,11 +583,23 @@ eae6320::cResult eae6320::cExampleGame::CleanUpEffect()
 		}
 	}
 
-	if (s_effect_mesh)
+	if (s_effect_mesh_solid)
 	{
-		result = s_effect_mesh->CleanUp();
+		result = s_effect_mesh_solid->CleanUp();
 		if (result)
-			s_effect_mesh = nullptr;
+			s_effect_mesh_solid = nullptr;
+		else
+		{
+			EAE6320_ASSERTF(false, "Effect cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (s_effect_mesh_exposed)
+	{
+		result = s_effect_mesh_exposed->CleanUp();
+		if (result)
+			s_effect_mesh_exposed = nullptr;
 		else
 		{
 			EAE6320_ASSERTF(false, "Effect cleanup failed");
@@ -731,7 +761,7 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticPlane, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
 
 	// Submit Effect Sprite pair data

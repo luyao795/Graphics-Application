@@ -767,7 +767,7 @@ namespace
 	MStatus WriteMeshToFile( const MString& i_fileName, const std::vector<sVertexInfo>& i_vertexArray, const std::vector<size_t>& i_indexArray,
 		const std::vector<sMaterialInfo>& i_materialInfo )
 	{
-		// Maya's coordinate system is right=handed and UVs have (0,0) at the lower left corner.
+		// Maya's coordinate system is right-handed and UVs have (0,0) at the lower left corner.
 		// For our class my advice is to keep things the Maya way in your engine (which matches the default OpenGL behavior),
 		// but the following shows one way that the data input to this file could be converted to match standard Direct3D:
 		//	* POSITION	-> x, y, -z
@@ -800,7 +800,7 @@ namespace
 					fout << "\t\t\t" "-- position info" "\n";
 					fout << "\t\t\t" "x = " << i_vertexArray[i].vertex.x << "," "\n";
 					fout << "\t\t\t" "y = " << i_vertexArray[i].vertex.y << "," "\n";
-					fout << "\t\t\t" "z = " << i_vertexArray[i].vertex.z * (-1) << "," "\n";
+					fout << "\t\t\t" "z = " << i_vertexArray[i].vertex.z << "," "\n";
 					fout << "\t\t\t" "-- color info" "\n";
 					fout << "\t\t\t" "r = " << i_vertexArray[i].vertex.r << "," "\n";
 					fout << "\t\t\t" "g = " << i_vertexArray[i].vertex.g << "," "\n";
@@ -808,19 +808,19 @@ namespace
 					fout << "\t\t\t" "a = " << i_vertexArray[i].vertex.a << "," "\n";
 					fout << "\t\t\t" "-- texcoord info" "\n";
 					fout << "\t\t\t" "u = " << i_vertexArray[i].vertex.u << "," "\n";
-					fout << "\t\t\t" "v = " << 1 - i_vertexArray[i].vertex.v << "," "\n";
+					fout << "\t\t\t" "v = " << i_vertexArray[i].vertex.v << "," "\n";
 					fout << "\t\t\t" "-- bitangent info" "\n";
-					fout << "\t\t\t" "btx = " << i_vertexArray[i].vertex.btx * (-1) << "," "\n";
-					fout << "\t\t\t" "bty = " << i_vertexArray[i].vertex.bty * (-1) << "," "\n";
+					fout << "\t\t\t" "btx = " << i_vertexArray[i].vertex.btx << "," "\n";
+					fout << "\t\t\t" "bty = " << i_vertexArray[i].vertex.bty << "," "\n";
 					fout << "\t\t\t" "btz = " << i_vertexArray[i].vertex.btz << "," "\n";
 					fout << "\t\t\t" "-- normal info" "\n";
 					fout << "\t\t\t" "nx = " << i_vertexArray[i].vertex.nx << "," "\n";
 					fout << "\t\t\t" "ny = " << i_vertexArray[i].vertex.ny << "," "\n";
-					fout << "\t\t\t" "nz = " << i_vertexArray[i].vertex.nz * (-1) << "," "\n";
+					fout << "\t\t\t" "nz = " << i_vertexArray[i].vertex.nz << "," "\n";
 					fout << "\t\t\t" "-- tangent info" "\n";
 					fout << "\t\t\t" "tx = " << i_vertexArray[i].vertex.tx << "," "\n";
 					fout << "\t\t\t" "ty = " << i_vertexArray[i].vertex.ty << "," "\n";
-					fout << "\t\t\t" "tz = " << i_vertexArray[i].vertex.tz * (-1) << "," "\n";
+					fout << "\t\t\t" "tz = " << i_vertexArray[i].vertex.tz << "," "\n";
 					fout << "\t\t" "}," "\n";
 				}
 				// Write index data into index array
@@ -832,7 +832,7 @@ namespace
 				{
 					fout << "\t\t" "-- Triangle " << i / s_vertexCountPerTriangle << "\n";
 					fout << "\t\t" "{" "\n";
-					fout << "\t\t\t" << i_indexArray[i] << ", " << i_indexArray[i + 2] << ", " << i_indexArray[i + 1] << ",\n";
+					fout << "\t\t\t" << i_indexArray[i] << ", " << i_indexArray[i + 1] << ", " << i_indexArray[i + 2] << ",\n";
 					fout << "\t\t" "}," "\n";
 				}
 				fout << "\t" "}," "\n";

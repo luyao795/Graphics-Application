@@ -34,7 +34,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			// (by using so-called "semantic" names so that, for example,
 			// "POSITION" here matches with "POSITION" in shader code).
 			// Note that OpenGL uses arbitrarily assignable number IDs to do the same thing.
-			constexpr unsigned int vertexElementCount = 2;
+			constexpr unsigned int vertexElementCount = 3;
 			D3D11_INPUT_ELEMENT_DESC layoutDescription[vertexElementCount] = {};
 			{
 				// Slot 0
@@ -68,6 +68,24 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 					texcoordElement.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 					texcoordElement.InputSlot = 0;
 					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sMesh, r);
+					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
+				}
+			}
+			{
+				// Slot 2
+
+				// TEXCOORD0
+				// 2 floats = 8 bytes
+				// Offset = 16
+				{
+					auto& texcoordElement = layoutDescription[2];
+
+					texcoordElement.SemanticName = "TEXCOORD";
+					texcoordElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
+					texcoordElement.Format = DXGI_FORMAT_R32G32_FLOAT;
+					texcoordElement.InputSlot = 0;
+					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sMesh, u);
 					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}
@@ -139,11 +157,11 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 		for (size_t i = 0; i < indexArraySize; i += 3)
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
-			// Since the input is clockwise (CW), thus example input
-			// like ABC should be assigned here with the order ABC
-			d3dIndexData[i] = i_indexData[i];
+			// Since the input is counterclockwise (CCW), thus example input
+			// like ABC should be assigned here with the order CBA
+			d3dIndexData[i] = i_indexData[i + 2];
 			d3dIndexData[i + 1] = i_indexData[i + 1];
-			d3dIndexData[i + 2] = i_indexData[i + 2];
+			d3dIndexData[i + 2] = i_indexData[i];
 		}
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
