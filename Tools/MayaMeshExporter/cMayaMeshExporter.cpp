@@ -830,7 +830,7 @@ namespace
 				fout << "\t" "{" "\n";
 				for (size_t i = 0; i < i_indexArray.size(); i += s_vertexCountPerTriangle)
 				{
-					fout << "\t\t" "-- Triangle " << i << "\n";
+					fout << "\t\t" "-- Triangle " << i / s_vertexCountPerTriangle << "\n";
 					fout << "\t\t" "{" "\n";
 					fout << "\t\t\t" << i_indexArray[i] << ", " << i_indexArray[i + 2] << ", " << i_indexArray[i + 1] << ",\n";
 					fout << "\t\t" "}," "\n";
