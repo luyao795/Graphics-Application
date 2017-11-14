@@ -45,6 +45,8 @@ namespace
 	eae6320::Graphics::cTexture::Handle pikachuTexture;
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
+	eae6320::Graphics::cTexture::Handle flowerShibeTexture;
+	eae6320::Graphics::cTexture::Handle evilShibeTexture;
 
 	// External constant data for movable mesh size
 	constexpr float movableMeshSideLength = 1.0f;
@@ -472,6 +474,20 @@ eae6320::cResult eae6320::cExampleGame::InitializeTexture()
 		goto OnExit;
 	}
 
+	const char * texture_flowerShibe = "FlowerShibe.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_flowerShibe, flowerShibeTexture)))
+	{
+		EAE6320_ASSERTF(false, "Texture initialization failed");
+		goto OnExit;
+	}
+
+	const char * texture_evilShibe = "EvilShibe.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_evilShibe, evilShibeTexture)))
+	{
+		EAE6320_ASSERTF(false, "Texture initialization failed");
+		goto OnExit;
+	}
+
 OnExit:
 	return result;
 }
@@ -512,11 +528,11 @@ void eae6320::cExampleGame::InitializeRenderData()
 	cubeRigidBody.position = cubeInitLocation;
 	cubeRigidBody.velocity = cubeInitVelocity;
 	cubeRigidBody.acceleration = cubeInitAcceleration;
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(cubeMesh), cubeRigidBody);
+	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(cubeMesh), eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture), cubeRigidBody);
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
+	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), planeRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -716,6 +732,24 @@ eae6320::cResult eae6320::cExampleGame::CleanUpTexture()
 	if (electroballTexture.IsValid())
 	{
 		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(electroballTexture)))
+		{
+			EAE6320_ASSERTF(false, "Texture cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (flowerShibeTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(flowerShibeTexture)))
+		{
+			EAE6320_ASSERTF(false, "Texture cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (evilShibeTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(evilShibeTexture)))
 		{
 			EAE6320_ASSERTF(false, "Texture cleanup failed");
 			goto OnExit;

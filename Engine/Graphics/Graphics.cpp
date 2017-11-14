@@ -103,6 +103,7 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.push_back(renderData);
 	renderData.effect->IncrementReferenceCount();
 	renderData.mesh->IncrementReferenceCount();
+	renderData.texture->IncrementReferenceCount();
 }
 
 void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
@@ -180,6 +181,9 @@ void eae6320::Graphics::RenderFrame()
 	// Copy the data from the system memory that the application owns to GPU memory and the buffer will be updated later
 	auto& constantData_perDrawCall = s_dataBeingRenderedByRenderThread->constantData_perDrawCall;
 
+	// Default ID for binding textures
+	constexpr unsigned int defaultTextureID = 0;
+
 	// Bind shading data and draw mesh
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
@@ -189,6 +193,7 @@ void eae6320::Graphics::RenderFrame()
 			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
 
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture->Bind(defaultTextureID);
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
 		}
 	}
@@ -198,7 +203,7 @@ void eae6320::Graphics::RenderFrame()
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
 		{
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].effect->BindShadingData();
-			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(0);
+			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].texture->Bind(defaultTextureID);
 			s_dataBeingRenderedByRenderThread->cachedEffectSpritePairForRenderingInNextFrame[i].sprite->DrawGeometry();
 		}
 	}
@@ -227,6 +232,7 @@ void eae6320::Graphics::RenderFrame()
 			{
 				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
 				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
 			}
 		}
 		s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
@@ -357,9 +363,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		{
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
 
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect = nullptr;
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture = nullptr;
 		}
 	}
 	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
@@ -385,9 +393,11 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		{
 			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->DecrementReferenceCount();
 			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture->DecrementReferenceCount();
 
 			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect = nullptr;
 			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture = nullptr;
 		}
 	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
