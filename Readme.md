@@ -13,4 +13,4 @@ Thanks for trying this customizable graphics application! Before customizing thi
   - Select **Environment Variables...**
   - Under **System variables** select **New...**
   - Add an environment variable with variable name being **MAYA_LOCATION** and variable value being the installation location for Maya, the default installation location for Maya 2018 should be **C:\Program Files\Autodesk\Maya2018**, no trailing slash should be added into the path
-  - Add an environment variable with variable name being **MAYA_PLUG_IN_PATH** and variable value being the location you want to use to store Maya plug-ins, one example would be **C:\Users\USERNAME\Documents\maya\2018\plug-ins**, no trailing slash should be added into the path
+  - Add an environment variable with variable name being **MAYA_PLUG_IN_PATH** and variable value being the location you want to use to store Maya plug-ins, one example would be **C:\Program Files\Autodesk\Maya2018\plug-ins**, no trailing slash should be added into the path
