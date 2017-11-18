@@ -1,0 +1,707 @@
+return
+{
+	-- This is the set of unique vertex data
+	vertexData =
+	{
+		-- Vertex 0
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = 1,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 1
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 1,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = 1,
+			-- normal info
+			nx = 0,
+			ny = -1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 2
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = -1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = -0,
+			tz = 1,
+		},
+		-- Vertex 3
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 1,
+			g = 0,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 1,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = 1,
+			-- normal info
+			nx = 0,
+			ny = -1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 4
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 1,
+			g = 0,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = 0,
+			tz = -1,
+		},
+		-- Vertex 5
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = 1,
+			-- color info
+			r = 1,
+			g = 0,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = 1,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 6
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = -1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = -0,
+			tz = 1,
+		},
+		-- Vertex 7
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = 1,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 8
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 9
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = 0,
+			tz = -1,
+		},
+		-- Vertex 10
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = 1,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 11
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = 1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 12
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0.3103,
+			a = 1,
+			-- texcoord info
+			u = 0.125,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = -1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = -0,
+			tz = 1,
+		},
+		-- Vertex 13
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0.3103,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.5,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 14
+		{
+			-- position info
+			x = -1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 0,
+			g = 1,
+			b = 0.3103,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.5,
+			-- bitangent info
+			btx = 0,
+			bty = -1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = -1,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 15
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.875,
+			v = 0.25,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = 0,
+			tz = -1,
+		},
+		-- Vertex 16
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.5,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 17
+		{
+			-- position info
+			x = 1,
+			y = 1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 1,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.5,
+			-- bitangent info
+			btx = 0,
+			bty = -1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = -1,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 18
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 0.2731,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.75,
+			-- bitangent info
+			btx = 0,
+			bty = -1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = -1,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 19
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 0.2731,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.375,
+			v = 0.75,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = 1,
+			-- normal info
+			nx = 0,
+			ny = -1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 20
+		{
+			-- position info
+			x = -1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 1,
+			g = 0.2731,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0.125,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = -1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = -0,
+			tz = 1,
+		},
+		-- Vertex 21
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 0.2299,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.75,
+			-- bitangent info
+			btx = 0,
+			bty = -1,
+			btz = 0,
+			-- normal info
+			nx = 0,
+			ny = 0,
+			nz = -1,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 22
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 0.2299,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.625,
+			v = 0.75,
+			-- bitangent info
+			btx = 0,
+			bty = 0,
+			btz = 1,
+			-- normal info
+			nx = 0,
+			ny = -1,
+			nz = 0,
+			-- tangent info
+			tx = 1,
+			ty = 0,
+			tz = 0,
+		},
+		-- Vertex 23
+		{
+			-- position info
+			x = 1,
+			y = -1,
+			z = -1,
+			-- color info
+			r = 0.2299,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0.875,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 1,
+			btz = 0,
+			-- normal info
+			nx = 1,
+			ny = 0,
+			nz = 0,
+			-- tangent info
+			tx = 0,
+			ty = 0,
+			tz = -1,
+		},
+	},
+	-- This is the set of index data being used to grab vertices
+	indexData =
+	{
+		-- Triangle 0
+		{
+			0, 5, 7,
+		},
+		-- Triangle 1
+		{
+			1, 22, 3,
+		},
+		-- Triangle 2
+		{
+			4, 23, 9,
+		},
+		-- Triangle 3
+		{
+			7, 5, 10,
+		},
+		-- Triangle 4
+		{
+			8, 11, 13,
+		},
+		-- Triangle 5
+		{
+			9, 23, 15,
+		},
+		-- Triangle 6
+		{
+			12, 2, 6,
+		},
+		-- Triangle 7
+		{
+			13, 11, 16,
+		},
+		-- Triangle 8
+		{
+			14, 17, 18,
+		},
+		-- Triangle 9
+		{
+			18, 17, 21,
+		},
+		-- Triangle 10
+		{
+			19, 22, 1,
+		},
+		-- Triangle 11
+		{
+			20, 2, 12,
+		},
+	},
+}

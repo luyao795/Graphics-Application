@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -34,7 +34,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			// (by using so-called "semantic" names so that, for example,
 			// "POSITION" here matches with "POSITION" in shader code).
 			// Note that OpenGL uses arbitrarily assignable number IDs to do the same thing.
-			constexpr unsigned int vertexElementCount = 2;
+			constexpr unsigned int vertexElementCount = 3;
 			D3D11_INPUT_ELEMENT_DESC layoutDescription[vertexElementCount] = {};
 			{
 				// Slot 0
@@ -72,6 +72,24 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
 				}
 			}
+			{
+				// Slot 2
+
+				// TEXCOORD0
+				// 2 floats = 8 bytes
+				// Offset = 16
+				{
+					auto& texcoordElement = layoutDescription[2];
+
+					texcoordElement.SemanticName = "TEXCOORD";
+					texcoordElement.SemanticIndex = 0;	// (Semantics without modifying indices at the end can always use zero)
+					texcoordElement.Format = DXGI_FORMAT_R32G32_FLOAT;
+					texcoordElement.InputSlot = 0;
+					texcoordElement.AlignedByteOffset = offsetof(eae6320::Graphics::VertexFormats::sMesh, u);
+					texcoordElement.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+					texcoordElement.InstanceDataStepRate = 0;	// (Must be zero for per-vertex data)
+				}
+			}
 
 			const auto d3dResult = direct3dDevice->CreateInputLayout(layoutDescription, vertexElementCount,
 				vertexShaderDataFromFile.data, vertexShaderDataFromFile.size, &s_vertexInputLayout);
@@ -93,13 +111,15 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Vertex Buffer
 	{
-		const auto vertexCount = vertexData.size();
+		const auto vertexCount = i_vertexData.size();
 
-		eae6320::Graphics::VertexFormats::sMesh* localMeshData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
+		eae6320::Graphics::VertexFormats::sMesh* d3dVertexData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
 		{
 			for (size_t i = 0; i < vertexCount; i++)
 			{
-				localMeshData[i] = vertexData[i];
+				d3dVertexData[i] = i_vertexData[i];
+				// Vertical axis for UV in Direct3D is reverted from OpenGL
+				d3dVertexData[i].v = 1.0f - d3dVertexData[i].v;
 			}
 		}
 
@@ -116,7 +136,7 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 		}
 		D3D11_SUBRESOURCE_DATA InitialVertexData{};
 		{
-			InitialVertexData.pSysMem = localMeshData;
+			InitialVertexData.pSysMem = d3dVertexData;
 			// (The other data members are ignored for non-texture buffers)
 		}
 
@@ -129,21 +149,22 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			goto OnExit;
 		}
 
-		delete[] localMeshData;
+		delete[] d3dVertexData;
 	}
 
 	// Index Buffer
 	{
-		const auto indexArraySize = indexData.size();
+		constexpr unsigned int verticesPerTriangle = 3;
+		const auto indexArraySize = i_indexData.size();
 		uint16_t* d3dIndexData = new uint16_t[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += 3)
+		for (size_t i = 0; i < indexArraySize; i += verticesPerTriangle)
 		{
 			// Direct3D Rendering Order: Clockwise (CW)
-			// Since the input is clockwise (CW), thus example input
-			// like ABC should be assigned here with the order ABC
-			d3dIndexData[i] = indexData[i];
-			d3dIndexData[i + 1] = indexData[i + 1];
-			d3dIndexData[i + 2] = indexData[i + 2];
+			// Since the input is counterclockwise (CCW), thus example input
+			// like ABC should be assigned here with the order CBA
+			d3dIndexData[i] = i_indexData[i + 2];
+			d3dIndexData[i + 1] = i_indexData[i + 1];
+			d3dIndexData[i + 2] = i_indexData[i];
 		}
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};

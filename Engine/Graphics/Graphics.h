@@ -60,15 +60,17 @@ namespace eae6320
 
 			}
 
-			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Physics::sRigidBodyState i_rigidBody)
+			DataSetForRenderingMesh(eae6320::Graphics::Effect* i_effect, eae6320::Graphics::Mesh* i_mesh, eae6320::Graphics::cTexture* i_texture, eae6320::Physics::sRigidBodyState i_rigidBody)
 			{
 				effect = i_effect;
 				mesh = i_mesh;
+				texture = i_texture;
 				rigidBody = i_rigidBody;
 			}
 
 			eae6320::Graphics::Effect* effect;
 			eae6320::Graphics::Mesh* mesh;
+			eae6320::Graphics::cTexture* texture;
 			eae6320::Physics::sRigidBodyState rigidBody;
 		};
 

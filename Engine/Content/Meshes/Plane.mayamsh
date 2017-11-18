@@ -1,0 +1,127 @@
+return
+{
+	-- This is the set of unique vertex data
+	vertexData =
+	{
+		-- Vertex 0
+		{
+			-- position info
+			x = -2.5,
+			y = -1,
+			z = 2.5,
+			-- color info
+			r = 0,
+			g = 0.946,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 0,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 2.22045e-16,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 2.22045e-16,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 1
+		{
+			-- position info
+			x = 2.5,
+			y = -1,
+			z = 2.5,
+			-- color info
+			r = 1,
+			g = 0.297,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 1,
+			v = 0,
+			-- bitangent info
+			btx = 0,
+			bty = 2.22045e-16,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 2.22045e-16,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 2
+		{
+			-- position info
+			x = -2.5,
+			y = -1,
+			z = -2.5,
+			-- color info
+			r = 1,
+			g = 0.9896,
+			b = 0,
+			a = 1,
+			-- texcoord info
+			u = 0,
+			v = 1,
+			-- bitangent info
+			btx = 0,
+			bty = 2.22045e-16,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 2.22045e-16,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+		-- Vertex 3
+		{
+			-- position info
+			x = 2.5,
+			y = -1,
+			z = -2.5,
+			-- color info
+			r = 0.447,
+			g = 0,
+			b = 1,
+			a = 1,
+			-- texcoord info
+			u = 1,
+			v = 1,
+			-- bitangent info
+			btx = 0,
+			bty = 2.22045e-16,
+			btz = -1,
+			-- normal info
+			nx = 0,
+			ny = 1,
+			nz = 2.22045e-16,
+			-- tangent info
+			tx = 1,
+			ty = -0,
+			tz = 0,
+		},
+	},
+	-- This is the set of index data being used to grab vertices
+	indexData =
+	{
+		-- Triangle 0
+		{
+			0, 1, 2,
+		},
+		-- Triangle 1
+		{
+			2, 1, 3,
+		},
+	},
+}

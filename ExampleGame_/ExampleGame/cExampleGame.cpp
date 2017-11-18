@@ -25,8 +25,10 @@ namespace
 	eae6320::Graphics::Effect* s_effect = nullptr;
 	// This effect contains white static property.
 	eae6320::Graphics::Effect* s_effect_static = nullptr;
-	// This effect contains mesh renderint data.
-	eae6320::Graphics::Effect* s_effect_mesh = nullptr;
+	// This effect contains mesh render data for solid shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_solid = nullptr;
+	// This effect contains mesh render data for exposed shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_exposed = nullptr;
 
 	// Geometry Data
 	//--------------
@@ -43,6 +45,8 @@ namespace
 	eae6320::Graphics::cTexture::Handle pikachuTexture;
 	eae6320::Graphics::cTexture::Handle pokeballTexture;
 	eae6320::Graphics::cTexture::Handle electroballTexture;
+	eae6320::Graphics::cTexture::Handle flowerShibeTexture;
+	eae6320::Graphics::cTexture::Handle evilShibeTexture;
 
 	// External constant data for movable mesh size
 	constexpr float movableMeshSideLength = 1.0f;
@@ -50,7 +54,7 @@ namespace
 	constexpr float staticMeshShortSideLength = 0.125f;
 
 	// Mesh Data
-	eae6320::Graphics::Mesh::Handle cubeMesh;
+	eae6320::Graphics::Mesh::Handle sphereMesh;
 	eae6320::Math::sVector cubeInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector cubeInitVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	eae6320::Math::sVector cubeInitAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
@@ -71,8 +75,8 @@ namespace
 	eae6320::Graphics::DataSetForRenderingSprite s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite();
 
 	// Combined Rendering Data with Mesh
-	eae6320::Graphics::DataSetForRenderingMesh s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh();
-	eae6320::Graphics::DataSetForRenderingMesh s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_movableSphere = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh();
 
 	// Camera Data
 	eae6320::Graphics::Camera viewCamera;
@@ -170,37 +174,37 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	float accelerationDepth = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		if(s_render_movableMesh.rigidBody.velocity.x > 0.0f)
+		if(s_render_movableSphere.rigidBody.velocity.x > 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement * (-1.0f);
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement * (-1.0f);
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Right))
-		if (s_render_movableMesh.rigidBody.velocity.x < 0.0f)
+		if (s_render_movableSphere.rigidBody.velocity.x < 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Up))
-		if (s_render_movableMesh.rigidBody.velocity.y < 0.0f)
+		if (s_render_movableSphere.rigidBody.velocity.y < 0.0f)
 			accelerationBaseFactorVertical += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Down))
-		if (s_render_movableMesh.rigidBody.velocity.y > 0.0f)
+		if (s_render_movableSphere.rigidBody.velocity.y > 0.0f)
 			accelerationBaseFactorVertical += frictionAccelerationIncrement * (-1.0f);
 		else
 			accelerationBaseFactorVertical += normalAccelerationIncrement * (-1.0f);
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::PageUp))
-		if (s_render_movableMesh.rigidBody.velocity.z > 0.0f)
+		if (s_render_movableSphere.rigidBody.velocity.z > 0.0f)
 			accelerationBaseFactorDepth += frictionAccelerationIncrement * (-1.0f);
 		else
 			accelerationBaseFactorDepth += normalAccelerationIncrement * (-1.0f);
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::PageDown))
-		if (s_render_movableMesh.rigidBody.velocity.z < 0.0f)
+		if (s_render_movableSphere.rigidBody.velocity.z < 0.0f)
 			accelerationBaseFactorDepth += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorDepth += normalAccelerationIncrement;
@@ -209,7 +213,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
 	accelerationDepth = accelerationBaseFactorDepth * accelerationMultiplier;
 
-	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, accelerationDepth);
+	s_render_movableSphere.rigidBody.acceleration = eae6320::Math::sVector(accelerationHorizontal, accelerationVertical, accelerationDepth);
 
 	// Update for camera
 	float speedVerticalCamera = 0.0f;
@@ -248,42 +252,42 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
 {
-	float deaccelerationX = s_render_movableMesh.rigidBody.acceleration.x;
-	float deaccelerationY = s_render_movableMesh.rigidBody.acceleration.y;
-	float deaccelerationZ = s_render_movableMesh.rigidBody.acceleration.z;
+	float deaccelerationX = s_render_movableSphere.rigidBody.acceleration.x;
+	float deaccelerationY = s_render_movableSphere.rigidBody.acceleration.y;
+	float deaccelerationZ = s_render_movableSphere.rigidBody.acceleration.z;
 
 	// If the velocity is not zero
-	if (s_render_movableMesh.rigidBody.velocity != Zero)
+	if (s_render_movableSphere.rigidBody.velocity != Zero)
 	{
 		// And the acceleration x component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.x, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.acceleration.x, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity x component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.rigidBody.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x;
+			s_render_movableSphere.rigidBody.velocity.x = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.x, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.x;
 			// Otherwise, decrease the velocity by applying a deacceleration on x component
-			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.x / abs(s_render_movableMesh.rigidBody.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationX = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.x, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.x / abs(s_render_movableSphere.rigidBody.velocity.x) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 		// And the acceleration y component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.y, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.acceleration.y, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity y component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.rigidBody.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y;
+			s_render_movableSphere.rigidBody.velocity.y = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.y, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.y;
 			// Otherwise, decrease the velocity by applying a deacceleration on y component
-			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.y / abs(s_render_movableMesh.rigidBody.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationY = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.y, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.y / abs(s_render_movableSphere.rigidBody.velocity.y) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 		// And the acceleration z component is zero
-		if (eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.acceleration.z, 0.0f, epsilonForAccelerationOffset))
+		if (eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.acceleration.z, 0.0f, epsilonForAccelerationOffset))
 		{
 			// If the velocity z component amount is tiny enough to be ignored, ignore the amount and make the mesh static
-			s_render_movableMesh.rigidBody.velocity.z = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.z, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.z;
+			s_render_movableSphere.rigidBody.velocity.z = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.z, 0.0f, epsilonForVelocityOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.z;
 			// Otherwise, decrease the velocity by applying a deacceleration on z component
-			deaccelerationZ = eae6320::Math::AreAboutEqual(s_render_movableMesh.rigidBody.velocity.z, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableMesh.rigidBody.velocity.z / abs(s_render_movableMesh.rigidBody.velocity.z) * accelerationMultiplier * deaccelerationMultiplier;
+			deaccelerationZ = eae6320::Math::AreAboutEqual(s_render_movableSphere.rigidBody.velocity.z, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableSphere.rigidBody.velocity.z / abs(s_render_movableSphere.rigidBody.velocity.z) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 	}
 	// Calculate the actual acceleration
-	s_render_movableMesh.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, deaccelerationZ);
+	s_render_movableSphere.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, deaccelerationZ);
 	// Update transform information about the mesh
-	s_render_movableMesh.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+	s_render_movableSphere.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 	// Update transform information about the camera
 	viewCamera.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 }
@@ -368,14 +372,30 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 		goto OnExit;
 	}
 
-	// Initialize render state for meshes to be the same as default render state
+	// Initialize render state for solid meshes to be the same as default render state
 	uint8_t s_RenderStateForMeshWithDepthBuffering = defaultRenderState;
 
 	// If depth buffering is not enabled, enable it
 	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBuffering))
 		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBuffering);
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "Mesh.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh)))
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture.binshd", s_RenderStateForMeshWithDepthBuffering, s_effect_mesh_solid)))
+	{
+		EAE6320_ASSERTF(false, "Effect initialization failed");
+		goto OnExit;
+	}
+
+	// Initialize render state for exposed meshes to be the same as default render state
+	uint8_t s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering = defaultRenderState;
+
+	// If depth buffering is not enabled, enable it
+	if (!eae6320::Graphics::RenderStates::IsDepthBufferingEnabled(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering))
+		eae6320::Graphics::RenderStates::EnableDepthBuffering(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering);
+
+	// Enable rendering for both sides
+	eae6320::Graphics::RenderStates::EnableDrawingBothTriangleSides(s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering);
+
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture.binshd", s_RenderStateForMeshWithDepthBufferingAndDoubleSideRendering, s_effect_mesh_exposed)))
 	{
 		EAE6320_ASSERTF(false, "Effect initialization failed");
 		goto OnExit;
@@ -454,6 +474,20 @@ eae6320::cResult eae6320::cExampleGame::InitializeTexture()
 		goto OnExit;
 	}
 
+	const char * texture_flowerShibe = "FlowerShibe.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_flowerShibe, flowerShibeTexture)))
+	{
+		EAE6320_ASSERTF(false, "Texture initialization failed");
+		goto OnExit;
+	}
+
+	const char * texture_evilShibe = "EvilShibe.bintxr";
+	if (!(result = eae6320::Graphics::cTexture::s_manager.Load(texture_evilShibe, evilShibeTexture)))
+	{
+		EAE6320_ASSERTF(false, "Texture initialization failed");
+		goto OnExit;
+	}
+
 OnExit:
 	return result;
 }
@@ -462,14 +496,14 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 {
 	cResult result = Results::Success;
 
-	const char * mesh_cube = "CubeMesh.binmsh";
-	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_cube, cubeMesh)))
+	const char * mesh_sphere = "Sphere.binmsh";
+	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_sphere, sphereMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
 		goto OnExit;
 	}
 
-	const char * mesh_plane = "PlaneMesh.binmsh";
+	const char * mesh_plane = "Plane.binmsh";
 	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_plane, planeMesh)))
 	{
 		EAE6320_ASSERTF(false, "Mesh initialization failed");
@@ -494,11 +528,11 @@ void eae6320::cExampleGame::InitializeRenderData()
 	cubeRigidBody.position = cubeInitLocation;
 	cubeRigidBody.velocity = cubeInitVelocity;
 	cubeRigidBody.acceleration = cubeInitAcceleration;
-	s_render_movableMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, eae6320::Graphics::Mesh::s_manager.Get(cubeMesh), cubeRigidBody);
+	s_render_movableSphere = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(sphereMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), cubeRigidBody);
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticMesh = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), planeRigidBody);
+	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture), planeRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -565,11 +599,23 @@ eae6320::cResult eae6320::cExampleGame::CleanUpEffect()
 		}
 	}
 
-	if (s_effect_mesh)
+	if (s_effect_mesh_solid)
 	{
-		result = s_effect_mesh->CleanUp();
+		result = s_effect_mesh_solid->CleanUp();
 		if (result)
-			s_effect_mesh = nullptr;
+			s_effect_mesh_solid = nullptr;
+		else
+		{
+			EAE6320_ASSERTF(false, "Effect cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (s_effect_mesh_exposed)
+	{
+		result = s_effect_mesh_exposed->CleanUp();
+		if (result)
+			s_effect_mesh_exposed = nullptr;
 		else
 		{
 			EAE6320_ASSERTF(false, "Effect cleanup failed");
@@ -692,6 +738,24 @@ eae6320::cResult eae6320::cExampleGame::CleanUpTexture()
 		}
 	}
 
+	if (flowerShibeTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(flowerShibeTexture)))
+		{
+			EAE6320_ASSERTF(false, "Texture cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (evilShibeTexture.IsValid())
+	{
+		if (!(result = eae6320::Graphics::cTexture::s_manager.Release(evilShibeTexture)))
+		{
+			EAE6320_ASSERTF(false, "Texture cleanup failed");
+			goto OnExit;
+		}
+	}
+
 OnExit:
 	return result;
 }
@@ -700,9 +764,9 @@ eae6320::cResult eae6320::cExampleGame::CleanUpMesh()
 {
 	cResult result = Results::Success;
 
-	if (cubeMesh.IsValid())
+	if (sphereMesh.IsValid())
 	{
-		if (!(result = eae6320::Graphics::Mesh::s_manager.Release(cubeMesh)))
+		if (!(result = eae6320::Graphics::Mesh::s_manager.Release(sphereMesh)))
 		{
 			EAE6320_ASSERTF(false, "Mesh cleanup failed");
 			goto OnExit;
@@ -731,8 +795,8 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
 
 	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableMesh, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticPlane, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableSphere, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
 
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);

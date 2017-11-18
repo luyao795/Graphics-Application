@@ -66,7 +66,7 @@ namespace eae6320
 			//--------------------------
 
 			// vertexData is the array for all vertices, indexData is the array for index information for rendering the mesh
-			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> vertexData, std::vector<uint16_t> indexData);
+			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData);
 			cResult CleanUpMesh();
 
 			// Lua data operation

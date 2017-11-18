@@ -20,6 +20,7 @@
 	//======
 	
 	layout( location = 0 ) in vec4 i_meshcolor;
+	layout( location = 1 ) in vec2 i_texcoord;
 
 	// Output
 	//=======
@@ -38,6 +39,7 @@
 	//======
 	in const float4 i_position : SV_POSITION,
 	in const float4 i_meshcolor : COLOR0,
+	in const float2 i_texcoord : TEXCOORD0,
 
 	// Output
 	//=======
@@ -51,5 +53,6 @@
 #endif
 
 	{	
-		o_color = i_meshcolor;
+		vec4 sampledColor = CreateSampledColor( g_color_texture, i_texcoord, g_color_samplerState );
+		o_color = sampledColor * i_meshcolor;
 	}
