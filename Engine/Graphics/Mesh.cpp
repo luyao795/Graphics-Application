@@ -45,6 +45,7 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh
 
 	cResult result = Results::Success;
 
+	eae6320::Platform::sDataFromFile dataFromFile;
 	Mesh * mesh = nullptr;
 
 	// Automate the file path since compiled files will have to go into this folder
@@ -53,22 +54,21 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh
 
 	mesh = new (std::nothrow) Mesh();
 
-	std::string * errorMessage = nullptr;
-
-	eae6320::Platform::sDataFromFile fileData;
-
-	if (!(result = eae6320::Platform::LoadBinaryFile(completeFilePath, fileData, errorMessage)))
+	// Load the binary data
+	std::string errorMessage;
+	if (!(result = eae6320::Platform::LoadBinaryFile(completeFilePath, dataFromFile, &errorMessage)))
 	{
-		EAE6320_ASSERTF(false, "Failed to load mesh data from file");
+		EAE6320_ASSERTF(false, errorMessage.c_str());
+		Logging::OutputError("Failed to load mesh data from file %s: %s", completeFilePath, errorMessage.c_str());
 		goto OnExit;
 	}
 
 	// Get the start of the block and the end of the block
-	auto currentOffset = reinterpret_cast<uintptr_t>(fileData.data);
-	const auto finalOffset = currentOffset + fileData.size;
+	auto currentOffset = reinterpret_cast<uintptr_t>(dataFromFile.data);
+	const auto finalOffset = currentOffset + dataFromFile.size;
 
-	// Get number of vertices from data chunk
-	uint16_t * p_vertexCount = reinterpret_cast<uint16_t *>(fileData.data);
+	// Use current pointer of data and get number of vertices from data chunk
+	uint16_t * p_vertexCount = reinterpret_cast<uint16_t *>(currentOffset);
 	mesh->s_vertexCount = *p_vertexCount;
 
 	// Increment current pointer of data and get number of indices from data chunk
@@ -108,7 +108,7 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh
 	}
 
 	// Free data chunk from binary file after extracting data from it
-	fileData.Free();
+	dataFromFile.Free();
 
 OnExit:
 

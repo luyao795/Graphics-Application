@@ -30,7 +30,7 @@ eae6320::cResult eae6320::Assets::cMeshBuilder::Build(const std::vector<std::str
 	// This function should fill vertex and index vectors with data
 	if (!(result = LoadAsset(m_path_source)))
 	{
-		OutputErrorMessageWithFileInfo(m_path_source, errorMessage.c_str());
+		eae6320::Assets::OutputErrorMessageWithFileInfo(m_path_source, errorMessage.c_str());
 	}
 
 	// If the current platform is Direct3D, we will have to
