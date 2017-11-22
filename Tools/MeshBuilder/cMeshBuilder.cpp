@@ -11,7 +11,6 @@
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Results/Results.h>
 
-
 // Inherited Implementation
 //=========================
 

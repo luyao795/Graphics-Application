@@ -8,7 +8,6 @@
 #include <Engine/Platform/Platform.h>
 #include <Tools/MeshBuilder/cMeshBuilder.h>
 #include <new> // This library is needed for std::nothrow
-#include <iostream>
 
 // Static Data Initialization
 //===========================
