@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
 
 #include <Tools/AssetBuildLibrary/Functions.h>
 #include <Engine/Platform/Platform.h>
