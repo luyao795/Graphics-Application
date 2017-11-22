@@ -10,7 +10,6 @@
 #include <new> // This library is needed for std::nothrow
 #include <iostream>
 
-
 // Static Data Initialization
 //===========================
 
