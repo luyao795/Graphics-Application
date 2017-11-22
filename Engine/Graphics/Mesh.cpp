@@ -44,6 +44,7 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh
 	// (We could make it either always clockwise or counterclockwise)
 
 	cResult result = Results::Success;
+
 	Mesh * mesh = nullptr;
 
 	// Automate the file path since compiled files will have to go into this folder
@@ -67,12 +68,12 @@ eae6320::cResult eae6320::Graphics::Mesh::Load(const char * i_meshFileName, Mesh
 	const auto finalOffset = currentOffset + fileData.size;
 
 	// Get number of vertices from data chunk
-	size_t * p_vertexCount = reinterpret_cast<size_t *>(fileData.data);
+	uint16_t * p_vertexCount = reinterpret_cast<uint16_t *>(fileData.data);
 	mesh->s_vertexCount = *p_vertexCount;
 
 	// Increment current pointer of data and get number of indices from data chunk
 	currentOffset += sizeof(mesh->s_vertexCount);
-	size_t * p_indexCount = reinterpret_cast<size_t *>(currentOffset);
+	uint16_t * p_indexCount = reinterpret_cast<uint16_t *>(currentOffset);
 	mesh->s_indexCount = *p_indexCount;
 
 	// Increment current pointer of data and get vertex data pointer from data chunk

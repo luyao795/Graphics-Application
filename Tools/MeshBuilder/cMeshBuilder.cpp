@@ -45,12 +45,12 @@ eae6320::cResult eae6320::Assets::cMeshBuilder::Build(const std::vector<std::str
 #endif
 
 	// Write vertex count into binary file
-	const auto vertexCount = s_vertexData.size();
-	outfile.write(reinterpret_cast<const char *>(&vertexCount), sizeof(size_t));
+	const uint16_t vertexCount = static_cast<uint16_t>(s_vertexData.size());
+	outfile.write(reinterpret_cast<const char *>(&vertexCount), sizeof(uint16_t));
 
 	// Write index count into binary file
-	const auto indexCount = s_indexData.size();
-	outfile.write(reinterpret_cast<const char *>(&indexCount), sizeof(size_t));
+	const uint16_t indexCount = static_cast<uint16_t>(s_indexData.size());
+	outfile.write(reinterpret_cast<const char *>(&indexCount), sizeof(uint16_t));
 
 	// Write vertex data into binary file
 	outfile.write(reinterpret_cast<const char *>(&s_vertexData[0]), sizeof(eae6320::Graphics::VertexFormats::sMesh) * vertexCount);

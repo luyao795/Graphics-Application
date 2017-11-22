@@ -94,9 +94,9 @@ namespace eae6320
 			// Member data
 			//============
 
-			size_t s_indexCount;
+			uint16_t s_indexCount;
 
-			size_t s_vertexCount;
+			uint16_t s_vertexCount;
 
 			eae6320::Graphics::VertexFormats::sMesh * s_vertexData;
 
