@@ -13,7 +13,7 @@ Direct3D specific code for Mesh
 #include <Engine/Platform/Platform.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh * i_vertexData, uint16_t * i_indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -111,17 +111,9 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Vertex Buffer
 	{
-		const auto vertexCount = i_vertexData.size();
+		const auto vertexCount = s_vertexCount;
 
-		eae6320::Graphics::VertexFormats::sMesh* d3dVertexData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
-		{
-			for (size_t i = 0; i < vertexCount; i++)
-			{
-				d3dVertexData[i] = i_vertexData[i];
-				// Vertical axis for UV in Direct3D is reverted from OpenGL
-				d3dVertexData[i].v = 1.0f - d3dVertexData[i].v;
-			}
-		}
+		eae6320::Graphics::VertexFormats::sMesh * d3dVertexData = i_vertexData;
 
 		D3D11_BUFFER_DESC VertexBufferDescription{};
 		{
@@ -148,24 +140,13 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			eae6320::Logging::OutputError("Direct3D failed to create a mesh vertex buffer (HRESULT %#010x)", d3dResultForVertexBuffer);
 			goto OnExit;
 		}
-
-		delete[] d3dVertexData;
 	}
 
 	// Index Buffer
 	{
-		constexpr unsigned int verticesPerTriangle = 3;
-		const auto indexArraySize = i_indexData.size();
-		uint16_t* d3dIndexData = new uint16_t[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += verticesPerTriangle)
-		{
-			// Direct3D Rendering Order: Clockwise (CW)
-			// Since the input is counterclockwise (CCW), thus example input
-			// like ABC should be assigned here with the order CBA
-			d3dIndexData[i] = i_indexData[i + 2];
-			d3dIndexData[i + 1] = i_indexData[i + 1];
-			d3dIndexData[i + 2] = i_indexData[i];
-		}
+		const auto indexArraySize = s_indexCount;
+
+		uint16_t * d3dIndexData = i_indexData;
 
 		D3D11_BUFFER_DESC IndexBufferDescription{};
 		{
@@ -192,8 +173,6 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 			eae6320::Logging::OutputError("Direct3D failed to create a mesh index buffer (HRESULT %#010x)", d3dResultForIndexBuffer);
 			goto OnExit;
 		}
-
-		delete[] d3dIndexData;
 	}
 
 OnExit:

@@ -11,6 +11,8 @@
 #include <Engine/Graphics/Graphics.h>
 #include <Engine/Math/Functions.h>
 
+#include <fstream>
+
 // Inherited Implementation
 //=========================
 

@@ -11,7 +11,7 @@ OpenGL specific code for Mesh
 #include <Engine/Asserts/Asserts.h>
 #include <Engine/Logging/Logging.h>
 
-eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData)
+eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(eae6320::Graphics::VertexFormats::sMesh * i_vertexData, uint16_t * i_indexData)
 {
 	auto result = eae6320::Results::Success;
 
@@ -98,15 +98,9 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 	}
 	// Assign the data to the vertex buffer
 	{
-		const auto vertexCount = i_vertexData.size();
+		const auto vertexCount = s_vertexCount;
 
-		eae6320::Graphics::VertexFormats::sMesh* glVertexData = new eae6320::Graphics::VertexFormats::sMesh[vertexCount];
-		{
-			for (size_t i = 0; i < vertexCount; i++)
-			{
-				glVertexData[i] = i_vertexData[i];
-			}
-		}
+		eae6320::Graphics::VertexFormats::sMesh * glVertexData = i_vertexData;
 
 		const auto bufferSize = vertexCount * sizeof(eae6320::Graphics::VertexFormats::sMesh);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
@@ -122,23 +116,12 @@ eae6320::cResult eae6320::Graphics::Mesh::InitializeMesh(std::vector<eae6320::Gr
 				reinterpret_cast<const char*>(gluErrorString(errorCode)));
 			goto OnExit;
 		}
-
-		delete[] glVertexData;
 	}
 	// Assign the data to the index buffer
 	{
-		constexpr unsigned int verticesPerTriangle = 3;
-		const auto indexArraySize = i_indexData.size();
-		uint16_t* glIndexData = new uint16_t[indexArraySize];
-		for (size_t i = 0; i < indexArraySize; i += verticesPerTriangle)
-		{
-			// OpenGL Rendering Order: Counterclockwise (CCW)
-			// Since the input is counterclockwise (CCW), thus example input
-			// like ABC should be assigned here with the order ABC
-			glIndexData[i] = i_indexData[i];
-			glIndexData[i + 1] = i_indexData[i + 1];
-			glIndexData[i + 2] = i_indexData[i + 2];
-		}
+		const auto indexArraySize = s_indexCount;
+
+		uint16_t * glIndexData = i_indexData;
 
 		const auto bufferSize = indexArraySize * sizeof(uint16_t);
 		EAE6320_ASSERT(bufferSize < (uint64_t(1u) << (sizeof(GLsizeiptr) * 8)));
