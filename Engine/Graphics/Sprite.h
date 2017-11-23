@@ -25,24 +25,35 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite *& o_sprite);
+			// Initialization / Clean Up
+			//--------------------------
 
-			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+			static cResult Load(float tr_X, float tr_Y, float sideH, float sideV, Sprite *& o_sprite);
+			cResult CleanUp();
+
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Sprite)
 
-			void DrawGeometry();
+			// Reference Counting
+			//-------------------
 
-			cResult CleanUp();
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+
+			// Render
+			//-------
+
+			void DrawGeometry();
 
 		private:
 
 			Sprite();
 			~Sprite();
 
+			// Initialization / Clean Up
+			//--------------------------
+
 			// (tr_X, tr_Y) is the coordinate of top right point, sideH is length for horizontal side,
 			// sideV is length for vertical side
 			cResult InitializeGeometry(float tr_X, float tr_Y, float sideH, float sideV);
-
 			cResult CleanUpGeometry();
 
 #if defined ( EAE6320_PLATFORM_D3D )
@@ -63,6 +74,9 @@ namespace eae6320
 			// A vertex array encapsulates the vertex data as well as the vertex input layout
 			GLuint s_vertexArrayId = 0;
 #endif
+
+			// Reference counting
+			//===================
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 		};
