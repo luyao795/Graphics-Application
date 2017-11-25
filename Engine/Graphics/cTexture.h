@@ -91,6 +91,9 @@ namespace eae6320
 			GLuint m_textureId = 0;
 #endif
 
+			// Reference counting
+			//===================
+
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 
 			TextureFormats::sTextureInfo m_info;

@@ -27,26 +27,37 @@ namespace eae6320
 		{
 		public:
 
-			static cResult Load(const char * i_vertexShaderFileName, const char * i_fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect);
+			// Initialization / Clean Up
+			//--------------------------
 
-			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+			static cResult Load(const char * i_vertexShaderFileName, const char * i_fragmentShaderFileName, const uint8_t i_RenderState, Effect *& o_effect);
+			cResult CleanUp();
+
 			EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Effect)
 
-			void BindShadingData();
+			// Reference Counting
+			//-------------------
 
-			cResult CleanUp();
+			EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
+			
+			// Render
+			//-------
+
+			void BindShadingData();
 
 		private:
 
 			Effect();
 			~Effect();
 
+			// Initialization / Clean Up
+			//--------------------------
+
 			// vertexShaderFileName is the file name of the vertex shader, fragmentShaderFileName is
 			// the file name of the fragment shader. Both file names should include extension.
 			// Do NOT include file path in these parameters.
 			// i_RenderState is the render state the user wants to use, the default value is 0.
 			cResult InitializeShadingData(const char * vertexShaderFileName, const char * fragmentShaderFileName, const uint8_t i_RenderState);
-
 			cResult CleanUpShadingData();
 
 			// Shading Data
@@ -60,6 +71,9 @@ namespace eae6320
 #endif
 
 			Graphics::cRenderState s_renderState;
+
+			// Reference counting
+			//===================
 
 			EAE6320_ASSETS_DECLAREREFERENCECOUNT()
 

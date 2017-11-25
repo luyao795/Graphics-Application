@@ -11,7 +11,6 @@ These are code snippets that represent meshes that are separated from Graphics s
 #include <Engine/Assets/ReferenceCountedAssets.h>
 #include <Engine/Results/Results.h>
 #include <Engine/Graphics/VertexFormats.h>
-#include <External/Lua/Includes.h>
 #include <Engine/Assets/cHandle.h>
 #include <Engine/Assets/cManager.h>
 
@@ -66,21 +65,8 @@ namespace eae6320
 			//--------------------------
 
 			// vertexData is the array for all vertices, indexData is the array for index information for rendering the mesh
-			cResult InitializeMesh(std::vector<eae6320::Graphics::VertexFormats::sMesh> i_vertexData, std::vector<uint16_t> i_indexData);
+			cResult InitializeMesh(eae6320::Graphics::VertexFormats::sMesh * i_vertexData, uint16_t * i_indexData);
 			cResult CleanUpMesh();
-
-			// Lua data operation
-			//-------------------
-
-			cResult LoadTableValues(lua_State& io_luaState);
-
-			cResult LoadTableValues_vertices(lua_State& io_luaState);
-			cResult LoadTableValues_vertices_values(lua_State& io_luaState);
-
-			cResult LoadTableValues_indices(lua_State& io_luaState);
-			cResult LoadTableValues_indices_values(lua_State& io_luaState);
-
-			cResult LoadAsset(const char* const i_path);
 
 #if defined ( EAE6320_PLATFORM_D3D )
 			// Geometry Data
@@ -108,11 +94,13 @@ namespace eae6320
 			// Member data
 			//============
 
-			size_t s_indexCount;
+			uint16_t s_indexCount;
 
-			std::vector<eae6320::Graphics::VertexFormats::sMesh> s_vertexData;
+			uint16_t s_vertexCount;
 
-			std::vector<uint16_t> s_indexData;
+			eae6320::Graphics::VertexFormats::sMesh * s_vertexData;
+
+			uint16_t * s_indexData;
 
 			// Reference counting
 			//===================
