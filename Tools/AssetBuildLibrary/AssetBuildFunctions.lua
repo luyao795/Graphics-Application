@@ -516,6 +516,8 @@ function BuildAssets( i_path_assetsToBuild )
 						wereThereErrors = true
 						OutputErrorMessage( "The license \"" .. sourceLicense .. "\" couldn't be copied to \"" .. targetLicense .. "\": " .. errorMessage )
 					end
+				else
+					print( sourceFileName .. " is up to date" )
 				end
 			end
 		end
@@ -547,6 +549,8 @@ function BuildAssets( i_path_assetsToBuild )
 					wereThereErrors = true
 					OutputErrorMessage( "The setting \"" .. sourceFileName .. "\" couldn't be copied to \"" .. targetPath .. "\": " .. errorMessage )
 				end
+			else
+				print( sourceFileName .. " is up to date" )
 			end
 		end
 	end
