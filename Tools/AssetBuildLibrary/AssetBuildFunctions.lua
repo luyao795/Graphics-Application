@@ -493,15 +493,29 @@ function BuildAssets( i_path_assetsToBuild )
 		local sourceLicenses = GetFilesInDirectory( LicenseDir )
 		for i, sourceLicense in ipairs( sourceLicenses ) do
 			local sourceFileName = sourceLicense:sub( #LicenseDir + 1 )
-			local targetPath = GameLicenseDir .. sourceFileName
-			if not DoesFileExist ( sourceLicense ) then
-				local result, errorMessage = CopyFile( sourceLicense, targetPath )
+			local targetLicense = GameLicenseDir .. sourceFileName
+			if not DoesFileExist ( targetLicense ) then
+				local result, errorMessage = CopyFile( sourceLicense, targetLicense )
 				if result then
 					-- Display a message
 					print( "Installed " .. sourceFileName )
 				else
 					wereThereErrors = true
-					OutputErrorMessage( "The license \"" .. sourceLicense .. "\" couldn't be copied to \"" .. targetPath .. "\": " .. errorMessage )
+					OutputErrorMessage( "The license \"" .. sourceLicense .. "\" couldn't be copied to \"" .. targetLicense .. "\": " .. errorMessage )
+				end
+			else
+				local sourceModifiedTime = GetLastWriteTime( sourcePath )
+				local targetModifiedTime = GetLastWriteTime( targetLicense )
+				local shouldLicenseBeCopied = sourceModifiedTime > targetModifiedTime
+				if shouldLicenseBeCopied then
+					local result, errorMessage = CopyFile( sourceLicense, targetLicense )
+					if result then
+						-- Display a message
+						print( "Installed " .. sourceFileName )
+					else
+						wereThereErrors = true
+						OutputErrorMessage( "The license \"" .. sourceLicense .. "\" couldn't be copied to \"" .. targetLicense .. "\": " .. errorMessage )
+					end
 				end
 			end
 		end
@@ -510,8 +524,8 @@ function BuildAssets( i_path_assetsToBuild )
 	do
 		local sourceFileName = "Settings.ini"
 		local sourcePath = OutputDir .. sourceFileName
-		local targetPath = GameInstallDir .. sourceFileName
-		if not DoesFileExist( sourcePath ) then
+		local targetPath = GameInstallDir .. sourceFileName		
+		if not DoesFileExist( targetPath ) then
 			local result, errorMessage = CopyFile( sourcePath, targetPath )
 			if result then
 				-- Display a message
@@ -519,6 +533,20 @@ function BuildAssets( i_path_assetsToBuild )
 			else
 				wereThereErrors = true
 				OutputErrorMessage( "The setting \"" .. sourceFileName .. "\" couldn't be copied to \"" .. targetPath .. "\": " .. errorMessage )
+			end
+		else
+			local sourceModifiedTime = GetLastWriteTime( sourcePath )
+			local targetModifiedTime = GetLastWriteTime( targetPath )
+			local shouldSettingsBeCopied = sourceModifiedTime > targetModifiedTime
+			if shouldSettingsBeCopied then
+				local result, errorMessage = CopyFile( sourcePath, targetPath )
+				if result then
+					-- Display a message
+					print( "Installed " .. sourceFileName )
+				else
+					wereThereErrors = true
+					OutputErrorMessage( "The setting \"" .. sourceFileName .. "\" couldn't be copied to \"" .. targetPath .. "\": " .. errorMessage )
+				end
 			end
 		end
 	end
