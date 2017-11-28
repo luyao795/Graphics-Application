@@ -504,7 +504,7 @@ function BuildAssets( i_path_assetsToBuild )
 					OutputErrorMessage( "The license \"" .. sourceLicense .. "\" couldn't be copied to \"" .. targetLicense .. "\": " .. errorMessage )
 				end
 			else
-				local sourceModifiedTime = GetLastWriteTime( sourcePath )
+				local sourceModifiedTime = GetLastWriteTime( sourceLicense )
 				local targetModifiedTime = GetLastWriteTime( targetLicense )
 				local shouldLicenseBeCopied = sourceModifiedTime > targetModifiedTime
 				if shouldLicenseBeCopied then
