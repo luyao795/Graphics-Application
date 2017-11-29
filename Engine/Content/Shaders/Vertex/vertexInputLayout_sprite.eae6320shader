@@ -7,27 +7,7 @@
 // Entry Point
 //============
 
-#if defined (EAE6320_PLATFORM_GL)
-
-	// Input
-	//======
-
-	// The locations assigned are arbitrary
-	// but must match the C calls to glVertexAttribPointer()
-
-	// These values come from one of the VertexFormats::sGeometry that the vertex buffer was filled with in C code
-	layout( location = 0 ) in vec2 i_position;
-	layout( location = 1 ) in vec2 i_texcoord;
-
-	// Output
-	//=======
-	
-	layout( location = 0 ) out vec4 o_position;
-	layout( location = 1 ) out vec2 o_texcoord;
-
-	void main()
-
-#elif defined (EAE6320_PLATFORM_D3D)
+#if defined (EAE6320_PLATFORM_D3D)
 
 	void main(
 
@@ -36,7 +16,6 @@
 
 	// The "semantics" (the keywords in all caps after the colon) are arbitrary,
 	// but must match the C call to CreateInputLayout()
-
 	in const float2 i_position : POSITION,
 	in const float2 i_texcoord : TEXCOORD0,
 
@@ -50,11 +29,11 @@
 
 	)
 	
-#endif
-	
 {
 	// The shader program is only used to generate a vertex input layout object;
 	// the actual shading code is never used
 	o_position = vec4( i_position, 0.0, 1.0 );
 	o_texcoord = i_texcoord;
 }
+
+#endif

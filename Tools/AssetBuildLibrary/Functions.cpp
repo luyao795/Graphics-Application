@@ -29,7 +29,9 @@ namespace
 	public:
 
 		// Lua Functions
-		eae6320::cResult BuildAssets();
+		eae6320::cResult BuildAssets( const char* const i_path_assetsToBuild );
+		eae6320::cResult ConvertSourceRelativePathToBuiltRelativePath( const char* const i_sourceRelativePath, const char* const i_assetType,
+			std::string& o_builtRelativePath, std::string* o_errorMessage );
 
 		// Access
 		lua_State* Get();
@@ -46,6 +48,7 @@ namespace
 
 		// References to Lua functions that are saved in the Lua "registry"
 		int m_fBuildAssets = LUA_NOREF;
+		int m_fConvertSourceRelativePathToBuiltRelativePath = LUA_NOREF;
 
 		// Implementation
 		//---------------
@@ -101,9 +104,15 @@ namespace
 // Interface
 //==========
 
-eae6320::cResult eae6320::Assets::BuildAssets()
+eae6320::cResult eae6320::Assets::BuildAssets( const char* const i_path_assetsToBuild )
 {
-	return s_luaState.BuildAssets();
+	return s_luaState.BuildAssets( i_path_assetsToBuild );
+}
+
+eae6320::cResult eae6320::Assets::ConvertSourceRelativePathToBuiltRelativePath( const char* const i_sourceRelativePath, const char* const i_assetType,
+	std::string& o_builtRelativePath, std::string* o_errorMessage )
+{
+	return s_luaState.ConvertSourceRelativePathToBuiltRelativePath( i_sourceRelativePath, i_assetType, o_builtRelativePath, o_errorMessage );
 }
 
 // Error / Warning Output
@@ -259,7 +268,7 @@ namespace
 
 	// Lua Functions
 
-	eae6320::cResult cLuaState::BuildAssets()
+	eae6320::cResult cLuaState::BuildAssets( const char* const i_path_assetsToBuild )
 	{
 		auto result = eae6320::Results::Success;
 
@@ -276,7 +285,10 @@ namespace
 				// Call the function
 				constexpr int returnValueCount = 1;
 				{
-					constexpr int argumentCount = 0;
+					constexpr int argumentCount = 1;
+					{
+						lua_pushstring( luaState, i_path_assetsToBuild );
+					}
 					constexpr int noErrorHandler = 0;
 					const auto luaResult = lua_pcall( luaState, argumentCount, returnValueCount, noErrorHandler );
 					if ( luaResult != LUA_OK )
@@ -325,6 +337,162 @@ namespace
 				{
 					eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__,
 						"The reference for the Lua BuildAssets() function returned a %s instead of a function."
+						" This shouldn't happen if the asset build library was initialized successfully",
+						lua_typename( luaState, type ) );
+				}
+				goto OnExit;
+			}
+		}
+
+	OnExit:
+
+		EAE6320_ASSERT( !luaState || ( lua_gettop( luaState ) == 0 ) );
+		return result;
+	}
+
+	eae6320::cResult cLuaState::ConvertSourceRelativePathToBuiltRelativePath( const char* const i_sourceRelativePath, const char* const i_assetType,
+		std::string& o_builtRelativePath, std::string* o_errorMessage )
+	{
+		auto result = eae6320::Results::Success;
+
+		// Initialize the Lua environment if necessary
+		if ( luaState || ( result = Initialize() ) )
+		{
+			EAE6320_ASSERT( lua_gettop( luaState ) == 0 );
+
+			// Push the Lua function on the stack
+			EAE6320_ASSERT( ( m_fConvertSourceRelativePathToBuiltRelativePath != LUA_NOREF ) && ( m_fConvertSourceRelativePathToBuiltRelativePath != LUA_REFNIL ) );
+			const auto type = lua_rawgeti( luaState, LUA_REGISTRYINDEX, m_fConvertSourceRelativePathToBuiltRelativePath );
+			if ( type == LUA_TFUNCTION )
+			{
+				// Call the function
+				constexpr int returnValueCount = 2;
+				{
+					constexpr int argumentCount = 2;
+					{
+						lua_pushstring( luaState, i_sourceRelativePath );
+						lua_pushstring( luaState, i_assetType );
+					}
+					constexpr int noErrorHandler = 0;
+					const auto luaResult = lua_pcall( luaState, argumentCount, returnValueCount, noErrorHandler );
+					if ( luaResult != LUA_OK )
+					{
+						// The error message should already be formatted for output
+						std::cerr << lua_tostring( luaState, -1 ) << std::endl;
+						// Pop the error message
+						lua_pop( luaState, 1 );
+						switch ( luaResult )
+						{
+						case LUA_ERRMEM:
+							{
+								result = eae6320::Results::OutOfMemory;
+							}
+							break;
+						default:
+							{
+								result = eae6320::Results::Failure;
+							}
+						}
+
+						goto OnExit;
+					}
+				}
+				// Check the return values
+				{
+					if ( lua_isboolean( luaState, -2 ) )
+					{
+						const auto wereThereErrors = !lua_toboolean( luaState, -2 );
+						if ( !wereThereErrors )
+						{
+							if ( lua_isstring( luaState, -1 ) )
+							{
+								o_builtRelativePath = lua_tostring( luaState, -1 );
+							}
+							else
+							{
+								result = eae6320::Results::Failure;
+								if ( o_errorMessage )
+								{
+									std::ostringstream errorMessage;
+									errorMessage << "ConvertSourceRelativePathToBuiltRelativePath() returned success but then a "
+										<< luaL_typename( luaState, -1 ) << " instead of a string";
+									*o_errorMessage = errorMessage.str();
+								}
+								else
+								{
+									eae6320::Assets::OutputErrorMessage(
+										"ConvertSourceRelativePathToBuiltRelativePath() returned success but then a %s instead of a string",
+										luaL_typename( luaState, -1 ) );
+								}
+							}
+						}
+						else
+						{
+							result = eae6320::Results::Failure;
+							if ( lua_isstring( luaState, -1 ) )
+							{
+								if ( o_errorMessage )
+								{
+									*o_errorMessage = lua_tostring( luaState, -1 );
+								}
+								else
+								{
+									eae6320::Assets::OutputErrorMessage( lua_tostring( luaState, -1 ) );
+								}
+							}
+							else
+							{
+								if ( o_errorMessage )
+								{
+									std::ostringstream errorMessage;
+									errorMessage << "On failure ConvertSourceRelativePathToBuiltRelativePath() should return a string error message as return value #2, not a "
+										<< luaL_typename( luaState, -1 );
+									*o_errorMessage = errorMessage.str();
+								}
+								else
+								{
+									eae6320::Assets::OutputErrorMessage(
+										"On failure ConvertSourceRelativePathToBuiltRelativePath() should return a string error message as return value #2, not a %s",
+										luaL_typename( luaState, -1 ) );
+								}
+							}
+						}
+					}
+					else
+					{
+						result = eae6320::Results::Failure;
+						if ( o_errorMessage )
+						{
+							std::ostringstream errorMessage;
+							errorMessage << "On failure ConvertSourceRelativePathToBuiltRelativePath() should return a boolean as return value #1, not a "
+								<< luaL_typename( luaState, -2 );
+							*o_errorMessage = errorMessage.str();
+						}
+						else
+						{
+							eae6320::Assets::OutputErrorMessage( "ConvertSourceRelativePathToBuiltRelativePath() should return a boolean as return value #1, not a %s",
+								luaL_typename( luaState, -2 ) );
+						}
+					}
+					// Pop the returned values
+					lua_pop( luaState, returnValueCount );
+				}
+			}
+			else
+			{
+				result = eae6320::Results::Failure;
+				if ( o_errorMessage )
+				{
+					std::ostringstream errorMessage;
+					errorMessage << "The reference for the Lua ConvertSourceRelativePathToBuiltRelativePath() function returned a "
+						<< lua_typename( luaState, type ) << " instead of a function."
+						" This shouldn't happen if the asset build library was initialized successfully";
+					*o_errorMessage = errorMessage.str();
+				}
+				else
+				{
+					eae6320::Assets::OutputErrorMessageWithFileInfo( __FILE__, __LINE__,
+						"The reference for the Lua ConvertSourceRelativePathToBuiltRelativePath() function returned a %s instead of a function."
 						" This shouldn't happen if the asset build library was initialized successfully",
 						lua_typename( luaState, type ) );
 				}
@@ -642,27 +810,27 @@ namespace
 	{
 		// Argument #1: The source path
 		const char* i_path_source;
-		if (lua_isstring(io_luaState, 1))
+		if ( lua_isstring( io_luaState, 1 ) )
 		{
-			i_path_source = lua_tostring(io_luaState, 1);
+			i_path_source = lua_tostring( io_luaState, 1 );
 		}
 		else
 		{
-			return luaL_error(io_luaState,
+			return luaL_error( io_luaState,
 				"Argument #1 must be a string (instead of a %s)",
-				luaL_typename(io_luaState, 1));
+				luaL_typename( io_luaState, 1 ) );
 		}
 		// Argument #2: The target path
 		const char* i_path_target;
-		if (lua_isstring(io_luaState, 2))
+		if ( lua_isstring( io_luaState, 2 ) )
 		{
-			i_path_target = lua_tostring(io_luaState, 2);
+			i_path_target = lua_tostring( io_luaState, 2 );
 		}
 		else
 		{
-			return luaL_error(io_luaState,
+			return luaL_error( io_luaState,
 				"Argument #2 must be a string (instead of a %s)",
-				luaL_typename(io_luaState, 2));
+				luaL_typename( io_luaState, 2 ) );
 		}
 
 		// Copy the file
@@ -676,14 +844,14 @@ namespace
 			constexpr bool updateTheTargetFileTime = true;
 			if ( eae6320::Platform::CopyFile( i_path_source, i_path_target, noErrorIfTargetAlreadyExists, updateTheTargetFileTime, &errorMessage ) )
 			{
-				lua_pushboolean(io_luaState, true);
+				lua_pushboolean( io_luaState, true );
 				constexpr int returnValueCount = 1;
 				return returnValueCount;
 			}
 			else
 			{
-				lua_pushboolean(io_luaState, false);
-				lua_pushstring(io_luaState, errorMessage.c_str());
+				lua_pushboolean( io_luaState, false );
+				lua_pushstring( io_luaState, errorMessage.c_str() );
 				constexpr int returnValueCount = 2;
 				return returnValueCount;
 			}
@@ -694,15 +862,15 @@ namespace
 	{
 		// Argument #1: The path
 		const char* i_path;
-		if (lua_isstring(io_luaState, 1))
+		if ( lua_isstring( io_luaState, 1 ) )
 		{
-			i_path = lua_tostring(io_luaState, 1);
+			i_path = lua_tostring( io_luaState, 1 );
 		}
 		else
 		{
-			return luaL_error(io_luaState,
+			return luaL_error( io_luaState,
 				"Argument #1 must be a string (instead of a %s)",
-				luaL_typename(io_luaState, 1));
+				luaL_typename( io_luaState, 1 ) );
 		}
 
 		std::string errorMessage;
@@ -713,7 +881,7 @@ namespace
 		}
 		else
 		{
-			return luaL_error(io_luaState, errorMessage.c_str());
+			return luaL_error( io_luaState, errorMessage.c_str() );
 		}
 	}
 
@@ -800,14 +968,14 @@ namespace
 		std::string errorMessage;
 		if ( eae6320::Platform::GetEnvironmentVariable( i_key, value, &errorMessage ) )
 		{
-			lua_pushstring(io_luaState, value.c_str());
+			lua_pushstring( io_luaState, value.c_str() );
 			constexpr int returnValueCount = 1;
 			return returnValueCount;
 		}
 		else
 		{
-			lua_pushnil(io_luaState);
-			lua_pushstring(io_luaState, errorMessage.c_str());
+			lua_pushnil( io_luaState );
+			lua_pushstring( io_luaState, errorMessage.c_str() );
 			constexpr int returnValueCount = 2;
 			return returnValueCount;
 		}
