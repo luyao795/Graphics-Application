@@ -22,6 +22,7 @@ return
 		{ path = "Shaders/Fragment/MeshColor.eae6320shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/MeshTexture.eae6320shader", arguments = { "fragment" } },
 		{ path = "Shaders/Fragment/MeshColorTexture.eae6320shader", arguments = { "fragment" } },
+		{ path = "Shaders/Fragment/MeshColorTexture_Translucent.eae6320shader", arguments = { "fragment" } },
 	},
 	textures =
 	{
