@@ -102,9 +102,11 @@ namespace eae6320
 
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
-		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
+		void SubmitEffectAndOpaqueMeshPairToBeRendered(DataSetForRenderingMesh renderData);
 
-		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
+		void SubmitEffectAndTranslucentMeshPairToBeRendered(DataSetForRenderingMesh renderData);
+
+		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted, const bool i_isTheMeshTranslucent);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
