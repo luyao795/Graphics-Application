@@ -297,18 +297,18 @@ float eae6320::Graphics::ConvertDegreeToRadian(const float i_degree)
 std::vector<eae6320::Graphics::DataSetForRenderingMesh> eae6320::Graphics::SelectionSortMeshForRenderingBasedOnDistanceToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData)
 {
 	auto result = i_meshData;
-	for (int i = 0; i < result.size(); i++)
+	for (size_t i = 0; i < result.size(); i++)
 	{
-		int minIndex = FindIndexOfObjectFarthestToCamera(result, i);
+		size_t minIndex = FindIndexOfObjectFarthestToCamera(result, i);
 		if (i != minIndex)
 			std::swap(result[i], result[minIndex]);
 	}
 	return result;
 }
 
-int eae6320::Graphics::FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, int i_startIndex)
+size_t eae6320::Graphics::FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, size_t i_startIndex)
 {
-	int currentMaxIndex = -1;
+	size_t currentMaxIndex = 0;
 	// Since the forward direction for the camera is -z, we thus need to find the farthest by getting the smallest z value.
 	if (i_meshData.size() > 0)
 	{
@@ -323,7 +323,7 @@ int eae6320::Graphics::FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Gr
 
 		// Find smallest from the range determined and get the index
 		currentMaxIndex = i_startIndex;
-		for (int i = i_startIndex; i < positionInfo.size(); i++)
+		for (size_t i = i_startIndex; i < positionInfo.size(); i++)
 		{
 			if (positionInfo[i].z < positionInfo[currentMaxIndex].z)
 				currentMaxIndex = i;

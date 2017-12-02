@@ -152,10 +152,11 @@ namespace eae6320
 		//-----------------
 		float ConvertDegreeToRadian(const float i_degree);
 
+		// Sort mesh data based on their z distances to the camera in camera space
 		std::vector<eae6320::Graphics::DataSetForRenderingMesh> SelectionSortMeshForRenderingBasedOnDistanceToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData);
 
 		// Search through the vector from i_startIndex to the end of the vector and get the index of object with farthest distance
-		int FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, int i_startIndex);
+		size_t FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, size_t i_startIndex);
 	}
 }
 

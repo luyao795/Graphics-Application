@@ -423,11 +423,11 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 	}
 
 	// Initialize render state for translucent meshes to be the same as default render state
-	uint8_t s_RenderStateForTranslucentMeshWithoutDepthBufferingOrDoubleSideRendering = defaultRenderState;
-	if (!eae6320::Graphics::RenderStates::IsAlphaTransparencyEnabled(s_RenderStateForTranslucentMeshWithoutDepthBufferingOrDoubleSideRendering))
-		eae6320::Graphics::RenderStates::EnableAlphaTransparency(s_RenderStateForTranslucentMeshWithoutDepthBufferingOrDoubleSideRendering);
+	uint8_t s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly = defaultRenderState;
+	if (!eae6320::Graphics::RenderStates::IsAlphaTransparencyEnabled(s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly))
+		eae6320::Graphics::RenderStates::EnableAlphaTransparency(s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly);
 
-	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture_Translucent.binshd", s_RenderStateForTranslucentMeshWithoutDepthBufferingOrDoubleSideRendering, s_effect_mesh_translucent)))
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture_Translucent.binshd", s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly, s_effect_mesh_translucent)))
 	{
 		EAE6320_ASSERTF(false, "Effect initialization failed");
 		goto OnExit;
