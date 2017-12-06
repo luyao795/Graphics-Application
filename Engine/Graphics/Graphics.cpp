@@ -41,6 +41,7 @@ namespace
 		eae6320::Graphics::Color cachedColorForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingSprite> cachedEffectSpritePairForRenderingInNextFrame;
 		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairForRenderingInNextFrame;
+		std::vector<eae6320::Graphics::DataSetForRenderingMesh> cachedEffectMeshPairWithTranslucentForRenderingInNextFrame;
 		eae6320::Graphics::Camera cameraForView;
 	};
 	// In our class there will be two copies of the data required to render a frame:
@@ -97,7 +98,7 @@ void eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(DataSetFor
 	renderData.texture->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData)
+void eae6320::Graphics::SubmitEffectAndOpaqueMeshPairToBeRendered(DataSetForRenderingMesh renderData)
 {
 	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
 	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.push_back(renderData);
@@ -106,12 +107,26 @@ void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(DataSetForR
 	renderData.texture->IncrementReferenceCount();
 }
 
-void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted)
+void eae6320::Graphics::SubmitEffectAndTranslucentMeshPairToBeRendered(DataSetForRenderingMesh renderData)
+{
+	EAE6320_ASSERT(s_dataBeingSubmittedByApplicationThread);
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.push_back(renderData);
+	renderData.effect->IncrementReferenceCount();
+	renderData.mesh->IncrementReferenceCount();
+	renderData.texture->IncrementReferenceCount();
+}
+
+void eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted, const bool i_isTheMeshTranslucent)
 {
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
 		i_meshToBeRendered.rigidBody.IncrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
 
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRendered(i_meshToBeRendered);
+	{
+		if (i_isTheMeshTranslucent)
+			eae6320::Graphics::SubmitEffectAndTranslucentMeshPairToBeRendered(i_meshToBeRendered);
+		else
+			eae6320::Graphics::SubmitEffectAndOpaqueMeshPairToBeRendered(i_meshToBeRendered);
+	}
 
 	if (i_doesTheMovementOfTheMeshNeedsToBePredicted)
 		i_meshToBeRendered.rigidBody.DecrementPredictionOntoMovement(i_elapsedSecondCount_sinceLastSimulationUpdate);
@@ -184,7 +199,10 @@ void eae6320::Graphics::RenderFrame()
 	// Default ID for binding textures
 	constexpr unsigned int defaultTextureID = 0;
 
-	// Bind shading data and draw mesh
+	// Sort objects with translucent effect based on camera distance
+	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame = SelectionSortMeshForRenderingBasedOnDistanceToCamera(s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame);
+
+	// Bind shading data and draw opaque mesh
 	{
 		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.size(); i++)
 		{
@@ -195,6 +213,20 @@ void eae6320::Graphics::RenderFrame()
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].effect->BindShadingData();
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].texture->Bind(defaultTextureID);
 			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame[i].mesh->DrawMesh();
+		}
+	}
+
+	// Bind shading data and draw translucent mesh
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size(); i++)
+		{
+			// Update the per-draw call constant buffer
+			constantData_perDrawCall.g_transform_localToWorld = eae6320::Math::cMatrix_transformation(s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].rigidBody.orientation, s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].rigidBody.position);
+			s_constantBuffer_perDrawCall.Update(&constantData_perDrawCall);
+
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect->BindShadingData();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture->Bind(defaultTextureID);
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh->DrawMesh();
 		}
 	}
 
@@ -238,6 +270,21 @@ void eae6320::Graphics::RenderFrame()
 		s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 	}
 
+	// Once everything has been drawn the data that was submitted for this frame
+	// should be cleaned up and cleared.
+	// so that the struct can be re-used (i.e. so that data for a new frame can be submitted to it)
+	{
+		{
+			for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size(); i++)
+			{
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+				s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture->DecrementReferenceCount();
+			}
+		}
+		s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.clear();
+	}
+
 	SwapRender();
 }
 
@@ -245,6 +292,44 @@ float eae6320::Graphics::ConvertDegreeToRadian(const float i_degree)
 {
 	constexpr float PI = 3.14159265358f;
 	return (i_degree * PI) / 180.0f;
+}
+
+std::vector<eae6320::Graphics::DataSetForRenderingMesh> eae6320::Graphics::SelectionSortMeshForRenderingBasedOnDistanceToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData)
+{
+	auto result = i_meshData;
+	for (size_t i = 0; i < result.size(); i++)
+	{
+		size_t minIndex = FindIndexOfObjectFarthestToCamera(result, i);
+		if (i != minIndex)
+			std::swap(result[i], result[minIndex]);
+	}
+	return result;
+}
+
+size_t eae6320::Graphics::FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, size_t i_startIndex)
+{
+	size_t currentMaxIndex = 0;
+	// Since the forward direction for the camera is -z, we thus need to find the farthest by getting the smallest z value.
+	if (i_meshData.size() > 0)
+	{
+		// Grab position info from each element and put them into a vector
+		std::vector<eae6320::Math::sVector> positionInfo;
+		for (auto item : i_meshData)
+			positionInfo.push_back(item.rigidBody.position);
+
+		// Transform them from world space to camera space
+		for (auto item : positionInfo)
+			item = s_dataBeingRenderedByRenderThread->constantData_perFrame.g_transform_worldToCamera * item;
+
+		// Find smallest from the range determined and get the index
+		currentMaxIndex = i_startIndex;
+		for (size_t i = i_startIndex; i < positionInfo.size(); i++)
+		{
+			if (positionInfo[i].z < positionInfo[currentMaxIndex].z)
+				currentMaxIndex = i;
+		}
+	}
+	return currentMaxIndex;
 }
 
 eae6320::cResult eae6320::Graphics::Initialize(const sInitializationParameters& i_initializationParameters)
@@ -372,6 +457,21 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 	}
 	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
 
+	if (s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture->DecrementReferenceCount();
+
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh = nullptr;
+			s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture = nullptr;
+		}
+	}
+	s_dataBeingRenderedByRenderThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.clear();
+
 	if (s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size() > 0)
 	{
 		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectSpritePairForRenderingInNextFrame.size(); i++)
@@ -401,6 +501,21 @@ eae6320::cResult eae6320::Graphics::CleanUp()
 		}
 	}
 	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairForRenderingInNextFrame.clear();
+
+	if (s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size() > 0)
+	{
+		for (size_t i = 0; i < s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.size(); i++)
+		{
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh->DecrementReferenceCount();
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture->DecrementReferenceCount();
+
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].effect = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].mesh = nullptr;
+			s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame[i].texture = nullptr;
+		}
+	}
+	s_dataBeingSubmittedByApplicationThread->cachedEffectMeshPairWithTranslucentForRenderingInNextFrame.clear();
 
 	CleanUpGraphics();
 

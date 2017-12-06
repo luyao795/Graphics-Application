@@ -11,6 +11,7 @@
 #include "Configuration.h"
 
 #include <cstdint>
+#include <vector>
 #include <Engine/Results/Results.h>
 #include <Engine/Math/sVector.h>
 #include <Engine/Physics/sRigidBodyState.h>
@@ -101,9 +102,11 @@ namespace eae6320
 
 		void SubmitEffectSpritePairToBeRenderedWithTexture(DataSetForRenderingSprite renderData);
 
-		void SubmitEffectMeshPairWithPositionToBeRendered(DataSetForRenderingMesh renderData);
+		void SubmitEffectAndOpaqueMeshPairToBeRendered(DataSetForRenderingMesh renderData);
 
-		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted);
+		void SubmitEffectAndTranslucentMeshPairToBeRendered(DataSetForRenderingMesh renderData);
+
+		void SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(DataSetForRenderingMesh & i_meshToBeRendered, const float i_elapsedSecondCount_sinceLastSimulationUpdate, const bool i_doesTheMovementOfTheMeshNeedsToBePredicted, const bool i_isTheMeshTranslucent);
 
 		// When the application is ready to submit data for a new frame
 		// it should call this before submitting anything
@@ -148,6 +151,12 @@ namespace eae6320
 		// Helper functions
 		//-----------------
 		float ConvertDegreeToRadian(const float i_degree);
+
+		// Sort mesh data based on their z distances to the camera in camera space
+		std::vector<eae6320::Graphics::DataSetForRenderingMesh> SelectionSortMeshForRenderingBasedOnDistanceToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData);
+
+		// Search through the vector from i_startIndex to the end of the vector and get the index of object with farthest distance
+		size_t FindIndexOfObjectFarthestToCamera(std::vector<eae6320::Graphics::DataSetForRenderingMesh> i_meshData, size_t i_startIndex);
 	}
 }
 

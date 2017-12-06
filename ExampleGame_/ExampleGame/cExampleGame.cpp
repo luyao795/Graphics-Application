@@ -19,68 +19,16 @@
 
 namespace
 {
-	// Shading Data
-	//-------------
-	// This effect contains color changing property.
-	eae6320::Graphics::Effect* s_effect = nullptr;
-	// This effect contains white static property.
-	eae6320::Graphics::Effect* s_effect_static = nullptr;
-	// This effect contains mesh render data for solid shapes.
-	eae6320::Graphics::Effect* s_effect_mesh_solid = nullptr;
-	// This effect contains mesh render data for exposed shapes.
-	eae6320::Graphics::Effect* s_effect_mesh_exposed = nullptr;
-
-	// Geometry Data
-	//--------------
-	// These two sprites form the color changing plus sign.
-	eae6320::Graphics::Sprite* s_sprite = nullptr;
-	eae6320::Graphics::Sprite* s_sprite2 = nullptr;
-	// These four sprites form the static white rectangles.
-	eae6320::Graphics::Sprite* s_sprite_static = nullptr;
-	eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
-	eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
-	eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
-
-	// Texture Data
-	eae6320::Graphics::cTexture::Handle pikachuTexture;
-	eae6320::Graphics::cTexture::Handle pokeballTexture;
-	eae6320::Graphics::cTexture::Handle electroballTexture;
-	eae6320::Graphics::cTexture::Handle flowerShibeTexture;
-	eae6320::Graphics::cTexture::Handle evilShibeTexture;
-	eae6320::Graphics::cTexture::Handle AKMTexture;
+	// Constant data for comparison
+	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector X = eae6320::Math::sVector(1.0f, 0.0f, 0.0f);
+	static const eae6320::Math::sVector Y = eae6320::Math::sVector(0.0f, 1.0f, 0.0f);
+	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
 
 	// External constant data for movable mesh size
 	constexpr float movableMeshSideLength = 1.0f;
-	constexpr float staticMeshLongSideLength = 2.0f;
-	constexpr float staticMeshShortSideLength = 0.125f;
-
-	// Mesh Data
-	eae6320::Graphics::Mesh::Handle AKMMesh;
-	eae6320::Math::sVector cubeInitLocation = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	eae6320::Math::sVector cubeInitVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	eae6320::Math::sVector cubeInitAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	eae6320::Physics::sRigidBodyState cubeRigidBody = eae6320::Physics::sRigidBodyState();
-
-	eae6320::Graphics::Mesh::Handle planeMesh;
-	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, movableMeshSideLength * (-1.0f), 0.0f);
-	eae6320::Math::sVector planeVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	eae6320::Math::sVector planeAcceleration = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	eae6320::Physics::sRigidBodyState planeRigidBody = eae6320::Physics::sRigidBodyState();
-
-	// Combined Rendering Data with Sprite & Texture
-	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
-	eae6320::Graphics::DataSetForRenderingSprite s_render2 = eae6320::Graphics::DataSetForRenderingSprite();
-	eae6320::Graphics::DataSetForRenderingSprite s_render_static = eae6320::Graphics::DataSetForRenderingSprite();
-	eae6320::Graphics::DataSetForRenderingSprite s_render_static2 = eae6320::Graphics::DataSetForRenderingSprite();
-	eae6320::Graphics::DataSetForRenderingSprite s_render_static3 = eae6320::Graphics::DataSetForRenderingSprite();
-	eae6320::Graphics::DataSetForRenderingSprite s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite();
-
-	// Combined Rendering Data with Mesh
-	eae6320::Graphics::DataSetForRenderingMesh s_render_movableAKM = eae6320::Graphics::DataSetForRenderingMesh();
-	eae6320::Graphics::DataSetForRenderingMesh s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh();
-
-	// Camera Data
-	eae6320::Graphics::Camera viewCamera;
+	constexpr float planeMeshLongSideLength = 2.0f;
+	constexpr float planeMeshShortSideLength = 0.125f;
 
 	// External constant for default render state
 	constexpr uint8_t defaultRenderState = 0;
@@ -99,8 +47,8 @@ namespace
 	constexpr float epsilonForAccelerationOffset = 0.0001f;
 
 	// External multiplier constants used for control on camera
-	constexpr float speedMultiplierForCamera = 0.5f;
-	constexpr float rotationAmountForCamera = 0.25f;
+	constexpr float speedMultiplierForCamera = 2.0f;
+	constexpr float rotationAmountForCamera = 0.5f;
 
 	// External constants for defining camera distance
 	constexpr float cameraDistanceX = 0.00f;
@@ -113,11 +61,83 @@ namespace
 	constexpr float nearPlaneDistance = 0.1f;
 	constexpr float farPlaneDistance = 100.0f;
 
-	// Constant data for comparison
-	static const eae6320::Math::sVector Zero = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	static const eae6320::Math::sVector X = eae6320::Math::sVector(1.0f, 0.0f, 0.0f);
-	static const eae6320::Math::sVector Y = eae6320::Math::sVector(0.0f, 1.0f, 0.0f);
-	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
+	// Shading Data
+	//-------------
+	// This effect contains color changing property.
+	eae6320::Graphics::Effect* s_effect = nullptr;
+	// This effect contains white static property.
+	eae6320::Graphics::Effect* s_effect_static = nullptr;
+	// This effect contains mesh render data for solid shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_solid = nullptr;
+	// This effect contains mesh render data for exposed shapes.
+	eae6320::Graphics::Effect* s_effect_mesh_exposed = nullptr;
+	// This effect contains mesh render data for translucent effect
+	eae6320::Graphics::Effect* s_effect_mesh_translucent = nullptr;
+
+	// Geometry Data
+	//--------------
+	// These two sprites form the color changing plus sign.
+	eae6320::Graphics::Sprite* s_sprite = nullptr;
+	eae6320::Graphics::Sprite* s_sprite2 = nullptr;
+	// These four sprites form the static white rectangles.
+	eae6320::Graphics::Sprite* s_sprite_static = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static2 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static3 = nullptr;
+	eae6320::Graphics::Sprite* s_sprite_static4 = nullptr;
+
+	// Texture Data
+	//-------------
+	eae6320::Graphics::cTexture::Handle pikachuTexture;
+	eae6320::Graphics::cTexture::Handle pokeballTexture;
+	eae6320::Graphics::cTexture::Handle electroballTexture;
+	eae6320::Graphics::cTexture::Handle flowerShibeTexture;
+	eae6320::Graphics::cTexture::Handle evilShibeTexture;
+	eae6320::Graphics::cTexture::Handle AKMTexture;
+
+	// Mesh Data
+	//----------
+	// Weapon Mesh
+	eae6320::Graphics::Mesh::Handle AKMMesh;
+	eae6320::Math::sVector cubeInitLocation = Zero;
+	eae6320::Math::sVector cubeInitVelocity = Zero;
+	eae6320::Math::sVector cubeInitAcceleration = Zero;
+	eae6320::Physics::sRigidBodyState cubeRigidBody = eae6320::Physics::sRigidBodyState();
+	// Plane Mesh
+	eae6320::Graphics::Mesh::Handle planeMesh;
+	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, movableMeshSideLength * (-1.0f), 0.0f);
+	eae6320::Math::sVector planeVelocity = Zero;
+	eae6320::Math::sVector planeAcceleration = Zero;
+	eae6320::Physics::sRigidBodyState planeRigidBody = eae6320::Physics::sRigidBodyState();
+	// Sphere Mesh with 2 different instances
+	eae6320::Graphics::Mesh::Handle sphereMesh;
+	// First instance
+	eae6320::Math::sVector sphere1Location = eae6320::Math::sVector(0.0f, 5.0f, 0.0f);
+	eae6320::Math::sVector sphere1Velocity = Zero;
+	eae6320::Math::sVector sphere1Acceleration = Zero;
+	eae6320::Physics::sRigidBodyState sphere1RigidBody = eae6320::Physics::sRigidBodyState();
+	// Second instance
+	eae6320::Math::sVector sphere2Location = eae6320::Math::sVector(-1.0f, 5.0f, -10.0f);
+	eae6320::Math::sVector sphere2Velocity = Zero;
+	eae6320::Math::sVector sphere2Acceleration = Zero;
+	eae6320::Physics::sRigidBodyState sphere2RigidBody = eae6320::Physics::sRigidBodyState();
+
+	// Combined Rendering Data with Sprite & Texture
+	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
+	eae6320::Graphics::DataSetForRenderingSprite s_render2 = eae6320::Graphics::DataSetForRenderingSprite();
+	eae6320::Graphics::DataSetForRenderingSprite s_render_static = eae6320::Graphics::DataSetForRenderingSprite();
+	eae6320::Graphics::DataSetForRenderingSprite s_render_static2 = eae6320::Graphics::DataSetForRenderingSprite();
+	eae6320::Graphics::DataSetForRenderingSprite s_render_static3 = eae6320::Graphics::DataSetForRenderingSprite();
+	eae6320::Graphics::DataSetForRenderingSprite s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite();
+
+	// Combined Rendering Data with Mesh
+	eae6320::Graphics::DataSetForRenderingMesh s_render_movableAKM = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_staticSphere1 = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_staticSphere2 = eae6320::Graphics::DataSetForRenderingMesh();
+
+	// Camera Data
+	//------------
+	eae6320::Graphics::Camera viewCamera;
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -402,6 +422,17 @@ eae6320::cResult eae6320::cExampleGame::InitializeEffect()
 		goto OnExit;
 	}
 
+	// Initialize render state for translucent meshes to be the same as default render state
+	uint8_t s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly = defaultRenderState;
+	if (!eae6320::Graphics::RenderStates::IsAlphaTransparencyEnabled(s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly))
+		eae6320::Graphics::RenderStates::EnableAlphaTransparency(s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly);
+
+	if (!(result = eae6320::Graphics::Effect::Load("Mesh.binshd", "MeshTexture_Translucent.binshd", s_RenderStateForTranslucentMeshWithAlphaTransparencyOnly, s_effect_mesh_translucent)))
+	{
+		EAE6320_ASSERTF(false, "Effect initialization failed");
+		goto OnExit;
+	}
+
 OnExit:
 	return result;
 }
@@ -518,6 +549,13 @@ eae6320::cResult eae6320::cExampleGame::InitializeMesh()
 		goto OnExit;
 	}
 
+	const char * mesh_sphere = "Sphere.binmsh";
+	if (!(result = eae6320::Graphics::Mesh::s_manager.Load(mesh_sphere, sphereMesh)))
+	{
+		EAE6320_ASSERTF(false, "Mesh initialization failed");
+		goto OnExit;
+	}
+
 OnExit:
 	return result;
 }
@@ -540,7 +578,15 @@ void eae6320::cExampleGame::InitializeRenderData()
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), planeRigidBody);
+	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture), planeRigidBody);
+	sphere1RigidBody.position = sphere1Location;
+	sphere1RigidBody.velocity = sphere1Velocity;
+	sphere1RigidBody.acceleration = sphere1Acceleration;
+	s_render_staticSphere1 = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_translucent, eae6320::Graphics::Mesh::s_manager.Get(sphereMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), sphere1RigidBody);
+	sphere2RigidBody.position = sphere2Location;
+	sphere2RigidBody.velocity = sphere2Velocity;
+	sphere2RigidBody.acceleration = sphere2Acceleration;
+	s_render_staticSphere2 = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_translucent, eae6320::Graphics::Mesh::s_manager.Get(sphereMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), sphere2RigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -624,6 +670,18 @@ eae6320::cResult eae6320::cExampleGame::CleanUpEffect()
 		result = s_effect_mesh_exposed->CleanUp();
 		if (result)
 			s_effect_mesh_exposed = nullptr;
+		else
+		{
+			EAE6320_ASSERTF(false, "Effect cleanup failed");
+			goto OnExit;
+		}
+	}
+
+	if (s_effect_mesh_translucent)
+	{
+		result = s_effect_mesh_translucent->CleanUp();
+		if (result)
+			s_effect_mesh_translucent = nullptr;
 		else
 		{
 			EAE6320_ASSERTF(false, "Effect cleanup failed");
@@ -799,6 +857,15 @@ eae6320::cResult eae6320::cExampleGame::CleanUpMesh()
 		}
 	}
 
+	if (sphereMesh.IsValid())
+	{
+		if (!(result = eae6320::Graphics::Mesh::s_manager.Release(sphereMesh)))
+		{
+			EAE6320_ASSERTF(false, "Mesh cleanup failed");
+			goto OnExit;
+		}
+	}
+
 OnExit:
 	return result;
 }
@@ -810,10 +877,14 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 
 	// Submit Color data
 	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
-
+	
 	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticPlane, i_elapsedSecondCount_sinceLastSimulationUpdate, false);
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableAKM, i_elapsedSecondCount_sinceLastSimulationUpdate, true);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticPlane, i_elapsedSecondCount_sinceLastSimulationUpdate, false, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableAKM, i_elapsedSecondCount_sinceLastSimulationUpdate, true, false);
+
+	// Submit Effect Mesh pair data with translucent effect and prediction if needed
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere1, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere2, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
 
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);
