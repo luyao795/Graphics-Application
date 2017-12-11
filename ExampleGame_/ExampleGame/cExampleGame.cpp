@@ -333,7 +333,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 	{
 		if (s_render_bullet.rigidBody.position.y <= s_render_shibePlane.rigidBody.position.y + textureOffset && s_render_bullet.rigidBody.position.y >= s_render_shibePlane.rigidBody.position.y - textureOffset)
 		{
-			if (s_render_bullet.rigidBody.position.y <= s_render_shibePlane.rigidBody.position.y + textureOffset && s_render_bullet.rigidBody.position.y >= s_render_shibePlane.rigidBody.position.y - textureOffset)
+			if (s_render_bullet.rigidBody.position.x <= s_render_shibePlane.rigidBody.position.x + textureOffset && s_render_bullet.rigidBody.position.x >= s_render_shibePlane.rigidBody.position.x - textureOffset)
 			{
 				shouldTextureAndBackgroundColorBeSwitched = !shouldTextureAndBackgroundColorBeSwitched;
 				ResetBackgroundColor();
