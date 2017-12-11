@@ -25,10 +25,11 @@ namespace
 	static const eae6320::Math::sVector Y = eae6320::Math::sVector(0.0f, 1.0f, 0.0f);
 	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
 
-	// External constant data for movable mesh size
+	// External constant data for meshes
 	constexpr float movableMeshSideLength = 1.0f;
 	constexpr float planeMeshLongSideLength = 2.0f;
 	constexpr float planeMeshShortSideLength = 0.125f;
+	const eae6320::Math::sVector bulletOffset = eae6320::Math::sVector(0.0f, 1.75f, -0.2f);
 
 	// External constant for default render state
 	constexpr uint8_t defaultRenderState = 0;
@@ -37,6 +38,11 @@ namespace
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
+
+	// External flag for firing the bullet and switching textures as well as colors
+	bool isBulletFired = false;
+	bool shouldTextureAndBackgroundColorBeSwitched = false;
+	constexpr float textureOffset = 7.5f;
 
 	// External multiplier constants used for control with acceleration on mesh
 	constexpr float accelerationMultiplier = 0.25f;
@@ -98,13 +104,13 @@ namespace
 	//----------
 	// Weapon Mesh
 	eae6320::Graphics::Mesh::Handle AKMMesh;
-	eae6320::Math::sVector cubeInitLocation = Zero;
-	eae6320::Math::sVector cubeInitVelocity = Zero;
-	eae6320::Math::sVector cubeInitAcceleration = Zero;
-	eae6320::Physics::sRigidBodyState cubeRigidBody = eae6320::Physics::sRigidBodyState();
+	eae6320::Math::sVector AKMInitLocation = Zero;
+	eae6320::Math::sVector AKMInitVelocity = Zero;
+	eae6320::Math::sVector AKMInitAcceleration = Zero;
+	eae6320::Physics::sRigidBodyState AKMRigidBody = eae6320::Physics::sRigidBodyState();
 	// Plane Mesh
 	eae6320::Graphics::Mesh::Handle planeMesh;
-	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, movableMeshSideLength * (-1.0f), 0.0f);
+	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, 0.0f, -50.0f);
 	eae6320::Math::sVector planeVelocity = Zero;
 	eae6320::Math::sVector planeAcceleration = Zero;
 	eae6320::Physics::sRigidBodyState planeRigidBody = eae6320::Physics::sRigidBodyState();
@@ -120,6 +126,11 @@ namespace
 	eae6320::Math::sVector sphere2Velocity = Zero;
 	eae6320::Math::sVector sphere2Acceleration = Zero;
 	eae6320::Physics::sRigidBodyState sphere2RigidBody = eae6320::Physics::sRigidBodyState();
+	// Sphere that represents bullet
+	eae6320::Math::sVector bulletInitLocation = bulletOffset + AKMInitLocation;
+	eae6320::Math::sVector bulletInitVelocity = Zero;
+	eae6320::Math::sVector bulletInitAcceleration = Zero;
+	eae6320::Physics::sRigidBodyState bulletRigidBody = eae6320::Physics::sRigidBodyState();
 
 	// Combined Rendering Data with Sprite & Texture
 	eae6320::Graphics::DataSetForRenderingSprite s_render = eae6320::Graphics::DataSetForRenderingSprite();
@@ -131,13 +142,18 @@ namespace
 
 	// Combined Rendering Data with Mesh
 	eae6320::Graphics::DataSetForRenderingMesh s_render_movableAKM = eae6320::Graphics::DataSetForRenderingMesh();
-	eae6320::Graphics::DataSetForRenderingMesh s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_shibePlane = eae6320::Graphics::DataSetForRenderingMesh();
 	eae6320::Graphics::DataSetForRenderingMesh s_render_staticSphere1 = eae6320::Graphics::DataSetForRenderingMesh();
 	eae6320::Graphics::DataSetForRenderingMesh s_render_staticSphere2 = eae6320::Graphics::DataSetForRenderingMesh();
+	eae6320::Graphics::DataSetForRenderingMesh s_render_bullet = eae6320::Graphics::DataSetForRenderingMesh();
 
 	// Camera Data
 	//------------
 	eae6320::Graphics::Camera viewCamera;
+
+	// Background Color Data
+	//----------------------
+	eae6320::Graphics::Color Background;
 }
 
 void eae6320::cExampleGame::UpdateBasedOnInput()
@@ -150,7 +166,7 @@ void eae6320::cExampleGame::UpdateBasedOnInput()
 		EAE6320_ASSERT(result);
 	}
 
-	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space))
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Shift))
 	{
 		s_render_static.texture = eae6320::Graphics::cTexture::s_manager.Get(electroballTexture);
 		s_render_static2.texture = eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture);
@@ -195,7 +211,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 	float accelerationDepth = 0.0f;
 
 	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Left))
-		if(s_render_movableAKM.rigidBody.velocity.x > 0.0f)
+		if (s_render_movableAKM.rigidBody.velocity.x > 0.0f)
 			accelerationBaseFactorHorizontal += frictionAccelerationIncrement * (-1.0f);
 		else
 			accelerationBaseFactorHorizontal += normalAccelerationIncrement * (-1.0f);
@@ -229,7 +245,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 			accelerationBaseFactorDepth += frictionAccelerationIncrement;
 		else
 			accelerationBaseFactorDepth += normalAccelerationIncrement;
-	
+
 	accelerationHorizontal = accelerationBaseFactorHorizontal * accelerationMultiplier;
 	accelerationVertical = accelerationBaseFactorVertical * accelerationMultiplier;
 	accelerationDepth = accelerationBaseFactorDepth * accelerationMultiplier;
@@ -269,6 +285,9 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnInput()
 
 	viewCamera.rigidBody.velocity = eae6320::Math::sVector(speedHorizontalCamera, speedVerticalCamera, speedDepthCamera);
 	viewCamera.rigidBody.orientation = eae6320::Math::cQuaternion(eae6320::Graphics::ConvertDegreeToRadian(rotationAngle), Y);
+
+	if (UserInput::IsKeyPressed(UserInput::KeyCodes::Space) && !isBulletFired)
+		isBulletFired = true;
 }
 
 void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSecondCount_sinceLastUpdate)
@@ -276,7 +295,6 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 	float deaccelerationX = s_render_movableAKM.rigidBody.acceleration.x;
 	float deaccelerationY = s_render_movableAKM.rigidBody.acceleration.y;
 	float deaccelerationZ = s_render_movableAKM.rigidBody.acceleration.z;
-
 	// If the velocity is not zero
 	if (s_render_movableAKM.rigidBody.velocity != Zero)
 	{
@@ -305,12 +323,53 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 			deaccelerationZ = eae6320::Math::AreAboutEqual(s_render_movableAKM.rigidBody.velocity.z, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableAKM.rigidBody.velocity.z / abs(s_render_movableAKM.rigidBody.velocity.z) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 	}
+	// Update bullet velocity based on flag
+	if (isBulletFired)
+		s_render_bullet.rigidBody.velocity = Z * (-10.0f);
+	else
+		s_render_bullet.rigidBody.velocity = s_render_movableAKM.rigidBody.velocity;
+	// Determine the texture on the plane should be switched
+	if (s_render_bullet.rigidBody.position.z <= s_render_shibePlane.rigidBody.position.z)
+	{
+		if (s_render_bullet.rigidBody.position.y <= s_render_shibePlane.rigidBody.position.y + textureOffset && s_render_bullet.rigidBody.position.y >= s_render_shibePlane.rigidBody.position.y - textureOffset)
+		{
+			if (s_render_bullet.rigidBody.position.y <= s_render_shibePlane.rigidBody.position.y + textureOffset && s_render_bullet.rigidBody.position.y >= s_render_shibePlane.rigidBody.position.y - textureOffset)
+			{
+				shouldTextureAndBackgroundColorBeSwitched = !shouldTextureAndBackgroundColorBeSwitched;
+				ResetBackgroundColor();
+			}	
+		}
+		ResetBullet();
+	}
+	// Update texture on the plane based on flag
+	if (shouldTextureAndBackgroundColorBeSwitched)
+		s_render_shibePlane.texture = eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture);
+	else
+		s_render_shibePlane.texture = eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture);
 	// Calculate the actual acceleration
 	s_render_movableAKM.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, deaccelerationZ);
 	// Update transform information about the mesh
 	s_render_movableAKM.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 	// Update transform information about the camera
 	viewCamera.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+	// Update transform information about the bullet
+	s_render_bullet.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+}
+
+void eae6320::cExampleGame::ResetBullet()
+{
+	isBulletFired = false;
+	s_render_bullet.rigidBody.position = s_render_movableAKM.rigidBody.position + bulletOffset;
+	s_render_bullet.rigidBody.velocity = s_render_movableAKM.rigidBody.velocity;
+	s_render_bullet.rigidBody.acceleration = s_render_movableAKM.rigidBody.acceleration;
+}
+
+void eae6320::cExampleGame::ResetBackgroundColor()
+{
+	if (shouldTextureAndBackgroundColorBeSwitched)
+		Background = eae6320::Graphics::Colors::Cyan;
+	else
+		Background = eae6320::Graphics::Colors::Magenta;
 }
 
 // Initialization / Clean Up
@@ -320,6 +379,8 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 {
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
+
+	InitializeBackgroundColor();
 
 	InitializeCamera();
 
@@ -356,6 +417,11 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 
 OnExit:
 	return result;
+}
+
+void eae6320::cExampleGame::InitializeBackgroundColor()
+{
+	Background = eae6320::Graphics::Colors::Magenta;
 }
 
 void eae6320::cExampleGame::InitializeCamera()
@@ -571,14 +637,14 @@ void eae6320::cExampleGame::InitializeRenderData()
 	s_render_static4 = eae6320::Graphics::DataSetForRenderingSprite(s_effect_static, s_sprite_static4, eae6320::Graphics::cTexture::s_manager.Get(electroballTexture));
 
 	// Initialize render data struct with Mesh
-	cubeRigidBody.position = cubeInitLocation;
-	cubeRigidBody.velocity = cubeInitVelocity;
-	cubeRigidBody.acceleration = cubeInitAcceleration;
-	s_render_movableAKM = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(AKMMesh), eae6320::Graphics::cTexture::s_manager.Get(AKMTexture), cubeRigidBody);
+	AKMRigidBody.position = AKMInitLocation;
+	AKMRigidBody.velocity = AKMInitVelocity;
+	AKMRigidBody.acceleration = AKMInitAcceleration;
+	s_render_movableAKM = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(AKMMesh), eae6320::Graphics::cTexture::s_manager.Get(AKMTexture), AKMRigidBody);
 	planeRigidBody.position = planeLocation;
 	planeRigidBody.velocity = planeVelocity;
 	planeRigidBody.acceleration = planeAcceleration;
-	s_render_staticPlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture), planeRigidBody);
+	s_render_shibePlane = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_exposed, eae6320::Graphics::Mesh::s_manager.Get(planeMesh), eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture), planeRigidBody);
 	sphere1RigidBody.position = sphere1Location;
 	sphere1RigidBody.velocity = sphere1Velocity;
 	sphere1RigidBody.acceleration = sphere1Acceleration;
@@ -587,6 +653,10 @@ void eae6320::cExampleGame::InitializeRenderData()
 	sphere2RigidBody.velocity = sphere2Velocity;
 	sphere2RigidBody.acceleration = sphere2Acceleration;
 	s_render_staticSphere2 = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_translucent, eae6320::Graphics::Mesh::s_manager.Get(sphereMesh), eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture), sphere2RigidBody);
+	bulletRigidBody.position = bulletInitLocation;
+	bulletRigidBody.velocity = bulletInitVelocity;
+	bulletRigidBody.acceleration = bulletInitAcceleration;
+	s_render_bullet = eae6320::Graphics::DataSetForRenderingMesh(s_effect_mesh_solid, eae6320::Graphics::Mesh::s_manager.Get(sphereMesh), eae6320::Graphics::cTexture::s_manager.Get(pokeballTexture), bulletRigidBody);
 }
 
 eae6320::cResult eae6320::cExampleGame::CleanUp()
@@ -876,15 +946,16 @@ void eae6320::cExampleGame::SubmitDataToBeRendered(const float i_elapsedSecondCo
 	eae6320::Graphics::SubmitElapsedTime(i_elapsedSecondCount_systemTime, i_elapsedSecondCount_sinceLastSimulationUpdate);
 
 	// Submit Color data
-	eae6320::Graphics::SubmitColorToBeRendered(eae6320::Graphics::Colors::Magenta);
-	
+	eae6320::Graphics::SubmitColorToBeRendered(Background);
+
 	// Submit Effect Mesh pair data with prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticPlane, i_elapsedSecondCount_sinceLastSimulationUpdate, false, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_shibePlane, i_elapsedSecondCount_sinceLastSimulationUpdate, true, false);
 	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_movableAKM, i_elapsedSecondCount_sinceLastSimulationUpdate, true, false);
+	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_bullet, i_elapsedSecondCount_sinceLastSimulationUpdate, true, false);
 
 	// Submit Effect Mesh pair data with translucent effect and prediction if needed
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere1, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
-	eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere2, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
+	//eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere1, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
+	//eae6320::Graphics::SubmitEffectMeshPairWithPositionToBeRenderedUsingPredictionIfNeeded(s_render_staticSphere2, i_elapsedSecondCount_sinceLastSimulationUpdate, false, true);
 
 	// Submit Effect Sprite pair data
 	//eae6320::Graphics::SubmitEffectSpritePairToBeRenderedWithTexture(s_render);

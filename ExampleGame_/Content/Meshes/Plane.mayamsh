@@ -6,9 +6,9 @@ return
 		-- Vertex 0
 		{
 			-- position info
-			x = -2.5,
-			y = -1,
-			z = 2.5,
+			x = -7.5,
+			y = -7.5,
+			z = 1.11022e-15,
 			-- color info
 			r = 0,
 			g = 0.946,
@@ -19,12 +19,12 @@ return
 			v = 0,
 			-- bitangent info
 			btx = 0,
-			bty = 2.22045e-16,
-			btz = -1,
+			bty = 1,
+			btz = 4.44089e-16,
 			-- normal info
 			nx = 0,
-			ny = 1,
-			nz = 2.22045e-16,
+			ny = 1.4803e-16,
+			nz = 1,
 			-- tangent info
 			tx = 1,
 			ty = -0,
@@ -33,9 +33,9 @@ return
 		-- Vertex 1
 		{
 			-- position info
-			x = 2.5,
-			y = -1,
-			z = 2.5,
+			x = 7.5,
+			y = -7.5,
+			z = 1.11022e-15,
 			-- color info
 			r = 1,
 			g = 0.297,
@@ -46,12 +46,12 @@ return
 			v = 0,
 			-- bitangent info
 			btx = 0,
-			bty = 2.22045e-16,
-			btz = -1,
+			bty = 1,
+			btz = 4.44089e-16,
 			-- normal info
 			nx = 0,
-			ny = 1,
-			nz = 2.22045e-16,
+			ny = 1.4803e-16,
+			nz = 1,
 			-- tangent info
 			tx = 1,
 			ty = -0,
@@ -60,9 +60,9 @@ return
 		-- Vertex 2
 		{
 			-- position info
-			x = -2.5,
-			y = -1,
-			z = -2.5,
+			x = -7.5,
+			y = 7.5,
+			z = -1.11022e-15,
 			-- color info
 			r = 1,
 			g = 0.9896,
@@ -73,12 +73,12 @@ return
 			v = 1,
 			-- bitangent info
 			btx = 0,
-			bty = 2.22045e-16,
-			btz = -1,
+			bty = 1,
+			btz = 4.44089e-16,
 			-- normal info
 			nx = 0,
-			ny = 1,
-			nz = 2.22045e-16,
+			ny = 1.4803e-16,
+			nz = 1,
 			-- tangent info
 			tx = 1,
 			ty = -0,
@@ -87,9 +87,9 @@ return
 		-- Vertex 3
 		{
 			-- position info
-			x = 2.5,
-			y = -1,
-			z = -2.5,
+			x = 7.5,
+			y = 7.5,
+			z = -1.11022e-15,
 			-- color info
 			r = 0.447,
 			g = 0,
@@ -100,12 +100,12 @@ return
 			v = 1,
 			-- bitangent info
 			btx = 0,
-			bty = 2.22045e-16,
-			btz = -1,
+			bty = 1,
+			btz = 4.44089e-16,
 			-- normal info
 			nx = 0,
-			ny = 1,
-			nz = 2.22045e-16,
+			ny = 1.4803e-16,
+			nz = 1,
 			-- tangent info
 			tx = 1,
 			ty = -0,
