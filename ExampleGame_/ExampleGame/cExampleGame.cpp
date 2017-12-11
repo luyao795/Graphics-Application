@@ -52,8 +52,8 @@ namespace
 
 	// External constants for defining camera distance
 	constexpr float cameraDistanceX = 0.00f;
-	constexpr float cameraDistanceY = 0.50f;
-	constexpr float cameraDistanceZ = 10.0f;
+	constexpr float cameraDistanceY = 5.0f;
+	constexpr float cameraDistanceZ = 20.0f;
 
 	// External constants for defining the camera properties
 	constexpr float aspectRatio = 1.0f;
