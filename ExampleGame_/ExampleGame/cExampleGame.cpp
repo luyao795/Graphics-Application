@@ -344,7 +344,7 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 			{
 				shouldTextureAndBackgroundColorBeSwitched = !shouldTextureAndBackgroundColorBeSwitched;
 				ResetBackgroundColor();
-			}	
+			}
 		}
 		// Whether the bullet hits the plane, its status needs to be reset
 		ResetBullet();
@@ -396,8 +396,10 @@ eae6320::cResult eae6320::cExampleGame::Initialize()
 	cResult result = Results::Success;
 	const uint8_t defaultRenderState = 0;
 
+	// Initialize the background color
 	InitializeBackgroundColor();
 
+	// Initialize the camera
 	InitializeCamera();
 
 	// Initialize the shading data
