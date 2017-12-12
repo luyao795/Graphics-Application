@@ -36,7 +36,7 @@ namespace
 	// External constant for default render state
 	constexpr uint8_t defaultRenderState = 0;
 
-	// External counter used for Rendering based on time
+	// External counter used for rendering based on time
 	float previousTimeElapsedCounter = 0.0f;
 	float currentTimeElapsedCounter = 0.0f;
 	bool flagForSwappingTexturesBasedOnTime = false;
@@ -63,7 +63,7 @@ namespace
 	constexpr float cameraDistanceY = 5.0f;
 	constexpr float cameraDistanceZ = 20.0f;
 
-	// External constants for defining the camera properties
+	// External constants for defining camera properties
 	constexpr float aspectRatio = 1.0f;
 	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
 	constexpr float nearPlaneDistance = 0.1f;
