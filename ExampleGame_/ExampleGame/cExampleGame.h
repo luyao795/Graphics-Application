@@ -82,11 +82,15 @@ namespace eae6320
 		virtual void UpdateSimulationBasedOnInput() override;
 		virtual void UpdateSimulationBasedOnTime(const float i_elapsedsecondcount_sincelastupdate) override;
 
+		void ResetBullet();
+		void ResetBackgroundColor();
+
 		// Initialization / Clean Up
 		//--------------------------
 
 		virtual cResult Initialize() override;
 
+		void InitializeBackgroundColor();
 		void InitializeCamera();
 		eae6320::cResult InitializeEffect();
 		eae6320::cResult InitializeSprite();

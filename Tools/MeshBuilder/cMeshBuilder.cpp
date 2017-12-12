@@ -241,7 +241,7 @@ eae6320::cResult eae6320::Assets::cMeshBuilder::LoadTableValues_vertices_values(
 
 	auto result = eae6320::Results::Success;
 
-	std::cout << "Iterating through vertex data:" << std::endl;
+	std::cout << "Iterating through vertex data" << std::endl;
 	const auto vertexCount = luaL_len(&io_luaState, -1);
 	for (int i = 1; i <= vertexCount; ++i)
 	{
@@ -728,7 +728,7 @@ eae6320::cResult eae6320::Assets::cMeshBuilder::LoadTableValues_indices_values(l
 {
 	auto result = eae6320::Results::Success;
 	
-	std::cout << "Iterating through index data:" << std::endl;
+	std::cout << "Iterating through index data" << std::endl;
 	const auto triangleCount = luaL_len(&io_luaState, -1);
 	for (int i = 1; i <= triangleCount; ++i)
 	{
