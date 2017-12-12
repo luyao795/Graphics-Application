@@ -26,10 +26,12 @@ namespace
 	static const eae6320::Math::sVector Z = eae6320::Math::sVector(0.0f, 0.0f, 1.0f);
 
 	// External constant data for meshes
-	constexpr float movableMeshSideLength = 1.0f;
-	constexpr float planeMeshLongSideLength = 2.0f;
-	constexpr float planeMeshShortSideLength = 0.125f;
-	const eae6320::Math::sVector bulletOffset = eae6320::Math::sVector(0.0f, 1.75f, -0.2f);
+	const eae6320::Math::sVector bulletOffset = eae6320::Math::sVector(0.0f, 1.75f, -0.5f);
+	const eae6320::Math::sVector bulletVelocity = Z * (-25.0f);
+	constexpr float planeDistance = -100.0f;
+	constexpr float planeFarthestTravelDistance = 20.0f;
+	constexpr float planeMovementSpeed = 5.0f;
+	constexpr float epsilonForPlaneDistanceOffset = 0.01f;
 
 	// External constant for default render state
 	constexpr uint8_t defaultRenderState = 0;
@@ -65,7 +67,7 @@ namespace
 	constexpr float aspectRatio = 1.0f;
 	const float cameraFieldOfView = eae6320::Graphics::ConvertDegreeToRadian(45.0f);
 	constexpr float nearPlaneDistance = 0.1f;
-	constexpr float farPlaneDistance = 100.0f;
+	constexpr float farPlaneDistance = 500.0f;
 
 	// Shading Data
 	//-------------
@@ -110,8 +112,8 @@ namespace
 	eae6320::Physics::sRigidBodyState AKMRigidBody = eae6320::Physics::sRigidBodyState();
 	// Plane Mesh
 	eae6320::Graphics::Mesh::Handle planeMesh;
-	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, 0.0f, -50.0f);
-	eae6320::Math::sVector planeVelocity = Zero;
+	eae6320::Math::sVector planeLocation = eae6320::Math::sVector(0.0f, 0.0f, planeDistance);
+	eae6320::Math::sVector planeVelocity = eae6320::Math::sVector(planeMovementSpeed, 0.0f, 0.0f);
 	eae6320::Math::sVector planeAcceleration = Zero;
 	eae6320::Physics::sRigidBodyState planeRigidBody = eae6320::Physics::sRigidBodyState();
 	// Sphere Mesh with 2 different instances
@@ -323,9 +325,14 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 			deaccelerationZ = eae6320::Math::AreAboutEqual(s_render_movableAKM.rigidBody.velocity.z, 0.0f, epsilonForAccelerationOffset) ? 0.0f : s_render_movableAKM.rigidBody.velocity.z / abs(s_render_movableAKM.rigidBody.velocity.z) * accelerationMultiplier * deaccelerationMultiplier;
 		}
 	}
+	// Update plane velocity based on its position
+	if (eae6320::Math::AreAboutEqual(s_render_shibePlane.rigidBody.position.x, -1.0f * planeFarthestTravelDistance, epsilonForPlaneDistanceOffset))
+		s_render_shibePlane.rigidBody.velocity.x = planeMovementSpeed;
+	else if (eae6320::Math::AreAboutEqual(s_render_shibePlane.rigidBody.position.x, planeFarthestTravelDistance, epsilonForPlaneDistanceOffset))
+		s_render_shibePlane.rigidBody.velocity.x = -1.0f * planeMovementSpeed;
 	// Update bullet velocity based on flag
 	if (isBulletFired)
-		s_render_bullet.rigidBody.velocity = Z * (-10.0f);
+		s_render_bullet.rigidBody.velocity = bulletVelocity;
 	else
 		s_render_bullet.rigidBody.velocity = s_render_movableAKM.rigidBody.velocity;
 	// Determine the texture on the plane should be switched
@@ -339,13 +346,20 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 				ResetBackgroundColor();
 			}	
 		}
+		// Whether the bullet hits the plane, its status needs to be reset
 		ResetBullet();
 	}
 	// Update texture on the plane based on flag
 	if (shouldTextureAndBackgroundColorBeSwitched)
+	{
 		s_render_shibePlane.texture = eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture);
+		s_render_bullet.texture = eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture);
+	}
 	else
+	{
 		s_render_shibePlane.texture = eae6320::Graphics::cTexture::s_manager.Get(flowerShibeTexture);
+		s_render_bullet.texture = eae6320::Graphics::cTexture::s_manager.Get(evilShibeTexture);
+	}
 	// Calculate the actual acceleration
 	s_render_movableAKM.rigidBody.acceleration = eae6320::Math::sVector(deaccelerationX, deaccelerationY, deaccelerationZ);
 	// Update transform information about the mesh
@@ -354,6 +368,8 @@ void eae6320::cExampleGame::UpdateSimulationBasedOnTime(const float i_elapsedSec
 	viewCamera.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 	// Update transform information about the bullet
 	s_render_bullet.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
+	// Update transform information about the plane
+	s_render_shibePlane.rigidBody.Update(i_elapsedSecondCount_sinceLastUpdate);
 }
 
 void eae6320::cExampleGame::ResetBullet()
