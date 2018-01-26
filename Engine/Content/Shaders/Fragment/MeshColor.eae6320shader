@@ -1,5 +1,5 @@
 /*
-	This is an platform independent fragment shader used to render sprite
+	This is an platform independent fragment shader used to render mesh
 */
 
 #include <Shaders/shaders.inc>
